@@ -7,12 +7,15 @@ type GameRoomProps = {
   players: number;
 };
 
-export default function GameRoom(props: GameRoomProps) {
-  const { status, name, password, players } = props;
-
+export default function GameRoom({
+  status,
+  name,
+  password,
+  players,
+}: GameRoomProps) {
   return (
     <>
-      <div className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6.1px] font-semibold text-[18.3px] flex items-center gap-[145.5px] px-[30px] py-[18px] relative border-2 border-black">
+      <div className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18.3px] flex items-center gap-[145.5px] px-[30px] py-[18px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15">
         {status === 'WAITING' ? (
           <div className="text-[var(--blue)]">대기중</div>
         ) : (
