@@ -25,8 +25,16 @@ export default function FriendList({
         </div>
         {request && (
           <div className="w-[54px] h-[24px] flex gap-[8px]">
-            <img src={icon_accept} alt="accept icon" />
-            <img src={icon_cancel} alt="cancel icon" />
+            <img
+              src={icon_accept}
+              alt="accept icon"
+              onClick={() => alert('수락!')}
+            />
+            <img
+              src={icon_cancel}
+              alt="cancel icon"
+              onClick={() => alert('거절!')}
+            />
           </div>
         )}
       </div>
