@@ -4,17 +4,17 @@
   --white: #ffffff;
   --black: #000000;
   --grey-100: #999999;
+  --grey-200: #222222;
   --grey-200-40: #22222266;
   --red: #f45a5a;
   --blue: #5a79f4;
 }
 
-
 @font-face {
-    font-family: "Pretendard";
-    src: url("/src/assets/fonts/Pretendard-ExtraBold.woff2") format("woff2");
-    font-weight: 800;
-    font-style: normal;
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
 }
 
 @font-face {
