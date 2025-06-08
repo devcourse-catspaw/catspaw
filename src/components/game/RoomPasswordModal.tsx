@@ -10,7 +10,7 @@ export default function RoomPasswordModal({
         onClick={closeRoomPasswordModalHanlder}
       >
         <div
-          className="rounded-[6.1px] text-center w-[519px] h-[251px] flex flex-col justify-center gap-10 bg-[var(--white)] border-2 border-[var(--black)]"
+          className="rounded-[6px] text-center w-[519px] h-[251px] flex flex-col justify-center gap-10 bg-[var(--white)] border-2 border-[var(--black)]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="font-semibold text-[22px]">

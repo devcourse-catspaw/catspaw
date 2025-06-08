@@ -50,13 +50,13 @@ export default function GameRoom({
   return (
     <>
       <div
-        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-center items-center gap-[40px] px-[30px] py-[18px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15"
+        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-center items-center gap-[50px] px-[30px] py-[18px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15"
         onClick={clickHandler}
       >
         {status === 'WAITING' ? (
-          <div className="text-[var(--blue)] w-[60px]">대기중</div>
+          <div className="text-[var(--blue)]">대기중</div>
         ) : (
-          <div className="text-[var(--red)] w-[60px]">게임중</div>
+          <div className="text-[var(--red)]">게임중</div>
         )}
         {password && (
           <img
@@ -65,7 +65,7 @@ export default function GameRoom({
             className="absolute top-[19px] left-[93px] w-[16px] h-[19px]"
           />
         )}
-        <div className="w-[300px] text-center truncate">{name}</div>
+        <div className="w-[280px] text-center truncate">{name}</div>
         <div className="font-medium opacity-60">{players}/4</div>
       </div>
       {isFullPlayersModalOpen && (
