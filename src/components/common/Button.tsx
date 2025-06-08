@@ -34,25 +34,22 @@ export default function Button({
 
   return (
     <>
-      <h1>Button Component</h1>
-      <div className="m-[100px]">
-        <button
-          style={{
-            fontSize: `${fontSize}px`,
-            fontWeight: `${numericWeight}`,
-            //py: padding y값, px: padding x값
-            padding: `${btnPY}px ${btnPX}px `,
-            backgroundColor: `${backgroundColor}`,
-            border: "2px solid var(--black)",
-            boxShadow: "0px 5px 0px var(--black)",
-            borderRadius: "6px",
-            textAlign: "center",
-            cursor: "pointer",
-          }}
-          onClick={onClick}>
-          {children}
-        </button>
-      </div>
+      <button
+        style={{
+          fontSize: `${fontSize}px`,
+          fontWeight: `${numericWeight}`,
+          //py: padding y값, px: padding x값
+          padding: `${btnPY}px ${btnPX}px `,
+          backgroundColor: `${backgroundColor}`,
+          border: "2px solid var(--black)",
+          boxShadow: "0px 5px 0px var(--black)",
+          borderRadius: "6px",
+          textAlign: "center",
+          cursor: "pointer",
+        }}
+        onClick={onClick}>
+        {children}
+      </button>
     </>
   );
 }
