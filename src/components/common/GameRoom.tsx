@@ -50,7 +50,7 @@ export default function GameRoom({
   return (
     <>
       <div
-        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-center items-center gap-[50px] px-[30px] py-[18px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15"
+        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-between items-center px-[30px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15"
         onClick={clickHandler}
       >
         {status === 'WAITING' ? (
@@ -65,8 +65,8 @@ export default function GameRoom({
             className="absolute top-[19px] left-[93px] w-[16px] h-[19px]"
           />
         )}
-        <div className="w-[280px] text-center truncate">{name}</div>
-        <div className="font-medium opacity-60">{players}/4</div>
+        <div className="w-[270px] text-center truncate">{name}</div>
+        <div className="w-[31px] font-medium opacity-60">{players}/4</div>
       </div>
       {isFullPlayersModalOpen && (
         <FullPlayersModal
