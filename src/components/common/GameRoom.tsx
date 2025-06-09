@@ -35,15 +35,15 @@ export default function GameRoom({
     }
   };
 
-  const closeFullPlayersModalHanlder = () => {
+  const closeFullPlayersModalHandler = () => {
     setIsFullPlayersModalOpen(false);
   };
 
-  const closePlayingModalHanlder = () => {
+  const closePlayingModalHandler = () => {
     setIsPlayingModalOpen(false);
   };
 
-  const closeRoomPasswordModalHanlder = () => {
+  const closeRoomPasswordModalHandler = () => {
     setIsRoomPasswordModalOpen(false);
   };
 
@@ -72,15 +72,15 @@ export default function GameRoom({
       </div>
       {isFullPlayersModalOpen && (
         <FullPlayersModal
-          closeFullPlayersModalHanlder={closeFullPlayersModalHanlder}
+          closeFullPlayersModalHandler={closeFullPlayersModalHandler}
         />
       )}
       {isPlayingModalOpen && (
-        <PlayingModal closePlayingModalHanlder={closePlayingModalHanlder} />
+        <PlayingModal closePlayingModalHandler={closePlayingModalHandler} />
       )}
       {isRoomPasswordModalOpen && (
         <RoomPasswordModal
-          closeRoomPasswordModalHanlder={closeRoomPasswordModalHanlder}
+          closeRoomPasswordModalHandler={closeRoomPasswordModalHandler}
         />
       )}
     </>
