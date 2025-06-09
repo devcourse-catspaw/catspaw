@@ -4,12 +4,12 @@ export default function Button({
   className,
   onClick,
 }: {
-  className: string;
+  className?: string;
   children: React.ReactNode;
   onClick?: () => void;
 }) {
   const buttonBasicStyle =
-    "border-2 border-[var(--black)] shadow-[0px_5px_0px_var(--black)] rounded-[6px] text-center cursor-pointer font-semibold text-[18px] text-center align-middle w-[100px] h-[39px]";
+    "border-2 border-[var(--black)] shadow-[0px_5px_0px_var(--black)] rounded-[6px] text-center cursor-pointer font-semibold text-[18px] text-center align-middle px-[39px] py-[3px] leading-[39px] ";
   return (
     <>
       <button
