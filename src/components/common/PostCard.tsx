@@ -47,11 +47,15 @@ export default function PostCard({
         )}
         <div className={twMerge(cardLayout)}>
           <div className="w-[240px] h-[200px] justify-center items-center flex pt-4">
-            <img
-              className="w-[208px] h-[150px] object-cover"
-              src={!image ? `${thumbnail}` : `${image}`}
-              alt={!image ? "기본섬네일" : ""}
-            />
+            {image ? (
+              <img
+                className="w-[208px] h-[150px] object-cover"
+                src={image}
+                alt=""
+              />
+            ) : (
+              <img src={thumbnail} alt="기본섬네일" />
+            )}
           </div>
           <div className="w-full h-[124px] border-t-[2px] border-[var(--black)] rounded-b-[11px] absolute -bottom-1 left-0 z-10 p-4 flex flex-col gap-2">
             <div className="flex w-full justify-between items-center gap-1">
