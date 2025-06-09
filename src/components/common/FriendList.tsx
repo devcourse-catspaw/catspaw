@@ -1,5 +1,5 @@
-import icon_accept from '../../assets/images/icon_accept.png'
-import icon_cancel from '../../assets/images/icon_cancel.png'
+import icon_accept from '../../assets/images/icon_accept.svg'
+import icon_cancel from '../../assets/images/icon_cancel.svg'
 import kisu from '../../assets/images/kisu_.svg'
 
 type FriendListProps = {
@@ -18,14 +18,14 @@ export default function FriendList({
       <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px]">
         <div className="flex gap-[10px] items-center cursor-pointer">
           <img
-            src={userCharacter || kisu}
+            src={userCharacter ?? kisu}
             alt="userCharacter"
             className="size-[35px]"
           />
           <span className="font-semibold text-[16px]">{userName}</span>
         </div>
         {request && (
-          <div className="w-[54px] h-[24px] flex gap-[8px]">
+          <div className="w-[54px] h-[24px] flex gap-[8px] items-center">
             <img
               src={icon_accept}
               alt="accept icon"
