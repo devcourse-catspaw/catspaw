@@ -54,9 +54,9 @@ export default function GameRoom({
         onClick={clickHandler}
       >
         {status === 'WAITING' ? (
-          <div className="text-[var(--blue)] w-[50px]">대기중</div>
+          <div className="text-[var(--blue)] w-[70px]">대기중</div>
         ) : (
-          <div className="text-[var(--red)] w-[50px]">게임중</div>
+          <div className="text-[var(--red)] w-[70px]">게임중</div>
         )}
         {password && (
           <img
@@ -65,8 +65,10 @@ export default function GameRoom({
             className="absolute top-[19px] left-[93px] w-[16px] h-[19px]"
           />
         )}
-        <div className="w-[270px] text-center truncate">{name}</div>
-        <div className="w-[31px] font-medium opacity-60">{players}/4</div>
+        <div className="w-[200px] text-center truncate">{name}</div>
+        <div className="w-[70px] text-right font-medium opacity-60">
+          {players}/4
+        </div>
       </div>
       {isFullPlayersModalOpen && (
         <FullPlayersModal
