@@ -19,7 +19,7 @@ export default function FriendList({
           <img
             src={userCharacter}
             alt="userCharacter"
-            className="size-[41px]"
+            className="size-[35px]"
           />
           <span className="font-semibold text-[16px]">{userName}</span>
         </div>
