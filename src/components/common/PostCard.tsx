@@ -14,6 +14,7 @@ type PostCardProps = {
   likeCount: number;
   isLiked?: boolean;
   avatar?: string;
+  springImg: "yes" | "no";
 };
 export default function PostCard({
   postTitle,
@@ -24,6 +25,7 @@ export default function PostCard({
   likeCount,
   isLiked,
   avatar,
+  springImg,
 }: PostCardProps) {
   const cardLayout =
     "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] flex";
@@ -36,12 +38,13 @@ export default function PostCard({
   return (
     <>
       <div className="relative leading-[24px] overflow-visible">
-        <img
-          className="absolute -top-3  z-10"
-          src={spring}
-          alt="스케치북 스프링"
-        />
-
+        {springImg === "yes" && (
+          <img
+            className="absolute -top-3  z-10"
+            src={spring}
+            alt="스케치북 스프링"
+          />
+        )}
         <div className={twMerge(cardLayout)}>
           <div className="w-[240px] h-[200px] justify-center items-center flex pt-4">
             <img
