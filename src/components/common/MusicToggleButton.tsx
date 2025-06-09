@@ -39,14 +39,17 @@ export default function MusicToggleButton() {
   return (
     <div className="relative">
       <div className="flex flex-col gap-4 absolute bottom-13 left-20 justify-center items-end">
-        <button onClick={toggleMusic}>
+        <button onClick={toggleMusic} className="cursor-pointer">
           <img
             src={isMusicOn ? yesMusic : noMusic}
             alt={isMusicOn ? "배경음악 켜짐" : "배경음악 꺼짐"}
           />
         </button>
 
-        <button onClick={() => setIsEffectOn(!isEffectOn)}>
+        <button
+          onClick={() => setIsEffectOn(!isEffectOn)}
+          className="cursor-pointer"
+        >
           <img
             src={isEffectOn ? yesEffect : noEffect}
             alt={isEffectOn ? "효과음 켜짐" : "효과음 꺼짐"}
