@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 type SubnavItemProps = {
   children: React.ReactNode;
@@ -11,18 +12,19 @@ export default function SubnavItem({
   active,
   onClick,
 }: SubnavItemProps) {
+  const subnavBasicStyle =
+    "w-[100px] h-[49px] text-[18px] font-medium text-center mx-[20px] cursor-pointer";
+
+  const activeStyle = "border-b-2 border-[var(--black)] text-[var(--black)]";
+  const inactiveStyle = "text-[#777777] hover:text-[var(--black)]";
+
+  const className = twMerge(
+    subnavBasicStyle,
+    active ? activeStyle : inactiveStyle
+  );
+
   return (
-    <button
-      className={`
-          w-[100px] h-[49px] text-[18px] font-medium
-          px-[26px] py-[12px] mx-[20px] cursor-pointer
-          ${
-            active
-              ? "border-b-2 border-[var(--black)] text-[var(--black)] font-medium"
-              : "text-[#777777] hover:text-var(--black)"
-          }
-        `}
-      onClick={onClick}>
+    <button className={className} onClick={onClick}>
       {children}
     </button>
   );
