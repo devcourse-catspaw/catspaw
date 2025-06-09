@@ -14,7 +14,7 @@ export default function FriendList({
 }: FriendListProps) {
   return (
     <>
-      <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px]">
+      <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px] cursor-pointer">
         <div className="flex gap-[10px] items-center">
           <img
             src={userCharacter}
