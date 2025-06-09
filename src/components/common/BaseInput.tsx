@@ -1,9 +1,9 @@
 import type { InputHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
-interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
+type BaseInputProps = InputHTMLAttributes<HTMLInputElement> & {
   className?: string;
-}
+};
 export default function BaseInput({
   className,
   placeholder = "제시어 입력",

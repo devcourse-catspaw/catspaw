@@ -1,12 +1,12 @@
 import { useId, type InputHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
-interface LabeledInputProps extends InputHTMLAttributes<HTMLInputElement> {
+type LabeledInputProps = InputHTMLAttributes<HTMLInputElement> & {
   title?: string;
   className?: string;
   invalidMessage?: string;
   isInvalid?: boolean;
-}
+};
 export default function LabeledInput({
   title = "게임방 입력",
   className,
