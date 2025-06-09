@@ -7,7 +7,7 @@ export default function GameModeSelect() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px]">
       <NavWithExit />
-      <div className="flex flex-col justify-center items-center mt-[180px] gap-10">
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-94px)] gap-10">
         <p className="font-extrabold text-[39px]">게임 모드를 골라보세요!</p>
         <div className="flex gap-[81px]">
           <GameModeSelectCard mode="single" />
@@ -19,7 +19,11 @@ export default function GameModeSelect() {
         alt="paw pencil 이미지"
         className="fixed bottom-25 right-0"
       />
-      <img src={doodle} alt="그림 이미지" className="fixed bottom-[-60px] right-[26px] rotate-150" />
+      <img
+        src={doodle}
+        alt="그림 이미지"
+        className="fixed bottom-[-60px] right-[26px] rotate-150"
+      />
     </div>
   );
 }
