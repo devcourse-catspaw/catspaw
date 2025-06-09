@@ -14,8 +14,8 @@ export default function FriendList({
 }: FriendListProps) {
   return (
     <>
-      <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px] cursor-pointer">
-        <div className="flex gap-[10px] items-center">
+      <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px]">
+        <div className="flex gap-[10px] items-center cursor-pointer">
           <img
             src={userCharacter}
             alt="userCharacter"
@@ -29,11 +29,13 @@ export default function FriendList({
               src={icon_accept}
               alt="accept icon"
               onClick={() => alert('수락!')}
+              className="cursor-pointer"
             />
             <img
               src={icon_cancel}
               alt="cancel icon"
               onClick={() => alert('거절!')}
+              className="cursor-pointer"
             />
           </div>
         )}
