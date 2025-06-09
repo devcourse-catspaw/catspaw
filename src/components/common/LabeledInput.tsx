@@ -1,0 +1,44 @@
+import { useId, type InputHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
+
+type LabeledInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  title?: string;
+  className?: string;
+  invalidMessage?: string;
+  isInvalid?: boolean;
+};
+export default function LabeledInput({
+  title = "게임방 입력",
+  className,
+  invalidMessage = "한 글자 이상 입력해주세요.",
+  isInvalid = false,
+  placeholder = "이름 입력",
+  id,
+  ...props
+}: LabeledInputProps) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const LabeledInputStyle =
+    "border-2 border-[color:var(--black)] px-4 py-3 text-lg rounded-[6px] w-full font-medium";
+  return (
+    <div className="flex flex-col gap-[8px]">
+      <label htmlFor={inputId} className="text-base font-semibold">
+        {title}
+      </label>
+      <div className="flex flex-col gap-[4px]">
+        <input
+          type="text"
+          id={inputId}
+          className={twMerge(LabeledInputStyle, className)}
+          placeholder={placeholder}
+          {...props}
+        />
+        {isInvalid && (
+          <p className="text-[color:var(--red)] text-xs font-regular">
+            *{invalidMessage}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
