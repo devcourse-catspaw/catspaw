@@ -1,8 +1,9 @@
 import icon_accept from '../../assets/images/icon_accept.png'
 import icon_cancel from '../../assets/images/icon_cancel.png'
+import kisu from '../../assets/images/kisu_.svg'
 
 type FriendListProps = {
-  userCharacter: string
+  userCharacter?: string
   userName: string
   request?: boolean
 }
@@ -17,7 +18,7 @@ export default function FriendList({
       <div className="w-[258px] h-[57px] flex justify-between items-center px-[16px] py-[8px]">
         <div className="flex gap-[10px] items-center cursor-pointer">
           <img
-            src={userCharacter}
+            src={userCharacter || kisu}
             alt="userCharacter"
             className="size-[35px]"
           />
