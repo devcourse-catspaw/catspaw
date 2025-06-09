@@ -33,7 +33,7 @@ export default function CreateRoomModal({
                 invalidMessage="한 글자 이상 입력해주세요."
                 isInvalid={false}
                 placeholder="이름 입력"
-                className="w-[339px] h-[50px] pr-[50px]"
+                className="w-[339px] h-[50px]"
               />
               <LabeledInput
                 type="password"
