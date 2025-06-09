@@ -57,7 +57,7 @@ export default function PostCard({
               <img src={thumbnail} alt="기본섬네일" />
             )}
           </div>
-          <div className="w-full h-[124px] border-t-[2px] border-[var(--black)] rounded-b-[11px] absolute -bottom-1 left-0 z-10 p-4 flex flex-col gap-2">
+          <div className="w-[240px] h-[124px] border-t-[2px] border-[var(--black)] rounded-b-[11px] absolute -bottom-1 left-0 z-10 p-4 flex flex-col gap-2">
             <div className="flex w-full justify-between items-center gap-1">
               <span className={twMerge(titleStyle)}>{postTitle}</span>
               <span className={dateStyle}>{date}</span>
