@@ -10,10 +10,15 @@ export default function NavWithExit() {
         <img
           src={logo}
           alt="Cat's Paw 로고"
-          className="w-15"
+          className="w-15 cursor-pointer"
           onClick={() => navigate("/")}
         />
-        <img src={exit} alt="나가기 버튼" onClick={() => navigate(-1)} />
+        <img
+          src={exit}
+          alt="나가기 버튼"
+          onClick={() => navigate(-1)}
+          className="cursor-pointer"
+        />
       </nav>
     </>
   );
