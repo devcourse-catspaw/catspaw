@@ -13,7 +13,7 @@ export default function NavWithExit() {
           className="w-15"
           onClick={() => navigate("/")}
         />
-        <img src={exit} alt="나가기 버튼" onClick={() => navigate("/")} />
+        <img src={exit} alt="나가기 버튼" onClick={() => navigate(-1)} />
       </nav>
     </>
   );
