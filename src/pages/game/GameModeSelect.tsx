@@ -12,10 +12,10 @@ export default function GameModeSelect() {
       <div className="flex flex-col justify-center items-center gap-10 absolute inset-0">
         <p className="font-extrabold text-[39px]">게임 모드를 골라보세요!</p>
         <div className="flex gap-[81px]">
-          <div onClick={() => navigate("/game/single")}>
+          <div onClick={() => navigate("/game/single")} className="z-50">
             <GameModeSelectCard mode="single" />
           </div>
-          <div onClick={() => navigate("/game/multi")}>
+          <div onClick={() => navigate("/game/multi")} className="z-50">
             <GameModeSelectCard mode="multi" />
           </div>
         </div>
@@ -28,7 +28,7 @@ export default function GameModeSelect() {
       <img
         src={doodle}
         alt="그림 이미지"
-        className="fixed bottom-[-60px] right-[26px] rotate-150"
+        className="fixed bottom-[-60px] right-[26px] rotate-150 -z-10"
       />
     </div>
   );
