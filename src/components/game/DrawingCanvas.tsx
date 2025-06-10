@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Stage, Layer, Line } from "react-konva";
 import Konva from "konva";
 import hexToRgba from "hex-to-rgba";
@@ -187,7 +187,6 @@ const DrawingCanvas = ({
   const handleMouseDown = (
     e: Konva.KonvaEventObject<MouseEvent | TouchEvent>
   ): void => {
-    console.log(e.evt);
     const stage = e.target.getStage();
     if (!stage) return;
 
@@ -250,6 +249,20 @@ const DrawingCanvas = ({
     setHistoryStep(historyStep + 1);
   };
 
+  useEffect(() => {
+    const handleMouseUpOutside = () => {
+      isDrawing.current = false;
+    };
+
+    window.addEventListener("mouseup", handleMouseUpOutside);
+    window.addEventListener("touchend", handleMouseUpOutside);
+
+    return () => {
+      window.removeEventListener("mouseup", handleMouseUpOutside);
+      window.removeEventListener("touchend", handleMouseUpOutside);
+    };
+  }, []);
+
   const handleUndo = (): void => {
     if (historyStep <= 0) return;
 
@@ -303,7 +316,6 @@ const DrawingCanvas = ({
       quality: 1.0,
       pixelRatio: 1,
     });
-    console.log(imageDataURL);
     onSubmit(imageDataURL);
   };
 
