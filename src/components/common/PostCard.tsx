@@ -5,8 +5,10 @@ import likeFilled from "../../assets/images/icon_like_filled.svg";
 import thumbnail from "../../assets/images/post_default_thumbnail.svg";
 import kisu from "../../assets/images/kisu_.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type PostCardProps = {
+  postId: string;
   postTitle: string;
   date: string;
   contents: string;
@@ -18,6 +20,7 @@ type PostCardProps = {
   springImg: "yes" | "no";
 };
 export default function PostCard({
+  postId,
   postTitle,
   date,
   contents,
@@ -30,7 +33,15 @@ export default function PostCard({
 }: PostCardProps) {
   const [liked, setLiked] = useState(isLiked);
   const [count, setCount] = useState(likeCount);
+  const navigate = useNavigate();
 
+  //CHECK
+  const goToDetail = () => {
+    navigate(`/lounge/${postId}`);
+    console.log("go to");
+  };
+
+  // 좋아요 핸들러
   const handleLikeClick = () => {
     setLiked((prev) => !prev);
     setCount((prev) => prev + (liked ? -1 : +1));
@@ -56,7 +67,9 @@ export default function PostCard({
         )}
         <div className={twMerge(cardLayout)}>
           {/* 카드 이미지 */}
-          <div className="w-[240px] h-[200px] justify-center items-center flex pt-4">
+          <div
+            className="w-[240px] h-[200px] justify-center items-center flex pt-4 cursor-pointer"
+            onClick={goToDetail}>
             {image ? (
               <img
                 className="w-[208px] h-[150px] object-cover"
@@ -71,13 +84,19 @@ export default function PostCard({
           {/* 이미지 하단 정보 : 제목, 날짜, 내용, 유저프로필, 유저 이름, 좋아요 버튼, 좋아요수  */}
           <div className="w-[240px] h-[124px] border-t-[2px] border-[var(--black)] rounded-b-[11px] absolute -bottom-1 left-0 z-10 p-4 flex flex-col gap-2">
             {/* 제목, 날짜 */}
-            <div className="flex w-full justify-between items-center gap-1">
+            <div
+              className="flex w-full justify-between items-center gap-1 cursor-pointer"
+              onClick={goToDetail}>
               <span className={twMerge(titleStyle)}>{postTitle}</span>
               <span className={dateStyle}>{date}</span>
             </div>
             {/* 내용 */}
             <div className="flex">
-              <div className={twMerge(contentStyle)}>{contents}</div>
+              <div
+                className={twMerge(contentStyle, "cursor-pointer")}
+                onClick={goToDetail}>
+                {contents}
+              </div>
             </div>
             {/* 프로필 사진 + 유저 이름 */}
             <div className="flex justify-between">
