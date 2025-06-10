@@ -6,6 +6,7 @@ import Spring from "../../assets/images/spring_big.svg?react";
 import Back from "../../assets/images/icon_back_page.svg?react";
 // import { twMerge } from "tailwind-merge";
 import { useNavigate } from "react-router";
+import { twMerge } from "tailwind-merge";
 const cardLayout =
   "w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ";
 
@@ -16,7 +17,7 @@ export default function LoungeDetail() {
     <div className="flex justify-center pt-20">
       <div className="relative overflow-visible">
         <Spring className="w-[1078px] absolute -top-8  z-1 text-[var(--black)]" />
-        <div className={cardLayout + "px-[100px] py-[94px] gap-4"}>
+        <div className={twMerge(cardLayout, "px-[100px] py-[94px] gap-4")}>
           <div className="w-[840px] flex items-start pb-[32px]">
             <Back
               className="w-[65px] h-[23px]  text-[var(--black)] cursor-pointer"
