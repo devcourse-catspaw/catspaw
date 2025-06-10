@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from '../pages/Home';
 import GameModeSelect from '../pages/game/GameModeSelect';
 import GameLayout from './layouts/GameLayout';
+import GameRoomList from '../pages/game/GameRoomList';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: '/game/select',
         element: <GameModeSelect />,
+      },
+      {
+        path: '/game/multi',
+        element: <GameRoomList />,
       },
     ],
   },
