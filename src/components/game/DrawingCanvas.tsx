@@ -322,49 +322,83 @@ const DrawingCanvas = ({
   return (
     <div>
       <div className="flex gap-[21px]">
-        <div className="flex flex-col gap-[10px] mt-5">
-          <div
-            className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
-              color === "#1D1D1F" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#1D1D1F")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#FF0000] rounded-full  ${
-              color === "#FF0000" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#FF0000")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#DE651A] rounded-full  ${
-              color === "#DE651A" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#DE651A")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#F4EC5A] rounded-full  ${
-              color === "#F4EC5A" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#F4EC5A")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#34A853] rounded-full  ${
-              color === "#34A853" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#34A853")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#2651FF] rounded-full  ${
-              color === "#2651FF" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#2651FF")}
-          ></div>
-          <div
-            className={`w-6 h-6 bg-[#5865F2] rounded-full  ${
-              color === "#5865F2" && "outline-[5px] outline-[#C9C9C9]"
-            } cursor-pointer`}
-            onClick={() => setColor("#5865F2")}
-          ></div>
+        <div className="flex gap-[10px]">
+          <div className="flex flex-col gap-[10px] mt-5">
+            <div
+              className={`w-6 h-6 bg-[#FF0000] rounded-full ${
+                color === "#FF0000" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#FF0000")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FF64B9] rounded-full  ${
+                color === "#FF64B9" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#FF64B9")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#9500FF] rounded-full  ${
+                color === "#9500FF" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#9500FF")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#A85134] rounded-full  ${
+                color === "#A85134" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#A85134")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#34A853] rounded-full  ${
+                color === "#34A853" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#34A853")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#3299FF] rounded-full  ${
+                color === "#3299FF" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#3299FF")}
+            ></div>
+          </div>
+          <div className="flex flex-col gap-[10px] mt-5">
+            <div
+              className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
+                color === "#1D1D1F" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#1D1D1F")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#ffffff] rounded-full border border-[#22222266]  ${
+                color === "#ffffff" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#ffffff")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#8C8C8C] rounded-full  ${
+                color === "#8C8C8C" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#8C8C8C")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FEC5A7] rounded-full  ${
+                color === "#FEC5A7" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#FEC5A7")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#F4EC5A] rounded-full  ${
+                color === "#F4EC5A" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#F4EC5A")}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FF6D12] rounded-full  ${
+                color === "#FF6D12" && "outline-[5px] outline-[#C9C9C9]"
+              } cursor-pointer`}
+              onClick={() => setColor("#FF6D12")}
+            ></div>
+          </div>
         </div>
 
         <div className="flex relative w-[610px] h-[410px] justify-center items-center pt-9">
