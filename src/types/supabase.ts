@@ -111,24 +111,34 @@ export type Database = {
       }
       game_scores: {
         Row: {
+          game_id: number
           id: number
           played_at: string
           score: number
           user_id: string
         }
         Insert: {
+          game_id: number
           id?: number
           played_at?: string
           score: number
           user_id: string
         }
         Update: {
+          game_id?: number
           id?: number
           played_at?: string
           score?: number
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "game_scores_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "game_scores_user_id_fkey"
             columns: ["user_id"]
@@ -142,25 +152,31 @@ export type Database = {
         Row: {
           created_at: string
           current_players: number
-          current_turn: number | null
           id: number
-          room_code: string | null
+          leader_id: string
+          ready_players: number
+          room_name: string
+          room_password: string | null
           status: string
         }
         Insert: {
           created_at?: string
-          current_players: number
-          current_turn?: number | null
+          current_players?: number
           id?: number
-          room_code?: string | null
-          status: string
+          leader_id?: string
+          ready_players?: number
+          room_name: string
+          room_password?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
           current_players?: number
-          current_turn?: number | null
           id?: number
-          room_code?: string | null
+          leader_id?: string
+          ready_players?: number
+          room_name?: string
+          room_password?: string | null
           status?: string
         }
         Relationships: []
@@ -244,18 +260,24 @@ export type Database = {
         Row: {
           game_id: number
           id: number
+          is_leader: boolean | null
+          is_ready: boolean | null
           joined_at: string
           user_id: string
         }
         Insert: {
           game_id: number
           id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           joined_at?: string
           user_id: string
         }
         Update: {
           game_id?: number
           id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           joined_at?: string
           user_id?: string
         }
