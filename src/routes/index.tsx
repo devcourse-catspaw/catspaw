@@ -1,7 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router'
-import Home from '../pages/Home'
-import GameModeSelect from '../pages/game/GameModeSelect'
-import GameLayout from './layouts/GameLayout'
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import Home from "../pages/Home";
+import GameModeSelect from "../pages/game/GameModeSelect";
+import GameLayout from "./layouts/GameLayout";
+import SingleModePage from "../pages/SingleModePage";
 import Login from '../pages/Login'
 
 const router = createBrowserRouter([
@@ -20,8 +21,16 @@ const router = createBrowserRouter([
     element: <GameLayout />,
     children: [
       {
-        path: '/game/select',
+        index: true,
+        element: <Navigate to="select" replace />,
+      },
+      {
+        path: "select",
         element: <GameModeSelect />,
+      },
+      {
+        path: "single",
+        element: <SingleModePage />,
       },
     ],
   },
