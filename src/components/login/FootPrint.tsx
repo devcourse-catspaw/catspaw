@@ -2,7 +2,17 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
-export default function FootPrint() {
+type FootPrintPosition = {
+  position: string
+  delay?: number
+  flip?: boolean
+}
+
+export default function FootPrint({
+  position,
+  delay = 0,
+  flip,
+}: FootPrintPosition) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useGSAP(
@@ -13,6 +23,7 @@ export default function FootPrint() {
         stagger: 0.3,
         duration: 0.8,
         ease: 'back.out(1.7)',
+        delay,
       })
     },
     { scope: containerRef }
@@ -20,13 +31,17 @@ export default function FootPrint() {
 
   return (
     <>
-      <div ref={containerRef}>
+      <div
+        ref={containerRef}
+        className={`absolute ${position} ${
+          flip ? `scale-x-[-1] rotate-[-40deg]` : ''
+        }`}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="175"
-          height="204"
           viewBox="0 0 175 204"
           fill="none"
+          className="h-[17vh]"
         >
           <g className="paw" id="paw1">
             <path
