@@ -50,7 +50,7 @@ export default function GameRoom({
   return (
     <>
       <div
-        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-between items-center px-[30px] relative border-2 border-[var(--black)] cursor-pointer hover:bg-[var(--grey-100)]/15"
+        className="w-[520px] h-[61px] bg-[var(--white)] rounded-[6px] font-semibold text-[18px] flex justify-between items-center px-[30px] relative border-2 border-[var(--black)] shrink-0 cursor-pointer hover:bg-[var(--grey-100)]/15"
         onClick={clickHandler}
       >
         {status === 'WAITING' ? (
