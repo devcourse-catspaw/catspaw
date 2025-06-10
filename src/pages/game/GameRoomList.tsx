@@ -1,16 +1,11 @@
-import logo from '../../assets/images/logo_catpaw.svg';
-import exit from '../../assets/images/icon_exit.svg';
-import bgmYes from '../../assets/images/icon_sound_bgm_yes.svg';
-import bgmNo from '../../assets/images/icon_sound_bgm_no.svg';
-import effectYes from '../../assets/images/icon_sound_effect_yes.svg';
-import effectNo from '../../assets/images/icon_sound_effect_no.svg';
 import { useState } from 'react';
 import SubnavItem from '../../components/common/SubnavItem';
 import Button from '../../components/common/Button';
 import GameRoom from '../../components/common/GameRoom';
-import pawPencil from '../../assets/images/paw_pencil.svg';
+import pawPencil from '../../assets/images/paw_pencil_big.svg';
 import doodle from '../../assets/images/doodle_loading.svg';
 import CreateRoomModal from '../../components/game/CreateRoomModal';
+import NavWithExit from '../../components/common/NavWithExit';
 
 interface propsDataType {
   status: string;
@@ -19,19 +14,9 @@ interface propsDataType {
   players: number;
 }
 
-export default function GameRoomPage() {
-  const [isPlayingEffect, setIsPlayingEffect] = useState(true);
-  const [isPlayingBgm, setIsPlayingBgm] = useState(true);
+export default function GameRoomList() {
   const [isActive, setIsActive] = useState([true, false, false]);
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
-
-  const clickEffectHandler = () => {
-    setIsPlayingEffect(!isPlayingEffect);
-  };
-
-  const clickBgmHandler = () => {
-    setIsPlayingBgm(!isPlayingBgm);
-  };
 
   const clickButtonHandler = () => {
     setIsCreateRoomModalOpen(true);
@@ -128,15 +113,17 @@ export default function GameRoomPage() {
   ];
 
   return (
-    <div className="w-full h-full">
-      <nav className="flex justify-between items-center px-20 py-[14px]">
+    // <div className="w-full h-full">
+    <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
+      {/* <nav className="flex justify-between items-center px-20 py-[14px]">
         <img src={logo} alt="로고" className="w-15 h-15 cursor-pointer" />
         <img
           src={exit}
           alt="나가기"
           className="w-[41px] h-[41px] cursor-pointer"
         />
-      </nav>
+      </nav> */}
+      <NavWithExit />
       <div className="flex flex-col items-center gap-[34px]">
         <div>
           <SubnavItem
@@ -179,20 +166,6 @@ export default function GameRoomPage() {
             ))}
           </div>
         </div>
-      </div>
-      <div className="absolute left-20 bottom-[50px] flex flex-col gap-[10px]">
-        <img
-          src={isPlayingBgm ? bgmYes : bgmNo}
-          alt="배경음악"
-          onClick={clickBgmHandler}
-          className="w-[21px] h-[21px] cursor-pointer"
-        />
-        <img
-          src={isPlayingEffect ? effectYes : effectNo}
-          alt="효과음"
-          onClick={clickEffectHandler}
-          className="w-6 h-6 cursor-pointer"
-        />
       </div>
       <img
         src={pawPencil}
