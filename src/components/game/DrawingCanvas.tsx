@@ -21,7 +21,11 @@ type HistoryState = {
   data: LineData[] | string;
 };
 
-const DrawingCanvas = () => {
+const DrawingCanvas = ({
+  onSubmit,
+}: {
+  onSubmit: (imageData: string) => void;
+}) => {
   const [tool, setTool] = useState<string>("pen");
   const [lines, setLines] = useState<LineData[]>([]);
   const isDrawing = useRef<boolean>(false);
@@ -290,6 +294,19 @@ const DrawingCanvas = () => {
     }
   };
 
+  const handleSubmit = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const imageDataURL = stage.toDataURL({
+      mimeType: "image/png",
+      quality: 1.0,
+      pixelRatio: 1,
+    });
+    console.log(imageDataURL);
+    onSubmit(imageDataURL);
+  };
+
   return (
     <div>
       <div className="flex gap-[21px]">
@@ -433,7 +450,7 @@ const DrawingCanvas = () => {
             />
           </div>
         </div>
-        <Button>제출</Button>
+        <Button onClick={handleSubmit}>제출</Button>
       </div>
     </div>
   );
