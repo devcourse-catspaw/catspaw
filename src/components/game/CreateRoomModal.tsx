@@ -1,12 +1,85 @@
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
 import close from '../../assets/images/icon_close.svg';
+import supabase from '../../utils/supabase';
+import { useState } from 'react';
 
 export default function CreateRoomModal({
   closeCreateRoomModalHandler,
 }: {
   closeCreateRoomModalHandler: () => void;
 }) {
+  const [name, setName] = useState('');
+  const [pw, setPw] = useState('');
+  // const [invalid, setInvalid] = useState(false);
+
+  // const checkPassword = () => {
+  //   if (pw === password) {
+  //     alert('일치합니당');
+  //     closeRoomPasswordModalHandler();
+  //     // navigate()
+  //   } else setInvalid(true);
+  // };
+
+  const clickCreateButtonHandler = () => {
+    const postGameRoom = async () => {
+      const { data, error } = await supabase
+        .from('games')
+        .insert([
+          {
+            room_name: name,
+            room_password: pw,
+            // profile_id: session?.user.id,
+          },
+        ])
+        .select();
+
+      if (data) {
+        alert('등록되었습니다.');
+        // navigate('/');
+      }
+
+      if (error) {
+        alert('에러가 발생했습니다.');
+        console.error(error);
+      }
+    };
+
+    // const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
+    //   try {
+    //     const { data: posts } = await supabase
+    //       .from('posts')
+    //       .select(
+    //         `
+    //           *,
+    //           profiles (
+    //             id,
+    //             username,
+    //             avatar_url
+    //           ),
+    //           comments (
+    //             id,
+    //             comment,
+    //             profile_id,
+    //             created_at,
+    //             post_id,
+    //             profiles (
+    //               id,
+    //               username,
+    //               avatar_url
+    //             )
+    //           )
+    //         `
+    //       )
+    //       .eq('id', Number(params.id))
+    //       .single();
+
+    //     return posts;
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
+    // };
+  };
   return (
     <>
       <div
@@ -29,6 +102,10 @@ export default function CreateRoomModal({
             <div className="font-semibold text-[24px]">게임방 생성</div>
             <div className="flex flex-col gap-3">
               <LabeledInput
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
                 title="게임방 이름"
                 invalidMessage="한 글자 이상 입력해주세요."
                 isInvalid={false}
@@ -37,15 +114,20 @@ export default function CreateRoomModal({
               />
               <LabeledInput
                 type="password"
+                value={pw}
+                onChange={(e) => {
+                  setPw(e.target.value);
+                  // setInvalid(false);
+                }}
                 title="게임방 비밀번호"
-                invalidMessage="비밀번호가 일치하지 않습니다."
+                // invalidMessage="비밀번호가 일치하지 않습니다."
                 isInvalid={false}
                 placeholder="비밀번호 입력"
                 className="w-[339px] h-[50px] pr-[50px]"
               />
             </div>
             <div className="flex gap-8">
-              <Button>생성</Button>
+              <Button onClick={clickCreateButtonHandler}>생성</Button>
               <Button onClick={closeCreateRoomModalHandler}>취소</Button>
             </div>
           </div>
