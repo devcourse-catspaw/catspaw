@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SubnavItem from '../../components/common/SubnavItem';
 import Button from '../../components/common/Button';
 import GameRoom from '../../components/common/GameRoom';
@@ -6,20 +6,29 @@ import pawPencil from '../../assets/images/paw_pencil_big.svg';
 import doodle from '../../assets/images/doodle_loading.svg';
 import CreateRoomModal from '../../components/game/CreateRoomModal';
 import NavWithExit from '../../components/common/NavWithExit';
+import supabase from '../../utils/supabase';
 
-interface propsDataType {
+export type GameRoom = NonNullable<{
+  id: number;
+  created_at: string;
   status: string;
-  name: string;
-  password: string;
-  players: number;
-}
+  room_name: string;
+  room_password: string | null;
+  ready_players: number;
+  current_players: number;
+}>;
 
 export default function GameRoomList() {
+  const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
   const [isActive, setIsActive] = useState([true, false, false]);
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
 
   const clickButtonHandler = () => {
     setIsCreateRoomModalOpen(true);
+  };
+
+  const closeCreateRoomModalHandler = () => {
+    setIsCreateRoomModalOpen(false);
   };
 
   const clickSubnavHandler = (index: number) => {
@@ -30,99 +39,79 @@ export default function GameRoomList() {
     setIsActive(newArr);
   };
 
-  const getFilteringlist = (activeArr: boolean[]): propsDataType[] => {
+  const getFilteringlist = (activeArr: boolean[]): GameRoom[] => {
     if (activeArr[1]) {
-      return propsData.filter((v) => v.status === 'WAITING');
+      return gameRooms.filter((v) => v.status === 'WAITING');
     } else if (activeArr[2]) {
-      return propsData.filter((v) => v.status === 'PLAYING');
+      return gameRooms.filter((v) => v.status === 'PLAYING');
     }
-    return propsData;
+    return gameRooms;
   };
 
-  const closeCreateRoomModalHandler = () => {
-    setIsCreateRoomModalOpen(false);
+  const getGameRoomList = async () => {
+    try {
+      const { data } = await supabase
+        .from('games')
+        .select(
+          `
+            *
+          `
+        )
+        .order('created_at', { ascending: false });
+      if (data) {
+        setGameRooms(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const propsData = [
-    {
-      status: 'WAITING',
-      name: '같이 할 사람 있나?',
-      password: '1',
-      players: 1,
-    },
-    {
-      status: 'PLAYING',
-      name: '드루오삼',
-      password: '',
-      players: 4,
-    },
-    {
-      status: 'PLAYING',
-      name: 'ㄱㄱ',
-      password: '1234',
-      players: 2,
-    },
-    {
-      status: 'WAITING',
-      name: '다른 사람이 알아볼 정도는 그려야 함',
-      password: 'gsdfs',
-      players: 4,
-    },
-    {
-      status: 'WAITING',
-      name: '못 그려도 ㄱㅊ',
-      password: '',
-      players: 4,
-    },
-    {
-      status: 'PLAYING',
-      name: 'ㄱㄱ',
-      password: '1234',
-      players: 2,
-    },
-    {
-      status: 'WAITING',
-      name: '다른 사람이 알아볼 정도는 그려야 함',
-      password: 'gsdfs',
-      players: 4,
-    },
-    {
-      status: 'WAITING',
-      name: '못 그려도 ㄱㅊ',
-      password: '',
-      players: 4,
-    },
-    {
-      status: 'PLAYING',
-      name: 'ㄱㄱ',
-      password: '1234',
-      players: 2,
-    },
-    {
-      status: 'WAITING',
-      name: '다른 사람이 알아볼 정도는 그려야 함',
-      password: 'gsdfs',
-      players: 4,
-    },
-    {
-      status: 'WAITING',
-      name: '못 그려도 ㄱㅊ',
-      password: '',
-      players: 4,
-    },
-  ];
+  useEffect(() => {
+    getGameRoomList();
+
+    const channel = supabase
+      .channel('realtime_games')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'games',
+        },
+        (payload) => {
+          console.log(payload);
+          setGameRooms((prevGames) => {
+            const { eventType, new: newGame, old: oldGame } = payload;
+
+            switch (eventType) {
+              case 'INSERT':
+                return [newGame as GameRoom, ...prevGames];
+              case 'UPDATE':
+                return prevGames.map((game) =>
+                  game.id === (newGame as GameRoom).id
+                    ? (newGame as GameRoom)
+                    : game
+                );
+              case 'DELETE':
+                return prevGames.filter(
+                  (game) => game.id !== (oldGame as GameRoom).id
+                );
+              default:
+                return prevGames;
+            }
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     // <div className="w-full h-full">
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      {/* <nav className="flex justify-between items-center px-20 py-[14px]">
-        <img src={logo} alt="로고" className="w-15 h-15 cursor-pointer" />
-        <img
-          src={exit}
-          alt="나가기"
-          className="w-[41px] h-[41px] cursor-pointer"
-        />
-      </nav> */}
       <NavWithExit />
       <div className="flex flex-col items-center gap-[34px]">
         <div>
@@ -157,11 +146,11 @@ export default function GameRoomList() {
           <div className="flex flex-col gap-1 overflow-y-auto scroll-custom">
             {getFilteringlist(isActive).map((data) => (
               <GameRoom
-                // key={data.id}
+                key={data.id}
                 status={data.status}
-                name={data.name}
-                password={data.password}
-                players={data.players}
+                name={data.room_name}
+                password={data.room_password}
+                players={data.current_players}
               />
             ))}
           </div>
