@@ -7,31 +7,33 @@ export default function Comments() {
   return (
     <>
       {/* 댓글 렌더링 */}
-      <div className=" flex flex-col justify-between gap-10">
-        <CommentCard
-          userName="ㅎㅎ"
-          avatar={kisu}
-          date="5분전"
-          comment="ㅍ...파이팅....."
-        />
-        <CommentCard
-          userName="hihihihi"
-          avatar={kisu}
-          date="5분전"
-          comment="ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
-        />
-        <CommentCard
-          userName="qkrwnsrb"
-          avatar={kisu}
-          date="5분전"
-          comment="ㅉ"
-        />
-        <CommentCard
-          userName="영서쓰"
-          avatar={kisu}
-          date="5분전"
-          comment="힘내요"
-        />
+      <div className=" flex flex-col gap-[40px]">
+        <div className="flex flex-col justify-between">
+          <CommentCard
+            userName="ㅎㅎ"
+            avatar={kisu}
+            date="5분전"
+            comment="ㅍ...파이팅....."
+          />
+          <CommentCard
+            userName="hihihihi"
+            avatar={kisu}
+            date="5분전"
+            comment="ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
+          />
+          <CommentCard
+            userName="qkrwnsrb"
+            avatar={kisu}
+            date="5분전"
+            comment="ㅉ"
+          />
+          <CommentCard
+            userName="영서쓰"
+            avatar={kisu}
+            date="5분전"
+            comment="힘내요"
+          />
+        </div>
 
         {/* 댓글 입력 */}
         <div className="w-[840px] flex justify-between">
