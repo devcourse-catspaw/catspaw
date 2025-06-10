@@ -47,7 +47,7 @@ export default function Login() {
             </div>
             <Button className="w-[351px] h-[54px] px-[55px] flex justify-center items-center gap-[15px]">
               <img src={kisu} alt="kisu" className="size-[28px]" />
-              <span className="text-[20px]">Continue as Guest</span>
+              <span className="text-[20px] w-[197px]">Continue as Guest</span>
             </Button>
           </div>
         </div>
