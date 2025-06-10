@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
-import ellipsis from "../../assets/images/icon_ellipsis.svg";
 import BaseInput from "../common/BaseInput";
-import cancel from "../../assets/images/icon_cancel.png";
+import Cancel from "../../assets/images/answer_wrong_2.svg?react";
+import Ellipsis from "../../assets/images/icon_ellipsis.svg?react";
+import { twMerge } from "tailwind-merge";
 
 type CommentCardProps = {
   userName: string;
@@ -24,7 +24,9 @@ export default function CommentCard({
   const [commentText, setCommentText] = useState(comment);
   const [editValue, setEditValue] = useState(comment);
 
-  const handleToggle = () => setShowMore((prev) => !prev);
+  const handleToggle = () => {
+    setShowMore((prev) => !prev);
+  };
 
   //수정
   const handleEditClick = () => {
@@ -60,12 +62,11 @@ export default function CommentCard({
         {/* 더보기 토글 */}
         <div>
           {!showMore && (
-            <img
-              src={ellipsis}
-              alt="더보기"
-              className="cursor-pointer"
+            <span
               onClick={handleToggle}
-            />
+              className="cursor-pointer text-[var(--black)] inline-flex items-center">
+              <Ellipsis className="w-[16px] h-[16px] fill-current" />
+            </span>
           )}
           {showMore && !isEditing && (
             <div className="flex items-center gap-2">
@@ -77,10 +78,8 @@ export default function CommentCard({
                 <span className={moreTextStyle}>삭제</span>
               </div>
               <span>
-                <img
-                  className="w-[14px] cursor-pointer"
-                  src={cancel}
-                  alt="취소"
+                <Cancel
+                  className="inline w-[12px] cursor-pointer text-[var(--grey-100)]"
                   onClick={() => setShowMore(false)}
                 />
               </span>
@@ -98,19 +97,14 @@ export default function CommentCard({
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
           />
-          <div className="flex gap-2">
+          <div className="flex justify-center items-center gap-2">
             <span
               className={twMerge(moreTextStyle, "cursor-pointer")}
               onClick={handleComplete}>
               완료
             </span>
-            <span>
-              <img
-                className="w-[14px] cursor-pointer"
-                src={cancel}
-                alt="취소"
-                onClick={handleCancelEdit}
-              />
+            <span className="cursor-pointer" onClick={handleCancelEdit}>
+              <Cancel className="w-[8px]  text-[var(--grey-100)]" />
             </span>
           </div>
         </div>
