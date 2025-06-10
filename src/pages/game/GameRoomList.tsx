@@ -70,7 +70,7 @@ export default function GameRoomList() {
     getGameRoomList();
 
     const channel = supabase
-      .channel('realtime_games')
+      .channel('change_games')
       .on(
         'postgres_changes',
         {
