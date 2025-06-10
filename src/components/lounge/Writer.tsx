@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ellipsis from "../../assets/images/icon_ellipsis.svg";
-import cancel from "../../assets/images/icon_cancel.png";
+import Cancel from "../../assets/images/answer_wrong.svg?react";
+import cancel from "../../assets/images/answer_wrong.svg";
 
 type WriterType = {
   avatar: string;
@@ -19,7 +20,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
   };
   return (
     <div className="flex flex-col w-[840px] h-[50px]">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center pr-6">
         <div className="flex justify-start items-center p-0">
           <img
             className="w-[41px] mr-[5px] color-[var(--black)]"
@@ -33,7 +34,6 @@ export default function Writer({ avatar, userName, date }: WriterType) {
             </span>
           </div>
         </div>
-
         {/* 더보기 토글 */}
         <div onClick={handleToggle}>
           {showMore ? (
@@ -44,10 +44,14 @@ export default function Writer({ avatar, userName, date }: WriterType) {
                 <span className={moreTextStyle}>삭제</span>
               </div>
               <span>
-                <img
-                  className="w-[14px] cursor-pointer"
+                {/* <img
+                  className="w-[12px] cursor-pointer text-[var(--grey-100)]"
                   src={cancel}
                   alt="취소"
+                /> */}
+                <Cancel
+                  className="inline w-[12px] cursor-pointer text-[var(--grey-100)] fill-current"
+                  onClick={handleToggle}
                 />
               </span>
             </div>
