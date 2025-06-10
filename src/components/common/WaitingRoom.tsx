@@ -5,7 +5,7 @@ type WaitingRoomProps = {
   avatar?: string;
   name: string;
   isReady?: boolean;
-  isLeader: boolean;
+  isLeader?: boolean;
 };
 
 export default function WaitingRoom({
@@ -16,7 +16,7 @@ export default function WaitingRoom({
 }: WaitingRoomProps) {
   return (
     <>
-      <div className="w-[321px] h-[77px] px-7 bg-[var(--white)] flex justify-between items-center text-[16px] font-bold rounded-md border-2 border-[var(--black)]">
+      <div className="w-full h-[77px] px-7 bg-[var(--white)] flex justify-between items-center text-[16px] font-bold rounded-md border-2 border-[var(--black)]">
         <div className="flex items-center gap-[7px]">
           <img
             src={avatar ? avatar : kisu}
@@ -30,9 +30,9 @@ export default function WaitingRoom({
         </div>
         {!isLeader &&
           (isReady ? (
-            <div className="text-[var(--blue)] w-[50px]">READY</div>
+            <div className="text-[var(--blue)] w-[60px] text-right">READY</div>
           ) : (
-            <div className="text-[var(--red)] w-[60px]">waiting</div>
+            <div className="text-[var(--red)] w-[60px] text-right">waiting</div>
           ))}
       </div>
     </>
