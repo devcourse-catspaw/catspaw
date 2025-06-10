@@ -51,6 +51,16 @@
   src: url('/src/assets/fonts/Pretendard-Light.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: "GloriaHallelujah";
+  font-weight: 400;
+  src: url("/src/assets/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
+}
+
+.font-gloria {
+  font-family: "GloriaHallelujah", cursive;
+}
+
 body {
   font-family: 'Pretendard';
 }

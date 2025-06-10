@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from '../pages/Home';
-import GameRoomPage from '../pages/game/GameRoomPage';
+import GameModeSelect from '../pages/game/GameModeSelect';
+import GameLayout from './layouts/GameLayout';
 
 const router = createBrowserRouter([
   {
@@ -10,8 +11,13 @@ const router = createBrowserRouter([
   },
   {
     path: '/game',
-    element: <GameRoomPage />,
-    hydrateFallbackElement: <h1>Loading ...</h1>,
+    element: <GameLayout />,
+    children: [
+      {
+        path: '/game/select',
+        element: <GameModeSelect />,
+      },
+    ],
   },
 ]);
 export default function Router() {
