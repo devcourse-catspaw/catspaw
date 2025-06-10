@@ -19,7 +19,7 @@ export default function Login() {
           alt="sketch book"
           className=" h-[60vh] min-h-[440px] min-w-[516px] absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]"
         />
-        <div className="absolute top-[33%] left-1/2 translate-x-[-50%] flex items-center">
+        <div className="absolute top-[33%] left-1/2 translate-x-[-50%] flex items-center cursor-pointer">
           <img
             src={logo_catpaw}
             alt="logo_catpaw"
