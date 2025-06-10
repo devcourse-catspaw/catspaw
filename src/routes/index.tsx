@@ -1,21 +1,26 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import Home from "../pages/Home";
-import GameModeSelect from "../pages/game/GameModeSelect";
-import GameLayout from "./layouts/GameLayout";
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import Home from '../pages/Home';
+import GameModeSelect from '../pages/game/GameModeSelect';
+import GameLayout from './layouts/GameLayout';
+import MultiModeWords from '../pages/game/MultiModeWords';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Home />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: "/game",
+    path: '/game',
     element: <GameLayout />,
     children: [
       {
-        path: "/game/select",
+        path: '/game/select',
         element: <GameModeSelect />,
+      },
+      {
+        path: '/game/multi',
+        element: <MultiModeWords />,
       },
     ],
   },
