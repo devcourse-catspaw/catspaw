@@ -7,7 +7,7 @@ import RoomPasswordModal from '../game/RoomPasswordModal';
 type GameRoomProps = {
   status: string;
   name: string;
-  password?: string;
+  password: string | null;
   players: number;
 };
 
@@ -80,6 +80,7 @@ export default function GameRoom({
       )}
       {isRoomPasswordModalOpen && (
         <RoomPasswordModal
+          password={password}
           closeRoomPasswordModalHandler={closeRoomPasswordModalHandler}
         />
       )}
