@@ -1,7 +1,6 @@
 import { useState } from "react";
-import ellipsis from "../../assets/images/icon_ellipsis.svg";
-import Cancel from "../../assets/images/answer_wrong.svg?react";
-import cancel from "../../assets/images/answer_wrong.svg";
+import Cancel from "../../assets/images/answer_wrong_2.svg?react";
+import Ellipsis from "../../assets/images/icon_ellipsis.svg?react";
 
 type WriterType = {
   avatar: string;
@@ -13,11 +12,7 @@ const moreTextStyle =
 
 export default function Writer({ avatar, userName, date }: WriterType) {
   const [showMore, setShowMore] = useState(false);
-  const handleToggle = () => {
-    if (!showMore) {
-      setShowMore(true);
-    }
-  };
+  const handleToggle = () => setShowMore((prev) => !prev);
   return (
     <div className="flex flex-col w-[840px] h-[50px]">
       <div className="flex justify-between items-center pr-6">
@@ -35,7 +30,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
           </div>
         </div>
         {/* 더보기 토글 */}
-        <div onClick={handleToggle}>
+        <div>
           {showMore ? (
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
@@ -44,19 +39,18 @@ export default function Writer({ avatar, userName, date }: WriterType) {
                 <span className={moreTextStyle}>삭제</span>
               </div>
               <span>
-                {/* <img
-                  className="w-[12px] cursor-pointer text-[var(--grey-100)]"
-                  src={cancel}
-                  alt="취소"
-                /> */}
                 <Cancel
-                  className="inline w-[12px] cursor-pointer text-[var(--grey-100)] fill-current"
-                  onClick={handleToggle}
+                  className="w-[8px] cursor-pointer text-[var(--grey-100)]"
+                  onClick={() => setShowMore(false)}
                 />
               </span>
             </div>
           ) : (
-            <img className="color-[var(--black)]" src={ellipsis} alt="더보기" />
+            <span
+              onClick={handleToggle}
+              className="cursor-pointer text-[var(--black)] inline-flex items-center">
+              <Ellipsis className="w-[16px] h-[16px] fill-current" />
+            </span>
           )}
         </div>
       </div>
