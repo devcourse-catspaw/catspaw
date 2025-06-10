@@ -1,7 +1,7 @@
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
 import close from '../../assets/images/icon_close.svg';
-import supabase from '../../utils/supabase';
+// import supabase from '../../utils/supabase';
 import { useState } from 'react';
 
 export default function CreateRoomModal({
@@ -21,63 +21,25 @@ export default function CreateRoomModal({
   //   } else setInvalid(true);
   // };
 
-  const clickCreateButtonHandler = () => {
-    const postGameRoom = async () => {
-      const { data, error } = await supabase
-        .from('games')
-        .insert([
-          {
-            room_name: name,
-            room_password: pw,
-            // profile_id: session?.user.id,
-          },
-        ])
-        .select();
-
-      if (data) {
-        alert('등록되었습니다.');
-        // navigate('/');
+  const clickCreateButtonHandler = async () => {
+    // const postGameRoom = async () => {
+    const res = await fetch(
+      'https://neddelxefvltdmbkyymh.functions.supabase.co/createRoomWithLeader',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          game: { room_name: name, room_password: pw },
+          player: {},
+        }),
       }
+    );
 
-      if (error) {
-        alert('에러가 발생했습니다.');
-        console.error(error);
-      }
-    };
-
-    // const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
-    //   try {
-    //     const { data: posts } = await supabase
-    //       .from('posts')
-    //       .select(
-    //         `
-    //           *,
-    //           profiles (
-    //             id,
-    //             username,
-    //             avatar_url
-    //           ),
-    //           comments (
-    //             id,
-    //             comment,
-    //             profile_id,
-    //             created_at,
-    //             post_id,
-    //             profiles (
-    //               id,
-    //               username,
-    //               avatar_url
-    //             )
-    //           )
-    //         `
-    //       )
-    //       .eq('id', Number(params.id))
-    //       .single();
-
-    //     return posts;
-    //   } catch (e) {
-    //     console.error(e);
-    //   }
+    const data = await res.json();
+    console.log(data);
+    closeCreateRoomModalHandler();
     // };
   };
   return (

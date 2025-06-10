@@ -110,7 +110,6 @@ export default function GameRoomList() {
   }, []);
 
   return (
-    // <div className="w-full h-full">
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
       <NavWithExit />
       <div className="flex flex-col items-center gap-[34px]">
