@@ -22,7 +22,7 @@ type PostCardProps = {
 };
 
 const cardLayout =
-  "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] flex";
+  "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex";
 const titleStyle =
   "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const contentStyle =
