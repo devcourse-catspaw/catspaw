@@ -1,9 +1,10 @@
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
-import Home from "../pages/Home";
-import GameModeSelect from "../pages/game/GameModeSelect";
-import GameLayout from "./layouts/GameLayout";
-import SingleModePage from "../pages/SingleModePage";
-import Login from '../pages/Login'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
+import Home from '../pages/Home';
+import GameModeSelect from '../pages/game/GameModeSelect';
+import GameLayout from './layouts/GameLayout';
+import SingleModePage from '../pages/SingleModePage';
+import Login from '../pages/Login';
+import MultiModeResult from '../pages/game/MultiModeResult';
 
 const router = createBrowserRouter([
   {
@@ -25,20 +26,24 @@ const router = createBrowserRouter([
         element: <Navigate to="select" replace />,
       },
       {
-        path: "select",
+        path: 'select',
         element: <GameModeSelect />,
       },
       {
-        path: "single",
+        path: 'single',
         element: <SingleModePage />,
+      },
+      {
+        path: 'multi',
+        element: <MultiModeResult />,
       },
     ],
   },
-])
+]);
 export default function Router() {
   return (
     <>
       <RouterProvider router={router} />
     </>
-  )
+  );
 }
