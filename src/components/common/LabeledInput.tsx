@@ -56,11 +56,19 @@ export default function LabeledInput({
               className="absolute top-[13px] right-4"
             />
           ))}
-        {isInvalid && (
+        {/* {isInvalid && (
           <p className="text-[color:var(--red)] text-xs font-regular">
             *{invalidMessage}
           </p>
-        )}
+        )} */}
+        <p
+          className={twMerge(
+            'text-[color:var(--red)] text-xs font-regular',
+            !isInvalid && 'invisible'
+          )}
+        >
+          *{invalidMessage}
+        </p>
       </div>
     </div>
   );
