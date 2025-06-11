@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import send from '../../assets/images/icon_send.svg';
 import sketchBook from '../../assets/images/sketchbook_big.svg';
-import kisu from '../../assets/images/kisu_.svg';
+import Kisu from '../../assets/images/kisu_.svg?react';
 import NavWithExit from '../../components/common/NavWithExit';
 // import DrawingCanvas from '../../components/game/DrawingCanvas';
 import { useNavigate } from 'react-router';
@@ -11,9 +11,13 @@ import Button from '../../components/common/Button';
 import ResultChat from '../../components/game/ResultChat';
 import logoTypo from '../../assets/images/logo_typo.svg';
 import ResultPlayerIndex from '../../components/game/ResultPlayerIndex';
+import ResultShareModal from '../../components/game/ResultShareModal';
 
 export default function MultiModeResult() {
   const navigate = useNavigate();
+
+  const [isActive, setIsActive] = useState([true, false, false, false]);
+  const [isResultShareModalOpen, setIsResultShareModalOpen] = useState(false);
 
   const [msg, setMsg] = useState('');
   const [messages, setMessages] = useState([]);
@@ -22,6 +26,14 @@ export default function MultiModeResult() {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const clickPlayerIndexHandler = (index: number) => {
+    const newArr = [false, false, false, false];
+    for (let i = 0; i < newArr.length; i++) {
+      if (i === index) newArr[i] = true;
+    }
+    setIsActive(newArr);
+  };
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -47,9 +59,17 @@ export default function MultiModeResult() {
     inputRef.current?.focus();
   };
 
-  const clickShareHandler = () => {};
+  const clickExitHandler = () => {
+    navigate('/');
+  };
 
-  const clickExitHandler = () => {};
+  const clickShareHandler = () => {
+    setIsResultShareModalOpen(true);
+  };
+
+  const closeResultShareModalHandler = () => {
+    setIsResultShareModalOpen(false);
+  };
 
   useEffect(() => {
     getMessages();
@@ -73,28 +93,36 @@ export default function MultiModeResult() {
               결과 발표
             </div>
             {/* <DrawingCanvas onSubmit={sendDrawingHandler} /> */}
-            <div className="flex">
+            <div className="flex relative">
               {/* flex flex-col justify-end items-end */}
-              <div className="">
+              <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5">
                 <ResultPlayerIndex
-                  avatar={kisu}
+                  avatar={Kisu}
                   name="트랄랄라트랄랄라"
-                  isActive={true}
+                  isActive={isActive[0]}
+                  onClick={() => clickPlayerIndexHandler(0)}
                 />
                 <ResultPlayerIndex
-                  avatar={kisu}
+                  avatar={Kisu}
                   name="유빈bin123"
-                  isActive={false}
+                  isActive={isActive[1]}
+                  onClick={() => clickPlayerIndexHandler(1)}
                 />
-                {/* <ResultPlayerIndex
-                  avatar={kisu}
+                <ResultPlayerIndex
+                  avatar={Kisu}
                   name="수코딩"
-                  isActive={false}
-                /> */}
-                <ResultPlayerIndex avatar={kisu} name="Hello" isActive={true} />
+                  isActive={isActive[2]}
+                  onClick={() => clickPlayerIndexHandler(2)}
+                />
+                <ResultPlayerIndex
+                  avatar={Kisu}
+                  name="Hello"
+                  isActive={isActive[3]}
+                  onClick={() => clickPlayerIndexHandler(3)}
+                />
               </div>
-              <div className="flex relative w-[629px] h-[495px] justify-center items-center pt-9 pr-2 overflow-hidden border border-black">
-                <div className="w-[610px] h-[440px] p-5 overflow-y-auto border-2 border-black">
+              <div className="flex relative w-[629px] h-[495px] justify-center items-center pt-9 pr-2 overflow-hidden">
+                <div className="w-[610px] h-[440px] p-5 overflow-y-auto">
                   <ResultChat
                     userName="트랄랄라"
                     message="푸바오"
@@ -204,6 +232,11 @@ export default function MultiModeResult() {
           </Button>
         </div>
       </div>
+      {isResultShareModalOpen && (
+        <ResultShareModal
+          closeResultShareModalHandler={closeResultShareModalHandler}
+        />
+      )}
     </div>
   );
 }
