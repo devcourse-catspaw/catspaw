@@ -5,19 +5,23 @@ import Ellipsis from "../../assets/images/icon_ellipsis.svg?react";
 import { twMerge } from "tailwind-merge";
 
 type CommentCardProps = {
+  id: number;
   userName: string;
   avatar: string;
   date: string;
   comment: string;
+  onDelete: (id: number) => void;
 };
 const moreTextStyle =
   "text-xs font-normal text-[var(--grey-100)] hover:underline-offset-2 cursor-pointer";
 
 export default function CommentCard({
+  id,
   userName,
   avatar,
   date,
   comment,
+  onDelete,
 }: CommentCardProps) {
   const [showMore, setShowMore] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -75,11 +79,13 @@ export default function CommentCard({
                   수정
                 </span>
                 <span className={moreTextStyle}>|</span>
-                <span className={moreTextStyle}>삭제</span>
+                <span className={moreTextStyle} onClick={() => onDelete(id)}>
+                  삭제
+                </span>
               </div>
               <span>
                 <Cancel
-                  className="inline w-[12px] cursor-pointer text-[var(--grey-100)]"
+                  className="inline w-[8px] cursor-pointer text-[var(--grey-100)]"
                   onClick={() => setShowMore(false)}
                 />
               </span>
@@ -92,7 +98,7 @@ export default function CommentCard({
       {isEditing ? (
         <div className="flex pl-[51px] justify-between items-center">
           <BaseInput
-            className="w-[609px] h-[26px] text-sm font-medium "
+            className="w-[609px] h-[26px] text-sm font-medium  border-[1px] border-[var(--grey-100)] "
             placeholder="댓글을 입력해주세요."
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
