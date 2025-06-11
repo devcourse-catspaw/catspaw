@@ -1,6 +1,10 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
-import Home from '../pages/Home';
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import Home from "../pages/Home";
+import GameModeSelect from "../pages/game/GameModeSelect";
+import GameLayout from "./layouts/GameLayout";
+import SingleModePage from "../pages/SingleModePage";
 import GameWaitingRoom from '../pages/game/GameWaitingRoom';
+import Login from '../pages/Login'
 
 const router = createBrowserRouter([
   {
@@ -9,15 +13,37 @@ const router = createBrowserRouter([
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/game/waiting',
-    element: <GameWaitingRoom />,
+    path: '/login',
+    element: <Login />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
-]);
+  {
+    path: '/game',
+    element: <GameLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="select" replace />,
+      },
+      {
+        path: "select",
+        element: <GameModeSelect />,
+      },
+      {
+        path: "single",
+        element: <SingleModePage />,
+      },
+      {
+        path: 'waiting',
+        element: <GameWaitingRoom />,
+      },
+    ],
+  },
+])
 export default function Router() {
   return (
     <>
       <RouterProvider router={router} />
     </>
-  );
+  )
 }
