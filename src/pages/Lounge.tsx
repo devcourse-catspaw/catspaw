@@ -15,15 +15,15 @@ export default function Lounge() {
 
   return (
     <div className="w-full flex justify-center ">
-      <div className="relative overflow-hidden py-[94px]">
+      <div className="relative overflow-visible py-[94px]">
         <img
           src={backImg}
           alt="배경이미지"
           className="fixed inset-0 w-full h-full object-cover -z-10"
         />
-        <div className="flex flex-col px-[160px] gap-[82px]">
+        <div className="flex flex-col px-[160px] gap-[82px] ">
           {/* 서브탭, 검색 */}
-          <div className="flex w-[960px] justify-between items-center">
+          <div className="flex w-full justify-between items-center sticky top-0 z-50 bg-[var(--white)]">
             <div className="w-[210px] h-[49px] flex justify-center">
               <SubnavItem active={!isActive} onClick={activeHandler}>
                 최신순
