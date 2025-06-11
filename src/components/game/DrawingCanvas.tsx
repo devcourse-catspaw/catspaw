@@ -311,11 +311,7 @@ const DrawingCanvas = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const imageDataURL = stage.toDataURL({
-      mimeType: "image/png",
-      quality: 1.0,
-      pixelRatio: 1,
-    });
+    const imageDataURL = stage.toDataURL();
     onSubmit(imageDataURL);
   };
 
@@ -440,7 +436,7 @@ const DrawingCanvas = ({
         </div>
       </div>
 
-      <div className="flex justify-between w-[609px] ml-10">
+      <div className="flex justify-between w-[609px] ml-18">
         <div className="flex gap-7 justify-center">
           <div className="flex items-center px-[17px] w-[126px] justify-between">
             <div
