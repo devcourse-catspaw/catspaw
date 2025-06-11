@@ -16,7 +16,7 @@ type PostCardProps = {
   userName: string;
   image?: string;
   likeCount: number;
-  isLiked?: boolean;
+  isLiked: boolean;
   avatar?: string;
   springImg: "yes" | "no";
 };
@@ -29,6 +29,7 @@ const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
 const likeCountStyle = "text-[var(--black)] text-sm font-bold";
+
 export default function PostCard({
   postId,
   postTitle,
@@ -49,7 +50,6 @@ export default function PostCard({
     navigate(`/lounge/${postId}`);
   };
 
-  // 좋아요 핸들러
   const handleLikeClick = () => {
     setLiked((prev) => !prev);
     setCount((prev) => prev + (liked ? -1 : +1));
@@ -70,7 +70,7 @@ export default function PostCard({
               <img
                 className="w-[208px] h-[150px] object-cover"
                 src={image}
-                alt=""
+                alt="사용자 이미지 섬네일"
               />
             ) : (
               <div className="flex flex-col w-[208px] h-[140px] justify-center items-center">
