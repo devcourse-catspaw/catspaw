@@ -4,13 +4,56 @@ import DrawingPropmt from "../components/game/DrawingPropmt";
 import GameTimer from "../components/game/GameTimer";
 import SingleModeHeader from "../components/game/SingleModeHeader";
 import { useDrawingStore } from "../stores/drawingStore";
+import { useNavigate } from "react-router";
+import supabase from "../utils/supabase";
+import { useGameTimerStore } from "../stores/gameTimerStore";
 
 export default function SingleModePage() {
-  const { currentTopic, getRandomTopic } = useDrawingStore();
+  const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
+  const navigate = useNavigate();
+  const { timeLeft, setTime, startTimer } = useGameTimerStore();
 
   useEffect(() => {
     getRandomTopic();
   }, []);
+
+  const handleSubmit = async (imageDataUrl: string) => {
+    const filename = `drawing_${Date.now()}.jpg`;
+    const data = await fetch(imageDataUrl);
+    const blob = await data.blob();
+
+    const file = new File([blob], filename, { type: "image/jpeg" });
+    setFilename(filename);
+
+    navigate("/game/ai-answering");
+
+    const { error } = await supabase.storage
+      .from("singlemode-images")
+      .upload(`public/user1/${filename}`, file);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setTime(180);
+    }
+
+    startTimer();
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (timeLeft <= 0) {
+        navigate("/");
+      }
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [timeLeft]);
 
   return (
     <>
@@ -21,9 +64,9 @@ export default function SingleModePage() {
             <DrawingPropmt topic={currentTopic} />
           </div>
           <div className="flex">
-            <DrawingCanvas />
+            <DrawingCanvas onSubmit={handleSubmit} />
             <div className="translate-x-5 translate-y-4">
-              <GameTimer />
+              <GameTimer totalTime={180} />
             </div>
           </div>
         </div>

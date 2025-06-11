@@ -1,48 +1,43 @@
 import { create } from "zustand";
 
 export const topicListData = [
-  "cat",
-  "dog",
-  "bird",
-  "fish",
-  "elephant",
-  "tiger",
-  "bear",
-  "cow",
-  "horse",
-  "sheep",
-  "car",
-  "house",
-  "tree",
-  "flower",
-  "sun",
-  "moon",
-  "star",
-  "apple",
-  "banana",
-  "umbrella",
-  "cup",
-  "scissors",
-  "guitar",
-  "piano",
-  "clock",
-  "book",
-  "chair",
-  "table",
-  "airplane",
-  "bicycle",
+  "비행기",
+  "구급차",
+  "천사",
+  "책가방",
+  "농구공",
+  "해변",
+  "곰",
+  "생일케이크",
+  "팔찌",
+  "선인장",
+  "계산기",
+  "캠프파이어",
+  "당근",
+  "고양이",
+  "컴퓨터",
+  "게",
+  "오리",
+  "코끼리",
+  "수코딩",
+  "아이스크림",
 ];
 
 type DrawingState = {
   topicList: string[];
   currentTopic: string;
+  filename: string | null;
+  usedTopic: string[];
   getRandomTopic: () => void;
   resetTopicList: () => void;
+  setFilename: (filename: string) => void;
 };
 
 export const useDrawingStore = create<DrawingState>((set, get) => ({
   topicList: [...topicListData],
   currentTopic: "",
+  filename: null,
+  usedTopic: [],
 
   getRandomTopic: () => {
     const { topicList } = get();
@@ -53,6 +48,7 @@ export const useDrawingStore = create<DrawingState>((set, get) => ({
 
     set((state) => ({
       currentTopic: selectedTopic,
+      usedTopic: [...state.usedTopic, selectedTopic],
       topicList: state.topicList.filter((topic) => topic !== selectedTopic),
     }));
   },
@@ -63,4 +59,5 @@ export const useDrawingStore = create<DrawingState>((set, get) => ({
       currentTopic: "",
     });
   },
+  setFilename: (filename) => set({ filename: filename }),
 }));
