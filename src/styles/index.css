@@ -1,4 +1,5 @@
 @import './tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
 :root {
   --white: #ffffff;
@@ -52,13 +53,17 @@
 }
 
 @font-face {
-  font-family: "GloriaHallelujah";
+  font-family: 'GloriaHallelujah';
   font-weight: 400;
-  src: url("/src/assets/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
+  src: url('/src/assets/fonts/GloriaHallelujah-Regular.ttf') format('truetype');
 }
 
 .font-gloria {
-  font-family: "GloriaHallelujah", cursive;
+  font-family: 'GloriaHallelujah', cursive;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
 }
 
 body {

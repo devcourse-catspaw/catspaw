@@ -16,8 +16,8 @@ export default function NavWithExit() {
         <img
           src={exit}
           alt="나가기 버튼"
-          className="cursor-pointer"
           onClick={() => navigate(-1)}
+          className="cursor-pointer"
         />
       </nav>
     </>
