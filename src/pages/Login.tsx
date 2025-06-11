@@ -8,9 +8,14 @@ import logo_discord from '../assets/images/logo_discord.svg'
 import FootPrint from '../components/login/FootPrint'
 import supabase from '../utils/supabase'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../stores/authStore'
 
 type OAuthProvider = 'google' | 'discord'
 export default function Login() {
+  const navigate = useNavigate()
+  const setUser = useAuthStore((state) => state.setUser)
+
   const handleSocialLogin = async (site: OAuthProvider) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: site,
@@ -21,9 +26,23 @@ export default function Login() {
 
     if (error) {
       toast.error('로그인 실패ㅠ')
-    } else {
-      toast.success('로그인 시도 중...')
+      return
     }
+
+    toast.success('로그인 시도 중...')
+  }
+
+  const handleAnonymousLogin = async () => {
+    const { data, error } = await supabase.auth.signInAnonymously()
+
+    if (error) {
+      toast.error('익명 로그인 실패')
+      return
+    }
+
+    setUser(data.user)
+    toast.success('익명 로그인 성공!')
+    navigate('/')
   }
 
   return (
@@ -69,7 +88,10 @@ export default function Login() {
                 Continue with Discord
               </span>
             </div>
-            <Button className="w-[351px] h-[54px] px-[55px] flex justify-center items-center gap-[15px]">
+            <Button
+              onClick={handleAnonymousLogin}
+              className="w-[351px] h-[54px] px-[55px] flex justify-center items-center gap-[15px]"
+            >
               <img src={kisu} alt="kisu" className="size-[28px]" />
               <span className="text-[20px] w-[197px]">Continue as Guest</span>
             </Button>
