@@ -5,7 +5,7 @@ export default function DrawingPropmt({
   className,
 }: {
   topic: string;
-  className: string;
+  className?: string;
 }) {
   return (
     <>
