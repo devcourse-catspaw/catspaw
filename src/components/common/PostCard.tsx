@@ -1,14 +1,15 @@
 import { twMerge } from "tailwind-merge";
-import spring from "../../assets/images/spring_small.svg";
+import Spring from "../../assets/images/spring_small.svg?react";
 import like from "../../assets/images/icon_like.svg";
 import likeFilled from "../../assets/images/icon_like_filled.svg";
-import thumbnail from "../../assets/images/post_default_thumbnail.svg";
+import Paw from "../../assets/images/logo_catpaw.svg?react";
+import Typo from "../../assets/images/logo_typo.svg?react";
 import kisu from "../../assets/images/kisu_.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type PostCardProps = {
-  postId: string;
+  postId: number;
   postTitle: string;
   date: string;
   contents: string;
@@ -19,6 +20,15 @@ type PostCardProps = {
   avatar?: string;
   springImg: "yes" | "no";
 };
+
+const cardLayout =
+  "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] flex";
+const titleStyle =
+  "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+const contentStyle =
+  "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
+const likeCountStyle = "text-[var(--black)] text-sm font-bold";
 export default function PostCard({
   postId,
   postTitle,
@@ -35,10 +45,8 @@ export default function PostCard({
   const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
 
-  //CHECK
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
-    console.log("go to");
   };
 
   // 좋아요 핸들러
@@ -47,23 +55,11 @@ export default function PostCard({
     setCount((prev) => prev + (liked ? -1 : +1));
   };
 
-  const cardLayout =
-    "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] flex";
-  const titleStyle =
-    "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
-  const contentStyle =
-    "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
-  const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
-  const likeCountStyle = "text-[var(--black)] text-sm font-bold";
   return (
     <>
       <div className="relative leading-[24px] overflow-visible">
         {springImg === "yes" && (
-          <img
-            className="absolute -top-3  z-10"
-            src={spring}
-            alt="스케치북 스프링"
-          />
+          <Spring className="absolute -top-3  z-10 text-[var(--black)]" />
         )}
         <div className={twMerge(cardLayout)}>
           {/* 카드 이미지 */}
@@ -77,7 +73,10 @@ export default function PostCard({
                 alt=""
               />
             ) : (
-              <img src={thumbnail} alt="기본썸네일" />
+              <div className="flex flex-col w-[208px] h-[140px] justify-center items-center">
+                <Paw className="w-[84px] text-[var(--black)]" />
+                <Typo className="w-[140px] text-[var(--black)]" />
+              </div>
             )}
           </div>
 
