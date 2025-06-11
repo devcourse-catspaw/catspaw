@@ -90,12 +90,13 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         <div className="flex items-center mt-3">
           <GameTimer totalTime={90} />
         </div>
-        <div className="flex flex-col w-[287px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
+        {/* h-[480px]  */}
+        <div className="flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
           <div className="h-15 font-bold text-[18px] flex justify-center items-center">
             채팅
           </div>
-
-          <div className="h-[416px] flex flex-col gap-2 px-4  border-y-2 border-[var(--black)] overflow-y-auto">
+          {/* h-[316px]  */}
+          <div className="h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto">
             <div className="py-2 space-y-2">
               <ChatMessage
                 userName="유코딩"
