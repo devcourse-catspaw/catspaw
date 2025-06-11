@@ -8,7 +8,7 @@ export default function Comments() {
     <>
       {/* 댓글 렌더링 */}
       <div className=" flex flex-col gap-[40px]">
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col justify-between divide-y divide-[var(--grey-100)]">
           <CommentCard
             userName="ㅎㅎ"
             avatar={kisu}

@@ -49,7 +49,7 @@ export default function CommentCard({
     setEditValue(commentText);
   };
   return (
-    <div className="flex flex-col w-[840px] px-[20px] py-[12px] border-[var(--grey-100)] border-b-[1px]">
+    <div className="flex flex-col w-[840px] px-[20px] py-[12px]">
       <div className="flex justify-between items-center">
         <div className="flex justify-start items-center">
           <img
