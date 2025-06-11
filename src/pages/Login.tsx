@@ -9,10 +9,11 @@ import FootPrint from '../components/login/FootPrint'
 import supabase from '../utils/supabase'
 import toast from 'react-hot-toast'
 
+type OAuthProvider = 'google' | 'discord'
 export default function Login() {
-  const handleGoogleLogin = async () => {
+  const handleSocialLogin = async (site: OAuthProvider) => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: site,
       options: {
         redirectTo: `${window.location.origin}/`,
       },
@@ -43,7 +44,7 @@ export default function Login() {
           </div>
           <div className="flex flex-col gap-[8px] ">
             <div
-              onClick={handleGoogleLogin}
+              onClick={() => handleSocialLogin('google')}
               className=" w-[351px] h-[54px] px-[55px] flex items-center gap-[15px] border-[1px] border-[var(--grey-100)] rounded-[10px] cursor-pointer"
             >
               <img
@@ -55,7 +56,10 @@ export default function Login() {
                 Continue with Google
               </span>
             </div>
-            <div className="w-[351px] h-[54px] px-[55px] flex items-center gap-[15px] bg-[#5865F2] rounded-[10px] cursor-pointer">
+            <div
+              onClick={() => handleSocialLogin('discord')}
+              className="w-[351px] h-[54px] px-[55px] flex items-center gap-[15px] bg-[#5865F2] rounded-[10px] cursor-pointer"
+            >
               <img
                 src={logo_discord}
                 alt="discord logo"
