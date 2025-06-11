@@ -38,7 +38,7 @@ export default function Comments() {
         {/* 댓글 입력 */}
         <div className="w-[840px] flex justify-between">
           <BaseInput
-            className="w-[720px] h-[40px] text-lg font-medium "
+            className="w-[720px] h-[40px] text-sm font-medium "
             placeholder="댓글을 입력해주세요."
           />
           <Button className="w-[100px] h-[38px] text-[13px] font-bold px-[25px] py-[12px] leading-0">
