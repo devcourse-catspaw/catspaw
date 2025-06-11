@@ -6,8 +6,25 @@ import kisu from '../assets/images/kisu_.svg'
 import logo_google from '../assets/images/logo_google.svg'
 import logo_discord from '../assets/images/logo_discord.svg'
 import FootPrint from '../components/login/FootPrint'
+import supabase from '../utils/supabase'
+import toast from 'react-hot-toast'
 
 export default function Login() {
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    })
+
+    if (error) {
+      toast.error('로그인 실패ㅠ')
+    } else {
+      toast.success('로그인 시도 중...')
+    }
+  }
+
   return (
     <>
       <div className="relative w-[100vw] h-[100vh]">
@@ -25,7 +42,10 @@ export default function Login() {
             <img src={logo_typo} alt="logo_typo" className="h-[85px]" />
           </div>
           <div className="flex flex-col gap-[8px] ">
-            <div className=" w-[351px] h-[54px] px-[55px] flex items-center gap-[15px] border-[1px] border-[var(--grey-100)] rounded-[10px] cursor-pointer">
+            <div
+              onClick={handleGoogleLogin}
+              className=" w-[351px] h-[54px] px-[55px] flex items-center gap-[15px] border-[1px] border-[var(--grey-100)] rounded-[10px] cursor-pointer"
+            >
               <img
                 src={logo_google}
                 alt="google logo"
