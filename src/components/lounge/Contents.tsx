@@ -1,6 +1,6 @@
 import { useState } from "react";
-import like from "../../assets/images/icon_like.png";
-import likeFilled from "../../assets/images/icon_like_filled.png";
+import like from "../../assets/images/icon_like.svg";
+import likeFilled from "../../assets/images/icon_like_filled.svg";
 import { twMerge } from "tailwind-merge";
 
 type ContentsType = {
