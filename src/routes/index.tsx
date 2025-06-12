@@ -1,9 +1,10 @@
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
-import Home from "../pages/Home";
-import GameModeSelect from "../pages/game/GameModeSelect";
-import GameLayout from "./layouts/GameLayout";
-import SingleModePage from "../pages/SingleModePage";
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import Home from '../pages/Home'
+import GameModeSelect from '../pages/game/GameModeSelect'
+import GameLayout from './layouts/GameLayout'
+import SingleModePage from '../pages/SingleModePage'
 import Login from '../pages/Login'
+import useAuthInit from './../utils/useAuthInit'
 
 const router = createBrowserRouter([
   {
@@ -25,17 +26,18 @@ const router = createBrowserRouter([
         element: <Navigate to="select" replace />,
       },
       {
-        path: "select",
+        path: 'select',
         element: <GameModeSelect />,
       },
       {
-        path: "single",
+        path: 'single',
         element: <SingleModePage />,
       },
     ],
   },
 ])
 export default function Router() {
+  useAuthInit()
   return (
     <>
       <RouterProvider router={router} />
