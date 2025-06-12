@@ -1,14 +1,15 @@
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
 import close from '../../assets/images/icon_close.svg';
-import logoTypo from '../../assets/images/logo_typo.svg';
-// import supabase from '../../utils/supabase';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import supabase from '../../utils/supabase';
 
 export default function ResultShareModal({
+  imageUrl,
   closeResultShareModalHandler,
 }: {
+  imageUrl: string;
   closeResultShareModalHandler: () => void;
 }) {
   const [title, setTitle] = useState('');
@@ -24,14 +25,72 @@ export default function ResultShareModal({
     }
     if (title.trim() !== '' && content.trim() !== '') {
       alert('게시합니당');
-      // clickCreateButtonHandler();
+      clickCreateButtonHandler();
       closeResultShareModalHandler();
     }
   };
 
-  // const clickCreateButtonHandler = async () => {
-  //   closeResultShareModalHandler();
-  // };
+  const base64ToBlob = (base64: string, contentType = 'image/png'): Blob => {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteNumbers = new Array(byteCharacters.length)
+      .fill(0)
+      .map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+
+    return new Blob([byteArray], { type: contentType });
+  };
+
+  const uploadImageToStorage = async (url: string): Promise<string | null> => {
+    const blob = base64ToBlob(url, 'image/png');
+    const fileName = `screenshot-${Date.now()}.png`;
+
+    const { data, error } = await supabase.storage
+      .from('post-images')
+      .upload(fileName, blob, {
+        contentType: 'image/png',
+        upsert: false,
+      });
+
+    console.log(data);
+
+    if (error) {
+      console.error('Storage upload error:', error.message);
+      return null;
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('post-images').getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
+  const clickCreateButtonHandler = async () => {
+    const storageImageUrl = await uploadImageToStorage(imageUrl);
+    if (!storageImageUrl) return;
+
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([
+        {
+          title,
+          content,
+          images: [storageImageUrl],
+          // user_id:
+        },
+      ])
+      .select();
+
+    if (data) {
+      alert('등록되었습니다.');
+      closeResultShareModalHandler();
+    }
+
+    if (error) {
+      alert('에러가 발생했습니다.');
+      console.error('Post insert error:', error.message);
+    }
+  };
 
   return (
     <>
@@ -54,8 +113,14 @@ export default function ResultShareModal({
           <div className="flex flex-col justify-center items-center gap-[38px] px-[57px]">
             <div className="font-bold text-xl">게임 결과 공유하기</div>
             <div className="flex gap-12">
-              <div className="flex items-center border-2 border-black">
-                <img src={logoTypo} alt="공유 이미지" />
+              {/* border-2 border-black */}
+              <div className="flex items-start w-[300px] min-h-[300px]">
+                {/* <img src={logoTypo} alt="공유 이미지" /> */}
+                <img
+                  src={imageUrl}
+                  alt="공유 이미지"
+                  // className="w-[300px] h-[380px]"
+                />
               </div>
               <div className="flex flex-col items-end gap-3">
                 <div className="flex flex-col gap-3">
