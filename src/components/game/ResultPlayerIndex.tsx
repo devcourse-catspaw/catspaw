@@ -15,8 +15,8 @@ export default function ResultPlayerIndex({
     <>
       <div
         className={twMerge(
-          'flex flex-col items-center w-[50px] py-1 gap-1 rounded-[5px] border-[3px] border-r-0 border-[var(--black)] cursor-pointer',
-          isActive && 'text-[var(--red)] w-[60px] p-[10px]'
+          'flex flex-col items-center  py-1 gap-1 rounded-[5px] border-[3px] border-r-0 border-[var(--black)] cursor-pointer transition-all duration-300 ease-in-out origin-left',
+          isActive ? 'text-[var(--red)] w-[60px] p-[10px]' : 'w-[50px]'
         )}
         onClick={onClick}
       >
