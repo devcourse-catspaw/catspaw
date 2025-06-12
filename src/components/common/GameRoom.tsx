@@ -3,35 +3,77 @@ import iconLock from '../../assets/images/icon_lock.svg';
 import FullPlayersModal from '../game/FullPlayersModal';
 import PlayingModal from '../game/PlayingModal';
 import RoomPasswordModal from '../game/RoomPasswordModal';
+import { useNavigate } from 'react-router-dom';
+import supabase from '../../utils/supabase';
+import { useAuthStore } from '../../stores/authStore';
+import type { Database } from '../../types/supabase';
 
-type GameRoomProps = {
-  status: string;
-  name: string;
-  password: string | null;
-  players: number;
-};
+export type GameRoomProps = Database['public']['Tables']['games']['Row'];
 
 export default function GameRoom({
+  id,
   status,
-  name,
-  password,
-  players,
+  room_name,
+  room_password,
+  current_players,
 }: GameRoomProps) {
+  const navigate = useNavigate();
+
+  const { user } = useAuthStore();
+
   const [isFullPlayersModalOpen, setIsFullPlayersModalOpen] = useState(false);
   const [isPlayingModalOpen, setIsPlayingModalOpen] = useState(false);
   const [isRoomPasswordModalOpen, setIsRoomPasswordModalOpen] = useState(false);
 
-  const clickHandler = () => {
+  const clickHandler = async () => {
     if (status === 'PLAYING') {
       setIsPlayingModalOpen(true);
       return;
     }
-    if (players >= 4) {
+    if (current_players >= 4) {
       setIsFullPlayersModalOpen(true);
       return;
     }
-    if (password) {
+    if (room_password) {
       setIsRoomPasswordModalOpen(true);
+    }
+
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('players')
+      .insert([
+        {
+          game_id: id,
+          user_id: user?.id,
+          is_ready: false,
+          is_leader: false,
+        },
+      ])
+      .select();
+
+    if (data) {
+      const { data, error } = await supabase
+        .from('games')
+        .update({
+          current_players: current_players + 1,
+        })
+        .eq('id', id);
+
+      if (data) {
+        alert('인원 수 증가 성공!');
+        alert('입장합니다.');
+        navigate('/room', { state: { game_id: id } });
+      }
+
+      if (error) {
+        alert('인원 수 증가 에러가 발생했습니다.');
+        console.error('Players insert error:', error.message);
+      }
+    }
+
+    if (error) {
+      alert('에러가 발생했습니다.');
+      console.error('Players insert error:', error.message);
     }
   };
 
@@ -58,16 +100,16 @@ export default function GameRoom({
         ) : (
           <div className="text-[var(--red)] w-[70px]">게임중</div>
         )}
-        {password && (
+        {room_password && (
           <img
             src={iconLock}
             alt="자물쇠"
             className="absolute top-[19px] left-[93px] w-[16px] h-[19px]"
           />
         )}
-        <div className="w-[200px] text-center truncate">{name}</div>
+        <div className="w-[200px] text-center truncate">{room_name}</div>
         <div className="w-[70px] text-right font-medium opacity-60">
-          {players}/4
+          {current_players}/4
         </div>
       </div>
       {isFullPlayersModalOpen && (
@@ -80,7 +122,7 @@ export default function GameRoom({
       )}
       {isRoomPasswordModalOpen && (
         <RoomPasswordModal
-          password={password}
+          password={room_password}
           closeRoomPasswordModalHandler={closeRoomPasswordModalHandler}
         />
       )}
