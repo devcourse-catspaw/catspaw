@@ -29,7 +29,7 @@ export default function ScrollItem({ children, delay = 0 }: Props) {
           ease: 'back.out(1.7)',
           scrollTrigger: {
             trigger: elRef.current,
-            start: 'top 90%',
+            start: 'top 100%',
             scroller: '#scroll-container',
             toggleActions: 'play none none none',
           },
