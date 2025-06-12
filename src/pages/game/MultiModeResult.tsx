@@ -210,8 +210,8 @@ export default function MultiModeResult() {
                         isDrawing={false}
                       />
                     </ScrollItem>
-                    {/* <ScrollItem> */}
-                    <ScrollItem delay={0.3}>
+                    {/* <ScrollItem delay={0.5}> */}
+                    <ScrollItem delay={2.0}>
                       <ResultChat
                         userName="Micky Park"
                         message={logoTypo}
