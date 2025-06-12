@@ -4,6 +4,7 @@ import close from '../../assets/images/icon_close.svg';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import supabase from '../../utils/supabase';
+import { useAuthStore } from '../../stores/authStore';
 
 export default function ResultShareModal({
   imageUrl,
@@ -12,6 +13,8 @@ export default function ResultShareModal({
   imageUrl: string;
   closeResultShareModalHandler: () => void;
 }) {
+  const { user } = useAuthStore();
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [invalid, setInvalid] = useState([false, false]);
@@ -66,6 +69,11 @@ export default function ResultShareModal({
   };
 
   const clickCreateButtonHandler = async () => {
+    if (!user) {
+      alert('로그인이 필요합니다!');
+      return;
+    }
+
     const storageImageUrl = await uploadImageToStorage(imageUrl);
     if (!storageImageUrl) return;
 
@@ -76,7 +84,7 @@ export default function ResultShareModal({
           title,
           content,
           images: [storageImageUrl],
-          // user_id:
+          user_id: user?.id,
         },
       ])
       .select();
