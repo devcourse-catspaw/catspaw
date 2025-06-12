@@ -15,8 +15,6 @@
     "@supabase/supabase-js": "^2.50.0",
     "@tailwindcss/vite": "^4.1.8",
     "zustand": "^5.0.5",
-    "@tensorflow/tfjs": "^4.22.0",
-    "@teachablemachine/image": "^0.8.5",
     "axios": "^1.9.0",
     "gsap": "^3.13.0",
     "hex-to-rgba": "^2.0.1",
@@ -29,7 +27,9 @@
     "react-router-dom": "^7.6.2",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-plugin-svgr": "^4.3.0",
+    "@teachablemachine/image": "^0.8.5",
+    "@tensorflow/tfjs": "^4.22.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

@@ -13,6 +13,7 @@ import pawsMouse from "../assets/images/paw_mouse_big.svg";
 import type { FileObject } from "@supabase/storage-js";
 import prevIcon from "../assets/images/icon_slide_left.svg";
 import nextIcon from "../assets/images/icon_slide_right.svg";
+import { useAuthStore } from "../stores/authStore";
 
 interface StorageResponse {
   data: FileObject[] | null;
@@ -20,6 +21,7 @@ interface StorageResponse {
 }
 
 export default function SingleModeResultPage() {
+  const user = useAuthStore((state) => state.user);
   const { usedTopic, resetTopicList, aiAnswerList } = useDrawingStore();
   const navigate = useNavigate();
   const swiperRef = useRef<SwiperType | null>(null);
@@ -32,7 +34,7 @@ export default function SingleModeResultPage() {
     const fetchImage = async () => {
       const { data, error }: StorageResponse = await supabase.storage
         .from("singlemode-images")
-        .list("public/user1", {
+        .list(`public/${user?.email}`, {
           limit: 100,
           offset: 0,
           sortBy: { column: "name", order: "asc" },
@@ -41,7 +43,7 @@ export default function SingleModeResultPage() {
       const imageUrls = data!.map((file: FileObject) => {
         const { data } = supabase.storage
           .from("singlemode-images")
-          .getPublicUrl(`public/user1/${file.name}`);
+          .getPublicUrl(`public/${user?.email}/${file.name}`);
         return data.publicUrl;
       });
       console.log(data);
@@ -143,7 +145,9 @@ export default function SingleModeResultPage() {
             <div className="px-[32px] py-[25px] flex flex-col justify-center items-center border-[2px] border-[color:var(--black)] rounded-[6px]">
               <div className="border-b border-[color:var(--black)] w-[147px] pb-6 mb-6">
                 <div className="flex flex-col gap-[6px] items-center justify-center">
-                  <h1 className="text-center text-lg font-extrabold">" 힣 "</h1>
+                  <h1 className="text-center text-lg font-extrabold flex gap-2">
+                    <span>"</span>{user?.user_metadata.name}<span>"</span>
+                  </h1>
                   <h2 className="text-center text-sm font-extrabold">
                     님의 점수
                   </h2>

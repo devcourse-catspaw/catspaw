@@ -7,12 +7,13 @@ import { useDrawingStore } from "../stores/drawingStore";
 import { useNavigate } from "react-router";
 import supabase from "../utils/supabase";
 import { useGameTimerStore } from "../stores/gameTimerStore";
+import { useAuthStore } from "../stores/authStore.ts";
 
 export default function SingleModePage() {
   const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
   const navigate = useNavigate();
   const { timeLeft, setTime, startTimer } = useGameTimerStore();
-
+  const user = useAuthStore((state) => state.user);
   useEffect(() => {
     getRandomTopic();
   }, []);
@@ -29,7 +30,7 @@ export default function SingleModePage() {
 
     const { error } = await supabase.storage
       .from("singlemode-images")
-      .upload(`public/user1/${filename}`, file);
+      .upload(`public/${user?.email}/${filename}`, file);
 
     if (error) {
       console.error(error);
