@@ -1,7 +1,6 @@
 import backImg from "../../assets/images/background_doodle_2.svg";
 import StashImg from "../../assets/images/icon_stash_image.svg?react";
 import Spring from "../../assets/images/spring_big.svg?react";
-import DefaultImg from "../../assets/images/logo_catpaw.svg?react";
 import { twMerge } from "tailwind-merge";
 import LabeledInput from "../../components/common/LabeledInput";
 import TextBox from "../../components/common/lounge/TextBox";
@@ -79,17 +78,15 @@ export default function AddPost() {
               {/* 첨부된 이미지 로드 */}
               <div className="flex justify-start w-[915px] gap-x-[45px] overflow-x-auto py-2">
                 {/* 이미지로드 박스 */}
-                {imgPath.length > 0 ? (
-                  imgPath.map((src, idx) => (
-                    <ImageBox
-                      image={src}
-                      key={idx}
-                      onDelete={() => deleteImage(idx)}
-                    />
-                  ))
-                ) : (
-                  <DefaultImg className="border-[1px] border-[var(--grey-100)] border-dashed w-[142px] h-[140px] object-cover text-[var(--grey-100)]" />
-                )}
+                {imgPath.length > 0
+                  ? imgPath.map((src, idx) => (
+                      <ImageBox
+                        image={src}
+                        key={idx}
+                        onDelete={() => deleteImage(idx)}
+                      />
+                    ))
+                  : ""}
               </div>
               <div className="flex justify-end w-[915px] gap-[15px] mt-4">
                 <Button className="w-[125px] font-bold text-[var(--black)]">
