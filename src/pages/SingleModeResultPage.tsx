@@ -65,6 +65,8 @@ export default function SingleModeResultPage() {
   };
 
   const handleExitRoom = async () => {
+    resetTopicList();
+
     const { data, error } = await supabase.storage
       .from("singlemode-images")
       .list(`private/${user?.id}`);
@@ -86,7 +88,6 @@ export default function SingleModeResultPage() {
         console.error(error);
       }
     }
-    resetTopicList();
     requestAnimationFrame(() => {
       navigate("/game");
     });

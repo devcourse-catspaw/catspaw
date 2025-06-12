@@ -66,6 +66,7 @@ export const useDrawingStore = create<DrawingState>((set, get) => ({
       topicList: [...topicListData],
       currentTopic: "",
       usedTopic: [],
+      aiAnswerList: [],
     });
   },
   setFilename: (filename) => set({ filename: filename }),
