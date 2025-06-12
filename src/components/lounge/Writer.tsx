@@ -14,7 +14,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
   const [showMore, setShowMore] = useState(false);
   const handleToggle = () => setShowMore((prev) => !prev);
   return (
-    <div className="flex flex-col w-[840px] h-[50px]">
+    <div className="flex flex-col w-[840px]">
       <div className="flex justify-between items-center pr-6">
         <div className="flex justify-start items-center p-0">
           <img
@@ -32,8 +32,8 @@ export default function Writer({ avatar, userName, date }: WriterType) {
         {/* 더보기 토글 */}
         <div>
           {showMore ? (
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1">
+            <div className="flex items-center gap-x-2">
+              <div className="flex gap-x-1">
                 <span className={moreTextStyle}>수정</span>
                 <span className={moreTextStyle}>|</span>
                 <span className={moreTextStyle}>삭제</span>
