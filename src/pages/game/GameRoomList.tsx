@@ -1,25 +1,17 @@
 import { useEffect, useState } from 'react';
 import SubnavItem from '../../components/common/SubnavItem';
 import Button from '../../components/common/Button';
-import GameRoom from '../../components/common/GameRoom';
+import GameRoom, { type GameRoomProps } from '../../components/common/GameRoom';
 import pawPencil from '../../assets/images/paw_pencil_big.svg';
 import doodle from '../../assets/images/doodle_loading.svg';
 import CreateRoomModal from '../../components/game/CreateRoomModal';
 import NavWithExit from '../../components/common/NavWithExit';
 import supabase from '../../utils/supabase';
-
-export type GameRoom = NonNullable<{
-  id: number;
-  created_at: string;
-  status: string;
-  room_name: string;
-  room_password: string | null;
-  ready_players: number;
-  current_players: number;
-}>;
+import GameRoomSkeleton from '../../components/game/GameRoomSkeleton';
 
 export default function GameRoomList() {
-  const [gameRooms, setGameRooms] = useState<GameRoom[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [gameRooms, setGameRooms] = useState<GameRoomProps[]>([]);
   const [isActive, setIsActive] = useState([true, false, false]);
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
 
@@ -39,7 +31,7 @@ export default function GameRoomList() {
     setIsActive(newArr);
   };
 
-  const getFilteringlist = (activeArr: boolean[]): GameRoom[] => {
+  const getFilteringlist = (activeArr: boolean[]): GameRoomProps[] => {
     if (activeArr[1]) {
       return gameRooms.filter((v) => v.status === 'WAITING');
     } else if (activeArr[2]) {
@@ -60,6 +52,7 @@ export default function GameRoomList() {
         .order('created_at', { ascending: false });
       if (data) {
         setGameRooms(data);
+        setIsLoading(false);
       }
     } catch (e) {
       console.error(e);
@@ -85,16 +78,16 @@ export default function GameRoomList() {
 
             switch (eventType) {
               case 'INSERT':
-                return [newGame as GameRoom, ...prevGames];
+                return [newGame as GameRoomProps, ...prevGames];
               case 'UPDATE':
                 return prevGames.map((game) =>
-                  game.id === (newGame as GameRoom).id
-                    ? (newGame as GameRoom)
+                  game.id === (newGame as GameRoomProps).id
+                    ? (newGame as GameRoomProps)
                     : game
                 );
               case 'DELETE':
                 return prevGames.filter(
-                  (game) => game.id !== (oldGame as GameRoom).id
+                  (game) => game.id !== (oldGame as GameRoomProps).id
                 );
               default:
                 return prevGames;
@@ -142,17 +135,27 @@ export default function GameRoomList() {
               방 만들기
             </Button>
           </div>
-          <div className="flex flex-col gap-1 overflow-y-auto scroll-custom">
-            {getFilteringlist(isActive).map((data) => (
-              <GameRoom
-                key={data.id}
-                status={data.status}
-                name={data.room_name}
-                password={data.room_password}
-                players={data.current_players}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            Array.from({ length: 10 }).map((_, i) => (
+              <GameRoomSkeleton key={i} />
+            ))
+          ) : (
+            <>
+              {getFilteringlist(isActive) &&
+              getFilteringlist(isActive).length !== 0 ? (
+                <div className="flex flex-col gap-1 overflow-y-auto scroll-custom">
+                  {getFilteringlist(isActive).map((data) => (
+                    <GameRoom key={data.id} {...data} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col justify-center items-center gap-5 text-lg font-semibold w-full h-full pb-10">
+                  <div>현재 입장 가능한 게임방이 없습니다!</div>
+                  <div>새로운 방을 만들어 보세요!</div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
       <img
