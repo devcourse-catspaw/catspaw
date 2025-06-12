@@ -26,7 +26,7 @@ export default function LoungeDetail() {
           <div
             className={twMerge(
               cardLayout,
-              "px-[100px] py-[94px] gap-4 bg-[var(--white)]"
+              "px-[100px] py-[94px] gap-8 bg-[var(--white)]"
             )}>
             <div className="w-[840px] flex items-start pb-[32px]">
               <Back
