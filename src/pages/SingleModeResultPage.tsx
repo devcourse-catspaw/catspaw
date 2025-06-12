@@ -46,7 +46,6 @@ export default function SingleModeResultPage() {
           .getPublicUrl(`public/${user?.email}/${file.name}`);
         return data.publicUrl;
       });
-      console.log(data);
 
       if (error) {
         console.error(error);
@@ -59,11 +58,19 @@ export default function SingleModeResultPage() {
     fetchImage();
   }, []);
 
+  const saveScoreToDatabase = async () => {
+    const { data, error } = await supabase
+      .from("game_scores")
+      .insert([{ user_id: user?.id, score: correctCount }])
+      .select();
+  };
+
   const handleExitRoom = async () => {
     const { data, error } = await supabase.storage
       .from("singlemode-images")
       .list("public/user1");
-    console.log(data);
+
+    saveScoreToDatabase();
 
     if (error) {
       console.error(error);
@@ -93,6 +100,18 @@ export default function SingleModeResultPage() {
   const handleNext = () => {
     swiperRef.current?.slideNext();
   };
+
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+  };
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
 
   return (
     <>
@@ -146,7 +165,9 @@ export default function SingleModeResultPage() {
               <div className="border-b border-[color:var(--black)] w-[147px] pb-6 mb-6">
                 <div className="flex flex-col gap-[6px] items-center justify-center">
                   <h1 className="text-center text-lg font-extrabold flex gap-2">
-                    <span>"</span>{user?.user_metadata.name}<span>"</span>
+                    <span>"</span>
+                    {user?.user_metadata.name}
+                    <span>"</span>
                   </h1>
                   <h2 className="text-center text-sm font-extrabold">
                     님의 점수

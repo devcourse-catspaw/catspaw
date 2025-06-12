@@ -56,6 +56,18 @@ export default function SingleModePage() {
     return () => clearTimeout(timeout);
   }, [timeLeft]);
 
+  const preventClose = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+  };
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
+
   return (
     <>
       <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
