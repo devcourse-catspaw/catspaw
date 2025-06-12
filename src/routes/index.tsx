@@ -6,6 +6,7 @@ import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
 import AiAnswering from "../pages/AiAnswering";
 import SingleModeResultPage from "../pages/SingleModeResultPage";
+import useAuthInit from './../utils/useAuthInit'
 
 const router = createBrowserRouter([
   {
@@ -27,11 +28,11 @@ const router = createBrowserRouter([
         element: <Navigate to="select" replace />,
       },
       {
-        path: "select",
+        path: 'select',
         element: <GameModeSelect />,
       },
       {
-        path: "single",
+        path: 'single',
         element: <SingleModePage />,
       },
       {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
   },
 ]);
 export default function Router() {
+  useAuthInit()
   return (
     <>
       <RouterProvider router={router} />
