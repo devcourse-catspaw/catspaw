@@ -14,7 +14,7 @@ export default function SingleModeResultCard({
 }) {
   return (
     <div className="relative flex flex-col gap-2 w-[212px] h-[195px]">
-      <DrawingPropmt topic={aiAnswer} className="w-[206px] h-[47px]" />
+      <DrawingPropmt topic={topic} className="w-[206px] h-[47px]" />
       <div className="relative">
         <img
           src={sketchBook}
