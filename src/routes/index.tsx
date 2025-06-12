@@ -3,21 +3,22 @@ import Home from "../pages/Home";
 import GameModeSelect from "../pages/game/GameModeSelect";
 import GameLayout from "./layouts/GameLayout";
 import SingleModePage from "../pages/SingleModePage";
-import Login from '../pages/Login'
+import Login from "../pages/Login";
+import Lounge from "../pages/Lounge";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Home />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/game',
+    path: "/game",
     element: <GameLayout />,
     children: [
       {
@@ -34,11 +35,16 @@ const router = createBrowserRouter([
       },
     ],
   },
-])
+  {
+    path: "/lounge",
+    element: <Lounge />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
+]);
 export default function Router() {
   return (
     <>
       <RouterProvider router={router} />
     </>
-  )
+  );
 }
