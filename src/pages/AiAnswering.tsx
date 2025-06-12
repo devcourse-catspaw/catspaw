@@ -10,14 +10,15 @@ import { useEffect, useRef, useState } from "react";
 import * as tmImage from "@teachablemachine/image";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router";
+import { useGameTimerStore } from "../stores/gameTimerStore";
 
 export default function AiAnswering() {
-  const { currentTopic } = useDrawingStore();
+  const { currentTopic, setAiAnswer, filename } = useDrawingStore();
+  const { timeLeft } = useGameTimerStore();
   const [prediction, setPrediction] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageReady, setImageReady] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
-  const { filename } = useDrawingStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function AiAnswering() {
         const best = sorted[0];
 
         setPrediction(best.className);
+        setAiAnswer(best.className);
       }
     };
 
@@ -62,12 +64,18 @@ export default function AiAnswering() {
     if (prediction) {
       const timer = setTimeout(() => {
         navigate("/game/single");
-      }, 2000);
+      }, 1000);
       return () => {
         clearTimeout(timer);
       };
     }
   }, [prediction]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      navigate("/game/single-result");
+    }
+  }, [timeLeft]);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">

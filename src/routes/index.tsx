@@ -5,6 +5,7 @@ import GameLayout from "./layouts/GameLayout";
 import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
 import AiAnswering from "../pages/AiAnswering";
+import SingleModeResultPage from "../pages/SingleModeResultPage";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "ai-answering",
         element: <AiAnswering />,
+      },
+      {
+        path: "single-result",
+        element: <SingleModeResultPage />,
       },
     ],
   },

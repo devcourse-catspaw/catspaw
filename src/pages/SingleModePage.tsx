@@ -48,7 +48,7 @@ export default function SingleModePage() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (timeLeft <= 0) {
-        navigate("/");
+        navigate("/game/single-result");
       }
     }, 100);
 

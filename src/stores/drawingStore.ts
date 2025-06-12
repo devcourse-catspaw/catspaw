@@ -28,9 +28,11 @@ type DrawingState = {
   currentTopic: string;
   filename: string | null;
   usedTopic: string[];
+  aiAnswerList: string[];
   getRandomTopic: () => void;
   resetTopicList: () => void;
   setFilename: (filename: string) => void;
+  setAiAnswer: (answer: string) => void;
 };
 
 export const useDrawingStore = create<DrawingState>((set, get) => ({
@@ -38,6 +40,7 @@ export const useDrawingStore = create<DrawingState>((set, get) => ({
   currentTopic: "",
   filename: null,
   usedTopic: [],
+  aiAnswerList: [],
 
   getRandomTopic: () => {
     const { topicList } = get();
@@ -53,10 +56,16 @@ export const useDrawingStore = create<DrawingState>((set, get) => ({
     }));
   },
 
+  setAiAnswer: (answer) =>
+    set((state) => ({
+      aiAnswerList: [...state.aiAnswerList, answer],
+    })),
+
   resetTopicList: () => {
     set({
       topicList: [...topicListData],
       currentTopic: "",
+      usedTopic: [],
     });
   },
   setFilename: (filename) => set({ filename: filename }),

@@ -1,0 +1,185 @@
+import { useEffect, useRef, useState } from "react";
+import { useDrawingStore } from "../stores/drawingStore";
+import SingleModeHeader from "../components/game/SingleModeHeader";
+import Button from "../components/common/Button";
+import { useNavigate } from "react-router";
+import SingleModeResultCard from "../components/game/SingleModeResultCard";
+import supabase from "../utils/supabase";
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
+import { Grid } from "swiper/modules";
+import DrawingPropmt from "../components/game/DrawingPropmt";
+import pawsMouse from "../assets/images/paw_mouse_big.svg";
+import type { FileObject } from "@supabase/storage-js";
+import prevIcon from "../assets/images/icon_slide_left.svg";
+import nextIcon from "../assets/images/icon_slide_right.svg";
+
+interface StorageResponse {
+  data: FileObject[] | null;
+  error: Error | null;
+}
+
+export default function SingleModeResultPage() {
+  const { usedTopic, resetTopicList, aiAnswerList } = useDrawingStore();
+  const navigate = useNavigate();
+  const swiperRef = useRef<SwiperType | null>(null);
+  const [answerList, setAnswerList] = useState<string[]>([]);
+  const correctCount = aiAnswerList.filter(
+    (answer, i) => answer === usedTopic[i]
+  ).length;
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const { data, error }: StorageResponse = await supabase.storage
+        .from("singlemode-images")
+        .list("public/user1", {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: "name", order: "asc" },
+        });
+
+      const imageUrls = data!.map((file: FileObject) => {
+        const { data } = supabase.storage
+          .from("singlemode-images")
+          .getPublicUrl(`public/user1/${file.name}`);
+        return data.publicUrl;
+      });
+      console.log(data);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setAnswerList(imageUrls);
+    };
+
+    fetchImage();
+  }, []);
+
+  const handleExitRoom = async () => {
+    const { data, error } = await supabase.storage
+      .from("singlemode-images")
+      .list("public/user1");
+    console.log(data);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const fileNames = data.map((file) => `public/user1/${file.name}`);
+    console.log(fileNames);
+
+    if (fileNames.length > 0) {
+      const { error } = await supabase.storage
+        .from("singlemode-images")
+        .remove(fileNames);
+      if (error) {
+        console.error(error);
+      }
+    }
+    resetTopicList();
+    requestAnimationFrame(() => {
+      navigate("/game");
+    });
+  };
+
+  const handlePrev = () => {
+    swiperRef.current?.slidePrev();
+  };
+  const handleNext = () => {
+    swiperRef.current?.slideNext();
+  };
+
+  return (
+    <>
+      <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
+        <SingleModeHeader disable={true} />
+        <div className="flex absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 gap-[62px] w-[1008px]">
+          <div className="flex flex-col gap-7 items-center justify-center">
+            <DrawingPropmt topic="결과 발표" className="w-[700px] h-[62px]" />
+            <div className="flex justify-center items-center w-[828px]">
+              <img
+                src={prevIcon}
+                onClick={handlePrev}
+                alt="이전 슬라이드"
+                className="cursor-pointer"
+              />
+              <div className="ml-[18px]">
+                <Swiper
+                  slidesPerView={3}
+                  grid={usedTopic.length <= 3 ? { rows: 1 } : { rows: 2 }}
+                  spaceBetween={22}
+                  modules={[Grid]}
+                  className="w-[720px] h-[420px] overflow-hidden"
+                  loop={false}
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                  }}
+                >
+                  {usedTopic.map((topic, i) => (
+                    <SwiperSlide key={i}>
+                      <div className="h-[195px] w-[212px]">
+                        <SingleModeResultCard
+                          topic={topic}
+                          draw={answerList[i]}
+                          aiAnswer={aiAnswerList[i]}
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+              <img
+                src={nextIcon}
+                onClick={handleNext}
+                alt="다음 슬라이드"
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-5 items-center">
+            <div className="px-[32px] py-[25px] flex flex-col justify-center items-center border-[2px] border-[color:var(--black)] rounded-[6px]">
+              <div className="border-b border-[color:var(--black)] w-[147px] pb-6 mb-6">
+                <div className="flex flex-col gap-[6px] items-center justify-center">
+                  <h1 className="text-center text-lg font-extrabold">" 힣 "</h1>
+                  <h2 className="text-center text-sm font-extrabold">
+                    님의 점수
+                  </h2>
+                </div>
+                <div className="flex flex-col gap-3 mt-[24px]">
+                  <p className="text-start font-semibold text-sm">
+                    {usedTopic.length}개 그림
+                  </p>
+                  <p className="text-start font-semibold text-sm">
+                    {correctCount}개 그림
+                  </p>
+                </div>
+              </div>
+              <div className="w-[147px] flex flex-col gap-[24px]">
+                <p className="text-start font-semibold text-sm">
+                  {correctCount}개 x 1점 = {correctCount}점
+                </p>
+                <h1 className="text-center font-extrabold text-lg">
+                  점수 : {correctCount}점
+                </h1>
+              </div>
+            </div>
+            <Button
+              onClick={handleExitRoom}
+              className="w-[134px] h-[44px] font-semibold text-[18px] p-0"
+            >
+              방 나가기
+            </Button>
+          </div>
+        </div>
+        <img
+          src={pawsMouse}
+          alt="마우스 잡은 고양이 손 그림"
+          className="absolute bottom-0 -z-50 right-[36px]"
+        />
+      </div>
+    </>
+  );
+}
