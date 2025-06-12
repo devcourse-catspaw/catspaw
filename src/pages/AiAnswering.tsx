@@ -11,6 +11,8 @@ import * as tmImage from "@teachablemachine/image";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router";
 import { useGameTimerStore } from "../stores/gameTimerStore";
+import { useAuthStore } from "../stores/authStore";
+import toast from "react-hot-toast";
 
 export default function AiAnswering() {
   const { currentTopic, setAiAnswer, filename } = useDrawingStore();
@@ -20,6 +22,7 @@ export default function AiAnswering() {
   const [imageReady, setImageReady] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -27,7 +30,7 @@ export default function AiAnswering() {
 
       const { data } = supabase.storage
         .from("singlemode-images")
-        .getPublicUrl(`public/user1/${filename}`);
+        .getPublicUrl(`private/${user?.id}/${filename}`);
 
       setImageUrl(data.publicUrl);
     };
@@ -51,7 +54,12 @@ export default function AiAnswering() {
           (a, b) => b.probability - a.probability
         );
         const best = sorted[0];
-
+        if (!best) {
+          toast.error(
+            "이런.. 고양이가 그림을 가져가버렸어요! 게임을 다시 시작해주세요"
+          );
+          navigate("/game");
+        }
         setPrediction(best.className);
         setAiAnswer(best.className);
       }
@@ -64,7 +72,7 @@ export default function AiAnswering() {
     if (prediction) {
       const timer = setTimeout(() => {
         navigate("/game/single");
-      }, 1000);
+      }, 1500);
       return () => {
         clearTimeout(timer);
       };

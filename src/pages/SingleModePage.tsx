@@ -14,6 +14,7 @@ export default function SingleModePage() {
   const navigate = useNavigate();
   const { timeLeft, setTime, startTimer } = useGameTimerStore();
   const user = useAuthStore((state) => state.user);
+
   useEffect(() => {
     getRandomTopic();
   }, []);
@@ -30,7 +31,7 @@ export default function SingleModePage() {
 
     const { error } = await supabase.storage
       .from("singlemode-images")
-      .upload(`public/${user?.email}/${filename}`, file);
+      .upload(`private/${user?.id}/${filename}`, file);
 
     if (error) {
       console.error(error);
@@ -40,7 +41,7 @@ export default function SingleModePage() {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      setTime(180);
+      setTime(30);
     }
 
     startTimer();
@@ -71,7 +72,7 @@ export default function SingleModePage() {
   return (
     <>
       <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-        <SingleModeHeader />
+        <SingleModeHeader disable={true} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center">
           <div className="translate-x-7 -translate-y-2">
             <DrawingPropmt topic={currentTopic} />
@@ -79,7 +80,7 @@ export default function SingleModePage() {
           <div className="flex">
             <DrawingCanvas onSubmit={handleSubmit} />
             <div className="translate-x-5 translate-y-4">
-              <GameTimer totalTime={180} />
+              <GameTimer totalTime={30} />
             </div>
           </div>
         </div>

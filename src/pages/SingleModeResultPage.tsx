@@ -34,7 +34,7 @@ export default function SingleModeResultPage() {
     const fetchImage = async () => {
       const { data, error }: StorageResponse = await supabase.storage
         .from("singlemode-images")
-        .list(`public/${user?.email}`, {
+        .list(`private/${user?.id}`, {
           limit: 100,
           offset: 0,
           sortBy: { column: "name", order: "asc" },
@@ -43,7 +43,7 @@ export default function SingleModeResultPage() {
       const imageUrls = data!.map((file: FileObject) => {
         const { data } = supabase.storage
           .from("singlemode-images")
-          .getPublicUrl(`public/${user?.email}/${file.name}`);
+          .getPublicUrl(`private/${user?.id}/${file.name}`);
         return data.publicUrl;
       });
 
@@ -59,16 +59,15 @@ export default function SingleModeResultPage() {
   }, []);
 
   const saveScoreToDatabase = async () => {
-    const { data, error } = await supabase
+    await supabase
       .from("game_scores")
-      .insert([{ user_id: user?.id, score: correctCount }])
-      .select();
+      .insert([{ user_id: user?.id, score: correctCount }]);
   };
 
   const handleExitRoom = async () => {
     const { data, error } = await supabase.storage
       .from("singlemode-images")
-      .list("public/user1");
+      .list(`private/${user?.id}`);
 
     saveScoreToDatabase();
 
@@ -77,8 +76,7 @@ export default function SingleModeResultPage() {
       return;
     }
 
-    const fileNames = data.map((file) => `public/user1/${file.name}`);
-    console.log(fileNames);
+    const fileNames = data.map((file) => `private/${user?.id}/${file.name}`);
 
     if (fileNames.length > 0) {
       const { error } = await supabase.storage
@@ -130,7 +128,11 @@ export default function SingleModeResultPage() {
               <div className="ml-[18px]">
                 <Swiper
                   slidesPerView={3}
-                  grid={usedTopic.length <= 3 ? { rows: 1 } : { rows: 2 }}
+                  grid={
+                    usedTopic.length <= 3
+                      ? { rows: 1, fill: "row" }
+                      : { rows: 2, fill: "row" }
+                  }
                   spaceBetween={22}
                   modules={[Grid]}
                   className="w-[720px] h-[420px] overflow-hidden"
@@ -166,7 +168,7 @@ export default function SingleModeResultPage() {
                 <div className="flex flex-col gap-[6px] items-center justify-center">
                   <h1 className="text-center text-lg font-extrabold flex gap-2">
                     <span>"</span>
-                    {user?.user_metadata.name}
+                    {user?.user_metadata.full_name}
                     <span>"</span>
                   </h1>
                   <h2 className="text-center text-sm font-extrabold">
