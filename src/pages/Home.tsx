@@ -1,14 +1,15 @@
 import { useEffect } from 'react'
 import supabase from '../utils/supabase'
 import toast from 'react-hot-toast'
-import { useAuthStore } from '../stores/authStore'
-import { useNavigate } from 'react-router-dom'
-import Button from '../components/common/Button'
-
+import NavBar from '../components/main/NavBar'
+import main_catdoodle from '../assets/images/main_catdoodle.gif'
+import MainBGDoodle1 from '../components/main/animation/MainBGDoodle1'
+import MainBGDoodle2 from '../components/main/animation/MainBGDoodle2'
+import MainBGDoodle3 from '../components/main/animation/MainBGDoodle3'
+import MainBGDoodle4 from '../components/main/animation/MainBGDoodle4'
+import MainLank from '../components/main/animation/MainLank'
+import AboutUs from '../components/main/animation/AboutUs'
 export default function Home() {
-  const { user, setUser } = useAuthStore()
-  const navigate = useNavigate()
-
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
@@ -19,22 +20,21 @@ export default function Home() {
     })
   }, [])
 
-  const logout = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      toast.error('로그아웃 실패')
-      return
-    }
-    setUser(null)
-    toast.success('로그아웃 되었습니다!')
-    navigate('/')
-  }
-
   return (
     <>
-      <h1>Home</h1>
-      {user && <Button onClick={logout}>로그아웃</Button>}
-      {!user && <Button onClick={() => navigate('/login')}>로그인</Button>}
+      <NavBar />
+      <div className="flex flex-col justify-center w-full relative">
+        <img src={main_catdoodle} className="w-full" />
+        <MainBGDoodle1 />
+        <MainLank />
+        <MainBGDoodle2 />
+        <div className="w-full aspect-[1156/613] px-[80px] my-[100px]">
+          <div className="w-full h-[80%] bg-[var(--grey-200)] rounded-[24px]"></div>
+        </div>
+        <MainBGDoodle3 />
+        <AboutUs />
+        <MainBGDoodle4 />
+      </div>
     </>
   )
 }
