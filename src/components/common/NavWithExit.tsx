@@ -6,7 +6,7 @@ export default function NavWithExit() {
   const navigate = useNavigate();
   return (
     <>
-      <nav className="w-full flex justify-between items-center">
+      <nav className="w-full flex justify-between items-center z-50">
         <img
           src={logo}
           alt="Cat's Paw 로고"
@@ -16,7 +16,7 @@ export default function NavWithExit() {
         <img
           src={exit}
           alt="나가기 버튼"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           className="cursor-pointer"
         />
       </nav>
