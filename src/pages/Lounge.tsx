@@ -4,7 +4,9 @@ import Button from "../components/common/Button";
 import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import kisu from "../assets/images/kisu_ribbon.svg";
+import Pen from "../assets/images/icon_pencil.svg?react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Lounge() {
   const [isActive, setIsActive] = useState(false);
@@ -22,7 +24,7 @@ export default function Lounge() {
           className="fixed inset-0 w-full h-full object-cover -z-10"
         />
         <div className="flex flex-col px-[160px] gap-[82px] ">
-          {/* 서브탭, 검색 */}
+          {/* 서브탭, 검색 TODO 필터링(날짜, 인기) */}
           <div className="flex w-full justify-between items-center sticky top-0 z-50 bg-[var(--white)]">
             <div className="w-[210px] h-[49px] flex justify-center">
               <SubnavItem active={!isActive} onClick={activeHandler}>
@@ -42,7 +44,7 @@ export default function Lounge() {
             </div>
           </div>
 
-          {/* 포스트, data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
+          {/* (포스트) data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
             <PostCard
               postId={1}
@@ -225,6 +227,13 @@ export default function Lounge() {
             />
           </div>
         </div>
+
+        {/* TODO 로그인 유저만 볼 수 있게 */}
+        <Link
+          to="/lounge/add-post"
+          className="fixed bottom-10 right-10 w-[80px] h-[80px] border-2 rounded-full shadow-[0px_5px_0px_var(--black)] bg-[var(--white)] flex items-center justify-center z-50">
+          <Pen className="text-[var(--black)] w-[40px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
+        </Link>
       </div>
     </div>
   );
