@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     element: <LoungeLayout />,
     children: [
       // { index: true, element: <Lounge /> },
-      { path: "post/:id", element: <LoungeDetail /> },
+      { path: "/:id", element: <LoungeDetail /> },
       // { path: "add-post", element: <AddPost /> },
     ],
   },
