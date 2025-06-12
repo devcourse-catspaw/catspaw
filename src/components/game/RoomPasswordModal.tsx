@@ -5,11 +5,13 @@ import { useState } from 'react';
 
 type RoomPasswordModalProps = {
   password: string | null;
+  dataHandler: () => void;
   closeRoomPasswordModalHandler: () => void;
 };
 
 export default function RoomPasswordModal({
   password,
+  dataHandler,
   closeRoomPasswordModalHandler,
 }: RoomPasswordModalProps) {
   const [pw, setPw] = useState('');
@@ -17,9 +19,9 @@ export default function RoomPasswordModal({
 
   const checkPassword = () => {
     if (pw === password) {
-      alert('일치합니당');
+      console.log('일치합니당');
       closeRoomPasswordModalHandler();
-      // navigate()
+      dataHandler();
     } else setInvalid(true);
   };
 
