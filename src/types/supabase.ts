@@ -111,34 +111,24 @@ export type Database = {
       }
       game_scores: {
         Row: {
-          game_id: number
           id: number
           played_at: string
           score: number
           user_id: string
         }
         Insert: {
-          game_id: number
           id?: number
           played_at?: string
           score: number
           user_id: string
         }
         Update: {
-          game_id?: number
           id?: number
           played_at?: string
           score?: number
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "game_scores_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "game_scores_user_id_fkey"
             columns: ["user_id"]
@@ -338,27 +328,24 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar: string
+          avatar: string | null
           created_at: string
-          email: string
+          email: string | null
           id: string
-          login_type: string
           nickname: string
         }
         Insert: {
-          avatar: string
+          avatar?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           id: string
-          login_type: string
           nickname: string
         }
         Update: {
-          avatar?: string
+          avatar?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           id?: string
-          login_type?: string
           nickname?: string
         }
         Relationships: []
