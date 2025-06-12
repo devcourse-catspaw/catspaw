@@ -1,6 +1,6 @@
-import logo from "../../assets/images/logo_catpaw.svg";
-import exit from "../../assets/images/icon_exit.svg";
-import { useNavigate } from "react-router";
+import logo from '../../assets/images/logo_catpaw.svg';
+import exit from '../../assets/images/icon_exit.svg';
+import { useNavigate } from 'react-router';
 
 export default function NavWithExit() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function NavWithExit() {
           src={logo}
           alt="Cat's Paw 로고"
           className="w-15 cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => navigate('/')}
         />
         <img
           src={exit}
