@@ -65,7 +65,7 @@ export default function CommentCard({
 
         {/* 더보기 토글 */}
         <div>
-          {!showMore && (
+          {!showMore && !isEditing && (
             <span
               onClick={handleToggle}
               className="cursor-pointer text-[var(--black)] inline-flex items-center">
@@ -115,7 +115,7 @@ export default function CommentCard({
           </div>
         </div>
       ) : (
-        <div className="pl-[51px] w-[660px] font-medium text-sm overflow-wrap">
+        <div className="pl-[51px] w-[660px] min-h-[32px]  flex items-center font-medium text-sm overflow-wrap">
           {comment}
         </div>
       )}
