@@ -1,35 +1,14 @@
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/all'
-
-import { useEffect, useRef } from 'react'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { useDrawSVG } from '../../../hooks/useDrawSVG'
 
 export default function MainBGDoodle1() {
   const pathRef = useRef<SVGPathElement>(null)
+  useDrawSVG(pathRef, {
+    start: 'top bottom',
+    end: 'bottom-=500 top',
+    scrub: 1,
+  })
 
-  useEffect(() => {
-    const path = pathRef.current
-    if (!path) return
-
-    const length = path.getTotalLength()
-
-    gsap.set(path, {
-      strokeDasharray: length,
-      strokeDashoffset: length,
-    })
-
-    gsap.to(path, {
-      strokeDashoffset: 0,
-      scrollTrigger: {
-        trigger: path,
-        start: 'top bottom',
-        end: 'bottom-=500 top',
-        scrub: 2,
-      },
-      ease: 'none',
-    })
-  }, [])
   return (
     <>
       <svg
@@ -41,7 +20,7 @@ export default function MainBGDoodle1() {
         <path
           ref={pathRef}
           strokeWidth={15}
-          stroke="black"
+          stroke="#6fc734"
           strokeLinecap="round"
           d="M1248.71 7C1241.58 13.082 1230.31 28.4714 1209.99 52.8456C1192.41 73.9321 1161.29 113.712 1108.1 164.995C1054.91 216.277 980.917 278.111 941.276 310.472C887.457 354.407 853.624 375.546 834.61 386.313C808.255 401.236 785.063 419.534 760.904 429.332C726.276 443.377 702.004 454.428 683.589 461.586C673.335 465.571 662.071 469.787 620.418 477.42C584.999 483.911 519.973 492.149 484.018 496.849C443.075 502.201 385.477 497.57 365.065 492.962C310.959 480.748 300.651 467.822 280.5 453.462C264.977 442.4 265.756 412.714 275.908 387.972C286.488 362.185 311.764 361.455 322.5 361.962C330.335 362.332 347.5 373.462 351.5 378.962C356.799 386.248 363.007 390.874 365.065 410.272C369.373 450.873 343.228 480.709 309.5 512.962C293.447 528.313 266.366 554.368 228 580.462C198.002 600.865 165.46 617.794 128 641.462C110.95 652.234 105.277 651.991 73.5 668.962C64.2387 672.571 33.2203 684.926 22.5 686.462C13.5 687.751 -8 693.462 -8 693.462"
         />
