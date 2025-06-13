@@ -1,12 +1,28 @@
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
 import close from '../../assets/images/icon_close.svg';
+import { useState } from 'react';
+
+type RoomPasswordModalProps = {
+  password: string | null;
+  closeRoomPasswordModalHandler: () => void;
+};
 
 export default function RoomPasswordModal({
+  password,
   closeRoomPasswordModalHandler,
-}: {
-  closeRoomPasswordModalHandler: () => void;
-}) {
+}: RoomPasswordModalProps) {
+  const [pw, setPw] = useState('');
+  const [invalid, setInvalid] = useState(false);
+
+  const checkPassword = () => {
+    if (pw === password) {
+      alert('일치합니당');
+      closeRoomPasswordModalHandler();
+      // navigate()
+    } else setInvalid(true);
+  };
+
   return (
     <>
       <div
@@ -31,13 +47,18 @@ export default function RoomPasswordModal({
             </div>
             <LabeledInput
               type="password"
+              value={pw}
+              onChange={(e) => {
+                setPw(e.target.value);
+                setInvalid(false);
+              }}
               title=""
               invalidMessage="비밀번호가 일치하지 않습니다."
-              isInvalid={true}
+              isInvalid={invalid}
               placeholder="비밀번호 입력"
               className="w-[339px] h-[50px] pr-[50px]"
             />
-            <Button>확인</Button>
+            <Button onClick={checkPassword}>확인</Button>
           </div>
         </div>
       </div>

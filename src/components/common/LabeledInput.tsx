@@ -17,6 +17,8 @@ export default function LabeledInput({
   placeholder = '이름 입력',
   id,
   type,
+  value,
+  onChange,
   ...props
 }: LabeledInputProps) {
   const [showPW, setShowPw] = useState(false);
@@ -35,6 +37,8 @@ export default function LabeledInput({
       <div className="flex flex-col gap-[4px] relative">
         <input
           type={type === 'password' ? (showPW ? 'text' : 'password') : 'text'}
+          value={value}
+          onChange={onChange}
           id={inputId}
           className={twMerge(LabeledInputStyle, className)}
           placeholder={placeholder}
@@ -56,11 +60,19 @@ export default function LabeledInput({
               className="absolute top-[13px] right-4"
             />
           ))}
-        {isInvalid && (
+        {/* {isInvalid && (
           <p className="text-[color:var(--red)] text-xs font-regular">
             *{invalidMessage}
           </p>
-        )}
+        )} */}
+        <p
+          className={twMerge(
+            'text-[color:var(--red)] text-xs font-regular',
+            !isInvalid && 'invisible'
+          )}
+        >
+          *{invalidMessage}
+        </p>
       </div>
     </div>
   );
