@@ -43,9 +43,10 @@ serve(async (req) => {
       is_leader: true,
     }
 
-    const { error: playerError } = await supabase
+    const { data: newPlayer, error: playerError } = await supabase
       .from('players')
       .insert(playerWithGameId)
+      .select()
 
     if (playerError) {
       return new Response(JSON.stringify({ error: playerError.message }), {
@@ -54,7 +55,7 @@ serve(async (req) => {
       })
     }
 
-    return new Response(JSON.stringify({ success: true, game: newGameRoom }), {
+    return new Response(JSON.stringify({ success: true, game: newGameRoom, player: newPlayer }), {
         status: 200,
         headers: corsHeaders
       })
