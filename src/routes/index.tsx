@@ -5,6 +5,11 @@ import GameLayout from "./layouts/GameLayout";
 import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
 import Lounge from "../pages/Lounge";
+import LoungeLayout from "./layouts/LoungeLayout";
+import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
+
+const LoungeDetail = () => <div>개발 중입니다.</div>;
+const AddPost = () => <div>개발 중입니다.</div>;
 
 const router = createBrowserRouter([
   {
@@ -37,8 +42,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/lounge",
-    element: <Lounge />,
-    hydrateFallbackElement: <h1>Loading ...</h1>,
+    element: <LoungeLayout />,
+    children: [
+      { index: true, element: <Lounge />, loader: fetchPosts },
+      { path: "post/:id", element: <LoungeDetail />, loader: fetchPostDetail },
+      { path: "add-post", element: <AddPost /> },
+    ],
   },
 ]);
 export default function Router() {
