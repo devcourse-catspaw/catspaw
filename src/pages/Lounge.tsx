@@ -1,4 +1,3 @@
-import backImg from "../assets/images/background_doodle_2.svg";
 import BaseInput from "../components/common/BaseInput";
 import Button from "../components/common/Button";
 import PostCard from "../components/common/PostCard";
@@ -18,11 +17,6 @@ export default function Lounge() {
   return (
     <div className="w-full flex justify-center ">
       <div className="relative overflow-visible py-[94px]">
-        <img
-          src={backImg}
-          alt="배경이미지"
-          className="fixed inset-0 w-full h-full object-cover -z-10"
-        />
         <div className="flex flex-col px-[160px] gap-[82px] ">
           {/* 서브탭, 검색 TODO 필터링(날짜, 인기) */}
           <div className="flex w-full justify-between items-center sticky top-0 z-50 bg-[var(--white)]">
