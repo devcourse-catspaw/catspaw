@@ -12,7 +12,7 @@ import supabase from "../utils/supabase";
 import { useNavigate } from "react-router";
 import { useGameTimerStore } from "../stores/gameTimerStore";
 import { useAuthStore } from "../stores/authStore";
-import toast from "react-hot-toast";
+import SneakyCat from "../components/game/SneakyCat";
 
 export default function AiAnswering() {
   const { currentTopic, setAiAnswer, filename } = useDrawingStore();
@@ -23,6 +23,7 @@ export default function AiAnswering() {
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -42,7 +43,7 @@ export default function AiAnswering() {
     if (!imageUrl || !imageReady) return;
 
     const predict = async () => {
-      const URL = "https://teachablemachine.withgoogle.com/models/PtonZs4cL/";
+      const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
 
@@ -54,12 +55,7 @@ export default function AiAnswering() {
           (a, b) => b.probability - a.probability
         );
         const best = sorted[0];
-        if (!best) {
-          toast.error(
-            "이런.. 고양이가 그림을 가져가버렸어요! 게임을 다시 시작해주세요"
-          );
-          navigate("/game");
-        }
+
         setPrediction(best.className);
         setAiAnswer(best.className);
       }
@@ -72,7 +68,7 @@ export default function AiAnswering() {
     if (prediction) {
       const timer = setTimeout(() => {
         navigate("/game/single");
-      }, 1500);
+      }, 1000);
       return () => {
         clearTimeout(timer);
       };
@@ -85,11 +81,87 @@ export default function AiAnswering() {
     }
   }, [timeLeft]);
 
+  useEffect(() => {
+    const errorHadleTimer = setTimeout(() => {
+      setIsError(true);
+    }, 10000);
+    return () => {
+      clearTimeout(errorHadleTimer);
+    };
+  }, []);
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
       <SingleModeHeader disable={true} />
+      {isError && (
+        <div className="w-[700px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <SneakyCat setIsError={setIsError} />
+        </div>
+      )}
 
-      {prediction ? (
+      {!isError && prediction && (
+        <>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <DrawingPropmt topic={currentTopic} className="w-107" />
+            <div className="relative">
+              <img
+                src={sketchBook}
+                alt="스케치북"
+                className="w-[438px] h-[294px]"
+              />
+              {imageUrl && (
+                <img
+                  ref={imgRef}
+                  src={imageUrl}
+                  alt="사용자 그림"
+                  crossOrigin="anonymous"
+                  onLoad={() => setImageReady(true)}
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[420px]"
+                />
+              )}
+              <div className="absolute top-[-70px] right-[-140px]">
+                {prediction === currentTopic ? (
+                  <img src={correctAnswer} alt="정답 아이콘" />
+                ) : (
+                  <img
+                    src={wrongAnswer}
+                    alt="오답 아이콘"
+                    className="text-[color:var(--red)]"
+                  />
+                )}
+              </div>
+              <div className="w-[266px] h-[133px] absolute left-[-280px] bottom-[150px] border-[2px] border-[color:var(--black)] flex justify-center items-center text-[28px] font-extrabold rounded-[6px]">
+                "{prediction}"
+              </div>
+
+              <img
+                src={aiAnswering}
+                alt="생각하는 AI"
+                className="absolute left-[-280px] bottom-[-100px]"
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {!isError && !prediction && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <img src={aiThinking} alt="생각하는 AI 그림" />
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt=""
+              className="hidden"
+              ref={imgRef}
+              crossOrigin="anonymous"
+              onLoad={() => {
+                setImageReady(true);
+              }}
+            />
+          )}
+        </div>
+      )}
+      {/* {prediction ? (
         <>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <DrawingPropmt topic={currentTopic} className="w-107" />
@@ -148,7 +220,7 @@ export default function AiAnswering() {
             />
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

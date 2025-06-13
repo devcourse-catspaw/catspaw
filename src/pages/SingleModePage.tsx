@@ -40,8 +40,8 @@ export default function SingleModePage() {
   };
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      setTime(30);
+    if (timeLeft === 0) {
+      setTime(180);
     }
 
     startTimer();
@@ -80,7 +80,7 @@ export default function SingleModePage() {
           <div className="flex">
             <DrawingCanvas onSubmit={handleSubmit} />
             <div className="translate-x-5 translate-y-4">
-              <GameTimer totalTime={30} />
+              <GameTimer totalTime={180} />
             </div>
           </div>
         </div>

@@ -7,12 +7,14 @@ import doodle from "../../assets/images/doodle_loading.svg";
 import supabase from "../../utils/supabase";
 import { useAuthStore } from "../../stores/authStore";
 import { useDrawingStore } from "../../stores/drawingStore";
+import { useGameTimerStore } from "../../stores/gameTimerStore";
 
 export default function GameModeSelect() {
   const navigate = useNavigate();
   const [count, setCount] = useState<number | null>(null);
   const user = useAuthStore((state) => state.user);
   const { resetTopicList, getRandomTopic } = useDrawingStore();
+  const reset = useGameTimerStore((state) => state.reset);
 
   useEffect(() => {
     if (count === null) return;
@@ -52,6 +54,10 @@ export default function GameModeSelect() {
     };
     clearData();
   });
+
+  useEffect(() => {
+    reset();
+  }, []);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
