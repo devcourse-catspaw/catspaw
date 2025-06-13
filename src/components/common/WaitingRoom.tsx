@@ -1,35 +1,37 @@
 import kisu from '../../assets/images/kisu_.svg';
 import Crown from '../..//assets/images/crown.svg?react';
-
-type WaitingRoomProps = {
-  avatar?: string;
-  name: string;
-  isReady?: boolean;
-  isLeader?: boolean;
+import type { Database } from '../../types/supabase';
+export type PlayerUserProps = Database['public']['Tables']['players']['Row'] & {
+  users: Database['public']['Tables']['users']['Row'];
 };
 
+export type PlayerWithUserProps =
+  Database['public']['Views']['player_with_user']['Row'];
+
 export default function WaitingRoom({
-  avatar,
-  name,
-  isReady,
-  isLeader,
-}: WaitingRoomProps) {
+  is_ready,
+  is_leader,
+  users,
+}: PlayerUserProps) {
   return (
     <>
       <div className="w-full h-[77px] px-7 bg-[var(--white)] flex justify-between items-center text-[16px] font-bold rounded-md border-2 border-[var(--black)]">
         <div className="flex items-center gap-[7px]">
           <img
-            src={avatar ? avatar : kisu}
+            // src={avatar ? avatar : kisu}
+            src={kisu}
             alt="캐릭터"
             className="w-[49px] h-[49px]"
           />
           <div className="flex items-center gap-[7px] w-[140px]">
-            <div className="truncate">{name}</div>
-            {isLeader && <Crown className="w-[18px] h-[15px] text-[#F4EC5A]" />}
+            <div className="truncate">{users?.nickname}</div>
+            {is_leader && (
+              <Crown className="w-[18px] h-[15px] text-[#F4EC5A]" />
+            )}
           </div>
         </div>
-        {!isLeader &&
-          (isReady ? (
+        {!is_leader &&
+          (is_ready ? (
             <div className="text-[var(--blue)] w-[60px] text-right">READY</div>
           ) : (
             <div className="text-[var(--red)] w-[60px] text-right">waiting</div>
