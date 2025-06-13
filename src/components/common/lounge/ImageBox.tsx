@@ -7,11 +7,11 @@ type Props = {
 
 export default function ImageBox({ image, onDelete }: Props) {
   return (
-    <div className="relative w-[142px] h-[140px] border-[1px] border-[var(--black)] flex-shrink-0">
+    <div className="relative w-[143px] h-[141px] border-[2px] border-[var(--black)] flex-shrink-0 rounded-[6px]">
       <img
         src={image}
         alt="업로드되는 이미지"
-        className="w-[142px] h-[140px] object-cover"
+        className="w-[142px] h-[137px] object-cover rounded-[4px]"
       />
       {/* 업로드 사진 삭제 버튼 */}
       <img
