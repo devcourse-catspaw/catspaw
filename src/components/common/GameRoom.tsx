@@ -15,6 +15,7 @@ export default function GameRoom({
   status,
   room_name,
   room_password,
+  ready_players,
   current_players,
 }: GameRoomProps) {
   const navigate = useNavigate();
@@ -71,7 +72,13 @@ export default function GameRoom({
       if (data) {
         console.log('인원 수 증가 성공!');
         console.log('입장합니다.');
-        navigate('/game/room', { state: { game_id: id } });
+        navigate('/game/room', {
+          state: {
+            game_id: id,
+            current_players: current_players + 1,
+            ready_players: ready_players,
+          },
+        });
       }
 
       if (error) {
