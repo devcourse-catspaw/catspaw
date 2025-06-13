@@ -1,13 +1,10 @@
 import kisu from '../../assets/images/kisu_.svg';
 import Crown from '../..//assets/images/crown.svg?react';
 import type { Database } from '../../types/supabase';
+
 export type PlayerUserProps = Database['public']['Tables']['players']['Row'] & {
-  users: Database['public']['Tables']['users']['Row'];
+  users?: Database['public']['Tables']['users']['Row'];
 };
-
-export type PlayerWithUserProps =
-  Database['public']['Views']['player_with_user']['Row'];
-
 export default function WaitingRoom({
   is_ready,
   is_leader,
