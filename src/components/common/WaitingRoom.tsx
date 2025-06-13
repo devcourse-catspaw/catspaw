@@ -27,12 +27,15 @@ export default function WaitingRoom({
             )}
           </div>
         </div>
-        {!is_leader &&
-          (is_ready ? (
+        {!is_leader ? (
+          is_ready ? (
             <div className="text-[var(--blue)] w-[60px] text-right">READY</div>
           ) : (
             <div className="text-[var(--red)] w-[60px] text-right">waiting</div>
-          ))}
+          )
+        ) : (
+          <div className="w-[60px]"></div>
+        )}
       </div>
     </>
   );
