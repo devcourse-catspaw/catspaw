@@ -39,7 +39,7 @@ serve(async (req) => {
       ...player,
       game_id: newGameRoom.id,
       user_id: newGameRoom.leader_id,
-      is_ready: false,
+      is_ready: true,
       is_leader: true,
     }
 
