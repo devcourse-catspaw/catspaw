@@ -5,6 +5,7 @@ import close from '../../assets/images/icon_close.svg';
 import { useState } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 export default function CreateRoomModal({
   closeCreateRoomModalHandler,
@@ -44,13 +45,12 @@ export default function CreateRoomModal({
     const data = await res.json();
     console.log(data);
     closeCreateRoomModalHandler();
-    navigate('/game/room', {
-      state: {
-        game_id: data.game.id,
-        current_players: data.game.current_players,
-        ready_players: data.game.ready_players,
-      },
-    });
+
+    useGameRoomStore.getState().setPlayer(data.player);
+    console.log('useGameRoomStore Player:', useGameRoomStore.getState().player);
+    useGameRoomStore.getState().setGame(data.game);
+    console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    navigate('/game/room');
   };
   return (
     <>

@@ -9,19 +9,19 @@ import NavWithExit from '../../components/common/NavWithExit';
 import type { Database } from '../../types/supabase';
 import supabase from '../../utils/supabase';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import WaitingRoomSkeleton from '../../components/game/WaitingRoomSkeleton';
 import { useAuthStore } from '../../stores/authStore';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 export type UserProps = Database['public']['Tables']['users']['Row'];
 export type PlayerProps = Database['public']['Tables']['players']['Row'];
 
 export default function GameWaitingRoom() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { game_id, current_players, ready_players } = location.state || {};
 
   const { user } = useAuthStore();
+  const { game } = useGameRoomStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLeader, setIsLeader] = useState(false);
@@ -29,11 +29,6 @@ export default function GameWaitingRoom() {
   const [players, setPlayers] = useState<PlayerUserProps[]>([]);
 
   const checkLeader = () => {
-    // players.map((player) => {
-    //   if (player.is_leader && player.user_id === user?.id) {
-    //     setIsLeader(true);
-    //   }
-    // });
     const leader = players.find(
       (player) => player.is_leader && player.user_id === user?.id
     );
@@ -41,12 +36,6 @@ export default function GameWaitingRoom() {
   };
 
   const checkAllReady = () => {
-    // players.map((player) => {
-    //   if (!player.is_leader && !player.is_ready) {
-    //     return;
-    //   }
-    //   setIsAllReady(true);
-    // });
     if (players.length === 1) {
       setIsAllReady(false);
       return;
@@ -58,31 +47,33 @@ export default function GameWaitingRoom() {
   };
 
   const clickStartHandler = async () => {
-    const { data: players } = await supabase
-      .from('players')
-      .select('id')
-      .eq('game_id', game_id)
-      .eq('is_ready', true);
+    if (!game) return;
+    // const { data: players } = await supabase
+    //   .from('players')
+    //   .select('id')
+    //   .eq('game_id', game.id)
+    //   .eq('is_ready', true);
 
-    console.log(players);
-    console.log(current_players);
+    // console.log(players);
+    // console.log(game.current_players);
 
-    // current_players 최신으로 반영되게 수정
-    if (players && players.length === current_players) {
-      await supabase
-        .from('games')
-        .update({ status: 'PLAYING' })
-        .eq('id', game_id);
+    // if (players && players.length === game.current_players) {
+    await supabase
+      .from('games')
+      .update({ status: 'PLAYING' })
+      .eq('id', game.id);
 
-      console.log('게임을 시작합니다!');
-    } else {
-      console.log('모든 팀원이 준비되지 않았습니다.');
-    }
+    console.log('게임을 시작합니다!');
+    useGameRoomStore.getState().updateGame({ status: 'PLAYING' });
+    console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    // } else {
+    //   console.log('모든 팀원이 준비하기 전임');
+    // }
   };
 
   const clickReadyHandler = async () => {
-    if (!user) return;
-    const { data, error } = await supabase
+    if (!user || !game) return;
+    const { data: dataP, error } = await supabase
       .from('players')
       .update({
         is_ready: true,
@@ -90,18 +81,27 @@ export default function GameWaitingRoom() {
       .eq('user_id', user?.id)
       .select();
 
-    if (data) {
+    if (dataP) {
       console.log('READY 성공!');
+      useGameRoomStore.getState().updatePlayer({ is_ready: true });
+      console.log(
+        'useGameRoomStore Player:',
+        useGameRoomStore.getState().player
+      );
 
       const { data, error } = await supabase
         .from('games')
         .update({
-          ready_players: ready_players + 1,
+          ready_players: game.ready_players + 1,
         })
-        .eq('id', game_id)
+        .eq('id', game.id)
         .select();
 
-      if (data) console.log('레디 카운트 성공!');
+      if (data) {
+        console.log('레디 카운트 성공!');
+        useGameRoomStore.getState().setGame(data[0]);
+        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+      }
       if (error) {
         console.log('레디 카운트 에러');
         console.error('Ready Count error:', error.message);
@@ -115,7 +115,7 @@ export default function GameWaitingRoom() {
   };
 
   const clickExitHandler = async () => {
-    if (!user) return;
+    if (!user || !game) return;
     const { error } = await supabase
       .from('players')
       .delete()
@@ -125,44 +125,57 @@ export default function GameWaitingRoom() {
       console.error('삭제 실패:', error.message);
     } else {
       console.log('삭제 성공');
+      useGameRoomStore.getState().resetPlayer();
+      console.log(
+        'useGameRoomStore Player:',
+        useGameRoomStore.getState().player
+      );
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('games')
-        .update({ current_players: current_players - 1 })
-        .eq('id', game_id)
+        .update({ current_players: game.current_players - 1 })
+        .eq('id', game.id)
         .select();
 
       if (error) {
         console.error('카운트 실패:', error.message);
       } else {
         console.log('카운트 성공');
+        useGameRoomStore.getState().setGame(data[0]);
+        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         navigate('/game/list');
       }
     }
   };
 
   const getPlayerList = async () => {
-    try {
-      const { data } = await supabase
-        .from('players')
-        .select(
-          `
+    if (!game) {
+      console.log('game이 없음... :', game);
+      return;
+    }
+    if (game) {
+      console.log('game 있음~! :', game);
+      try {
+        const { data } = await supabase
+          .from('players')
+          .select(
+            `
             *,
             users(
               *
             )
           `
-        )
-        .eq('game_id', game_id)
-        .order('joined_at', { ascending: true });
-      if (data) {
-        console.log(data);
-        setPlayers(data);
-        // checkLeader();
-        setIsLoading(false);
+          )
+          .eq('game_id', game.id)
+          .order('joined_at', { ascending: true });
+        if (data) {
+          console.log(data);
+          setPlayers(data);
+          setIsLoading(false);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
     }
   };
 
@@ -189,6 +202,9 @@ export default function GameWaitingRoom() {
   // };
 
   useEffect(() => {
+    useGameRoomStore.getState().loadGameFromSession();
+    useGameRoomStore.getState().loadPlayerFromSession();
+
     getPlayerList();
     checkLeader();
     checkAllReady();
@@ -201,6 +217,7 @@ export default function GameWaitingRoom() {
           event: '*',
           schema: 'public',
           table: 'players',
+          filter: `game_id=eq.${game?.id}`,
         },
         async (payload) => {
           console.log(payload);
@@ -210,6 +227,9 @@ export default function GameWaitingRoom() {
           if (!newPlayer) return;
 
           const player = newPlayer as PlayerProps;
+          let final: PlayerUserProps[];
+          let readyPlayers;
+          let currentPlayers;
 
           const { data: user } = await supabase
             .from('users')
@@ -224,7 +244,7 @@ export default function GameWaitingRoom() {
           setPlayers((prevPlayers) => {
             switch (eventType) {
               case 'INSERT':
-                return [
+                final = [
                   ...prevPlayers,
                   {
                     ...player,
@@ -237,8 +257,11 @@ export default function GameWaitingRoom() {
                     },
                   },
                 ];
+                readyPlayers = final?.filter((p) => p.is_ready).length;
+                currentPlayers = final?.length;
+                return final;
               case 'UPDATE':
-                return prevPlayers.map((p) =>
+                final = prevPlayers.map((p) =>
                   p.id === player.id
                     ? {
                         ...player,
@@ -252,17 +275,29 @@ export default function GameWaitingRoom() {
                       }
                     : p
                 );
+                readyPlayers = final?.filter((p) => p.is_ready).length;
+                currentPlayers = final?.length;
+                return final;
               case 'DELETE':
-                return prevPlayers.filter(
+                final = prevPlayers.filter(
                   (p) => p.id !== (oldPlayer as PlayerProps).id
                 );
+                readyPlayers = final?.filter((p) => p.is_ready).length;
+                currentPlayers = final?.length;
+                return final;
               default:
-                return prevPlayers;
+                final = prevPlayers;
+                readyPlayers = final?.filter((p) => p.is_ready).length;
+                currentPlayers = final?.length;
+                return final;
             }
           });
-          // })();
 
-          // checkAllReady();
+          useGameRoomStore.getState().updateGame({
+            ready_players: readyPlayers,
+            current_players: currentPlayers,
+          });
+          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         }
       )
       .subscribe();
@@ -274,19 +309,23 @@ export default function GameWaitingRoom() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`room-${game_id}`)
+      .channel(`room-${game?.id}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'games',
-          filter: `id=eq.${game_id}`,
+          filter: `id=eq.${game?.id}`,
         },
         (payload) => {
           const newStatus = payload.new;
           if (newStatus.status === 'PLAYING') {
-            // navigate(`/game/${game_id}`);
+            useGameRoomStore
+              .getState()
+              .updateGame({ status: newStatus.status });
+            console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+            // navigate(`/game/multi/${game_id}`);
             navigate('/game/multi');
           }
         }
@@ -296,7 +335,7 @@ export default function GameWaitingRoom() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [game_id]);
+  }, [game?.id]);
 
   useEffect(() => {
     checkLeader();
@@ -334,8 +373,6 @@ export default function GameWaitingRoom() {
             ></div>
             {isLeader ? (
               <Button
-                // disabled
-                // disabled:bg-[var(--grey-100)] disabled:cursor-not-allowed
                 className={`text-[28px] w-[320px] h-[82px] bg-[var(--blue)] ${
                   !isAllReady && 'bg-[var(--grey-100)] cursor-not-allowed'
                 }`}

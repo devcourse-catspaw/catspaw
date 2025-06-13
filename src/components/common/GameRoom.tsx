@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import type { Database } from '../../types/supabase';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 export type GameRoomProps = Database['public']['Tables']['games']['Row'];
 
@@ -15,7 +16,6 @@ export default function GameRoom({
   status,
   room_name,
   room_password,
-  ready_players,
   current_players,
 }: GameRoomProps) {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function GameRoom({
       console.log('사용자 정보 없음');
       return;
     }
-    const { data, error } = await supabase
+    const { data: dataP, error } = await supabase
       .from('players')
       .insert([
         {
@@ -60,8 +60,14 @@ export default function GameRoom({
       ])
       .select();
 
-    if (data) {
-      const { data, error } = await supabase
+    if (dataP) {
+      useGameRoomStore.getState().setPlayer(dataP[0]);
+      console.log(
+        'useGameRoomStore Player:',
+        useGameRoomStore.getState().player
+      );
+
+      const { data: dataG, error } = await supabase
         .from('games')
         .update({
           current_players: current_players + 1,
@@ -69,21 +75,18 @@ export default function GameRoom({
         .eq('id', id)
         .select();
 
-      if (data) {
-        console.log('인원 수 증가 성공!');
+      if (dataG) {
+        console.log('인원 수 증가 성공! :', dataG);
         console.log('입장합니다.');
-        navigate('/game/room', {
-          state: {
-            game_id: id,
-            current_players: current_players + 1,
-            ready_players: ready_players,
-          },
-        });
+
+        useGameRoomStore.getState().setGame(dataG[0]);
+        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+        navigate('/game/room');
       }
 
       if (error) {
         console.log('인원 수 증가 에러가 발생했습니다.');
-        console.error('Players insert error:', error.message);
+        console.error('Players count error:', error.message);
       }
     }
 
