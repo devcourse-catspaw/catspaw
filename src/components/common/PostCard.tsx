@@ -28,7 +28,8 @@ const titleStyle =
 const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
-const likeCountStyle = "text-[var(--black)] text-sm font-bold";
+const likeCountStyle =
+  "text-[var(--black)] text-sm font-bold min-w-[27px] text-center";
 
 export default function PostCard({
   postId,
@@ -115,6 +116,7 @@ export default function PostCard({
                   alt={liked ? "좋아요 취소" : "좋아요"}
                   onClick={handleLikeClick}
                 />
+
                 <span className={likeCountStyle}>{count}</span>
               </div>
             </div>
