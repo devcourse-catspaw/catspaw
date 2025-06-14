@@ -5,10 +5,16 @@ export const fetchPosts = async () => {
   try {
     const { data: posts } = await supabase.from("posts").select(`
     *,
-    profiles (
+    users (
       id, 
-      username,
-      avatar_url
+      avatar,
+      nickname
+    ),
+     likes(
+    id,
+    created_at,
+    post_id,
+    user_id
     )
   `);
 
@@ -25,22 +31,28 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
       .select(
         `
     *,
-    profiles (
+    users (
       id, 
-      username,
-      avatar_url
+      avatar,
+      nickname
     ),
     comments (
       id, 
-      comment, 
-      profile_id,
-      created_at,
+      content,
+      updated_at,
       post_id,
-      profiles (
+      users (
         id, 
-        username,
-        avatar_url
+        nickname,
+        avatar
       )
+    ),
+    likes(
+    id,
+    created_at,
+    post_id,
+    user_id
+
     )
   `
       )
@@ -48,6 +60,19 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
       .single();
 
     return posts;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const fetchLikes = async () => {
+  try {
+    const { data: likes } = await supabase.from("likes").select(`
+    *,
+  
+  `);
+
+    return likes;
   } catch (e) {
     console.error(e);
   }
