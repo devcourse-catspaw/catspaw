@@ -38,7 +38,7 @@ export default function ResultPlayerIndex({
         {isActive && (
           <div
             className={twMerge(
-              'text-[18px] font-bold tracking-widest [writing-mode:vertical-rl] [text-orientation:sideways] rotate-180'
+              'text-[18px] font-bold max-h-[140px] truncate tracking-widest [writing-mode:vertical-rl] [text-orientation:sideways] rotate-180'
             )}
           >
             {name}
