@@ -405,7 +405,7 @@ const DrawingCanvas = ({
           <div className="rounded-[6px] overflow-hidden border border-transparent">
             <Stage
               ref={stageRef}
-              width={584}
+              width={580}
               height={350}
               onMouseDown={handleMouseDown}
               onMousemove={handleMouseMove}
