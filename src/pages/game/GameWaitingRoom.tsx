@@ -228,8 +228,8 @@ export default function GameWaitingRoom() {
 
           const player = newPlayer as PlayerProps;
           let final: PlayerUserProps[];
-          let readyPlayers;
-          let currentPlayers;
+          // let readyPlayers = 0;
+          // let currentPlayers = 0;
 
           const { data: user } = await supabase
             .from('users')
@@ -257,8 +257,18 @@ export default function GameWaitingRoom() {
                     },
                   },
                 ];
-                readyPlayers = final?.filter((p) => p.is_ready).length;
-                currentPlayers = final?.length;
+                // readyPlayers = [...final].filter((p) => p.is_ready).length;
+                // currentPlayers = final.length;
+
+                useGameRoomStore.getState().updateGame({
+                  ready_players: [...final].filter((p) => p.is_ready).length,
+                  current_players: final.length,
+                });
+                console.log(
+                  'useGameRoomStore:',
+                  useGameRoomStore.getState().game
+                );
+
                 return final;
               case 'UPDATE':
                 final = prevPlayers.map((p) =>
@@ -275,29 +285,63 @@ export default function GameWaitingRoom() {
                       }
                     : p
                 );
-                readyPlayers = final?.filter((p) => p.is_ready).length;
-                currentPlayers = final?.length;
+                // readyPlayers = [...final].filter((p) => p.is_ready).length;
+                // currentPlayers = final.length;
+
+                useGameRoomStore.getState().updateGame({
+                  ready_players: [...final].filter((p) => p.is_ready).length,
+                  current_players: final.length,
+                });
+                console.log(
+                  'useGameRoomStore:',
+                  useGameRoomStore.getState().game
+                );
+
                 return final;
               case 'DELETE':
                 final = prevPlayers.filter(
                   (p) => p.id !== (oldPlayer as PlayerProps).id
                 );
-                readyPlayers = final?.filter((p) => p.is_ready).length;
-                currentPlayers = final?.length;
+                // readyPlayers = [...final].filter((p) => p.is_ready).length;
+                // currentPlayers = final.length;
+
+                useGameRoomStore.getState().updateGame({
+                  ready_players: [...final].filter((p) => p.is_ready).length,
+                  current_players: final.length,
+                });
+                console.log(
+                  'useGameRoomStore:',
+                  useGameRoomStore.getState().game
+                );
+
                 return final;
               default:
-                final = prevPlayers;
-                readyPlayers = final?.filter((p) => p.is_ready).length;
-                currentPlayers = final?.length;
-                return final;
+                // readyPlayers = [...prevPlayers].filter(
+                //   (p) => p.is_ready
+                // ).length;
+                // currentPlayers = prevPlayers.length;
+
+                useGameRoomStore.getState().updateGame({
+                  ready_players: [...prevPlayers].filter((p) => p.is_ready)
+                    .length,
+                  current_players: prevPlayers.length,
+                });
+                console.log(
+                  'useGameRoomStore:',
+                  useGameRoomStore.getState().game
+                );
+                return prevPlayers;
             }
           });
 
-          useGameRoomStore.getState().updateGame({
-            ready_players: readyPlayers,
-            current_players: currentPlayers,
-          });
-          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+          // console.log('readyPlayers: ', readyPlayers);
+          // console.log('currentPlayers: ', currentPlayers);
+
+          // useGameRoomStore.getState().updateGame({
+          //   ready_players: readyPlayers,
+          //   current_players: currentPlayers,
+          // });
+          // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         }
       )
       .subscribe();
@@ -318,15 +362,38 @@ export default function GameWaitingRoom() {
           table: 'games',
           filter: `id=eq.${game?.id}`,
         },
-        (payload) => {
+        async (payload) => {
           const newStatus = payload.new;
           if (newStatus.status === 'PLAYING') {
             useGameRoomStore
               .getState()
               .updateGame({ status: newStatus.status });
             console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-            // navigate(`/game/multi/${game_id}`);
-            navigate('/game/multi');
+
+            console.log('리더 아이디:', newStatus.leader_id);
+            console.log('내 아이디:', user?.id);
+            if (newStatus.leader_id === user?.id) {
+              const res = await fetch(
+                'https://neddelxefvltdmbkyymh.supabase.co/functions/v1/createTurns',
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    game_id: game?.id,
+                  }),
+                }
+              );
+              const data = await res.json();
+              console.log('성공:', data);
+            }
+
+            useGameRoomStore.getState().changeTurn(1);
+            console.log(
+              'useGameRoomStore Turn:',
+              useGameRoomStore.getState().turn
+            );
+
+            navigate('/game/multi/1');
           }
         }
       )
