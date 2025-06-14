@@ -10,16 +10,31 @@ import ChatMessage from '../../components/common/ChatMessage';
 import BaseInput from '../../components/common/BaseInput';
 import Button from '../../components/common/Button';
 import ResultChat from '../../components/game/ResultChat';
-import logoTypo from '../../assets/images/logo_typo.svg';
 import ResultPlayerIndex from '../../components/game/ResultPlayerIndex';
 import ResultShareModal from '../../components/game/ResultShareModal';
 import html2canvas from 'html2canvas';
 import ScrollItem from '../../components/common/ScrollItem';
+import supabase from '../../utils/supabase';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
+import type { PlayerUserProps } from '../../components/common/WaitingRoom';
+import type { Database } from '../../types/supabase';
+
+type TurnType = Database['public']['Tables']['turns']['Row'];
+
+type ChainItem = {
+  turn: number;
+  by: string;
+  content: string | null;
+};
 
 export default function MultiModeResult() {
+  const { game, resetGame, resetPlayer, resetTurn } = useGameRoomStore();
+
   const navigate = useNavigate();
 
-  const [isActive, setIsActive] = useState([true, false, false, false]);
+  const [players, setPlayers] = useState<PlayerUserProps[]>([]);
+  const [playerResults, setPlayerResults] = useState<ChainItem[][]>([]);
+  const [isActive, setIsActive] = useState(0);
   const [imageUrl, setImageUrl] = useState('');
   const [isCapturing, setIsCapturing] = useState(false);
   const [isResultShareModalOpen, setIsResultShareModalOpen] = useState(false);
@@ -35,11 +50,7 @@ export default function MultiModeResult() {
   const divModifyRef = useRef<HTMLDivElement | null>(null);
 
   const clickPlayerIndexHandler = (index: number) => {
-    const newArr = [false, false, false, false];
-    for (let i = 0; i < newArr.length; i++) {
-      if (i === index) newArr[i] = true;
-    }
-    setIsActive(newArr);
+    setIsActive(index);
   };
 
   let lastEnterTime = 0;
@@ -66,8 +77,117 @@ export default function MultiModeResult() {
     inputRef.current?.focus();
   };
 
-  const clickExitHandler = () => {
-    navigate('/');
+  const getResults = async () => {
+    if (!game) return;
+
+    const { data: turns } = await supabase
+      .from('turns')
+      .select('*')
+      .eq('game_id', game.id)
+      .order('turn_number');
+
+    const { data: players } = await supabase
+      .from('players')
+      .select('*, users(*)')
+      .eq('game_id', game.id)
+      .order('joined_at', { ascending: true });
+
+    if (!players) return;
+
+    const nicknameMap: Record<string, string> = {};
+    players?.forEach((player) => {
+      nicknameMap[player.user_id] = player.users?.nickname || 'Unknown';
+    });
+
+    const chainsByUserId = makeChains(turns!, nicknameMap);
+
+    setPlayers(players);
+    setPlayerResults(players.map((p) => chainsByUserId[p.user_id] ?? []));
+  };
+
+  const makeChains = (
+    turns: TurnType[],
+    nicknameMap: Record<string, string>
+  ): Record<string, ChainItem[]> => {
+    const chains: Record<string, ChainItem[]> = {};
+
+    const firstTurns = turns.filter(
+      (t) => t.turn_number === 1 && t.type === 'WORD'
+    );
+
+    for (const first of firstTurns) {
+      const chain: ChainItem[] = [
+        {
+          turn: first.turn_number,
+          by: nicknameMap[first.sender_id] || 'Unknown',
+          content: first.content,
+        },
+      ];
+
+      let currentReceiver = first.receiver_id;
+
+      for (let turnNum = 2; turnNum <= firstTurns.length; turnNum++) {
+        const next = turns.find(
+          (t) => t.turn_number === turnNum && t.sender_id === currentReceiver
+        );
+
+        if (next) {
+          chain.push({
+            turn: next.turn_number,
+            by: nicknameMap[next.sender_id] || 'Unknown',
+            content: next.content,
+          });
+          currentReceiver = next.receiver_id;
+        }
+      }
+
+      chains[first.sender_id] = chain;
+    }
+
+    return chains;
+  };
+
+  const clickExitHandler = async () => {
+    const { data, error } = await supabase.storage
+      .from('multimode-images')
+      .list(`${game?.id}`);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      const fileNames = data.map((file) => `${game?.id}/${file.name}`);
+
+      if (fileNames.length > 0) {
+        const { error } = await supabase.storage
+          .from('multimode-images')
+          .remove(fileNames);
+        if (error) {
+          console.error(error);
+        }
+      }
+
+      if (game) {
+        const { error } = await supabase
+          .from('games')
+          .delete()
+          .eq('id', game?.id);
+
+        if (error) {
+          console.error('삭제 실패:', error.message);
+        } else {
+          console.log('삭제 성공');
+
+          resetGame();
+          resetPlayer();
+          resetTurn();
+
+          navigate('/');
+        }
+      }
+    }
   };
 
   const clickShareHandler = async () => {
@@ -112,6 +232,14 @@ export default function MultiModeResult() {
   };
 
   useEffect(() => {
+    useGameRoomStore.getState().loadGameFromSession();
+    useGameRoomStore.getState().loadPlayerFromSession();
+    useGameRoomStore.getState().loadTurnFromSession();
+
+    getResults();
+  }, []);
+
+  useEffect(() => {
     getMessages();
   }, [reloadTrigger]);
 
@@ -124,7 +252,7 @@ export default function MultiModeResult() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit title="같이 할 사람~" />
+      <NavWithExit title={game?.room_name} />
       {isCapturing ? (
         <div className="relative w-full min-h-screen">
           <img
@@ -146,33 +274,18 @@ export default function MultiModeResult() {
               <div className="w-[629px] h-[62px] flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
                 결과 발표
               </div>
-              <div className="flex relative">
+              <div className="flex relative bg-[var(--white)]">
                 {/* flex flex-col justify-end items-end */}
-                <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5">
-                  <ResultPlayerIndex
-                    avatar={Kisu}
-                    name="트랄랄라트랄랄라"
-                    isActive={isActive[0]}
-                    onClick={() => clickPlayerIndexHandler(0)}
-                  />
-                  <ResultPlayerIndex
-                    avatar={Kisu}
-                    name="유빈bin123"
-                    isActive={isActive[1]}
-                    onClick={() => clickPlayerIndexHandler(1)}
-                  />
-                  <ResultPlayerIndex
-                    avatar={Kisu}
-                    name="수코딩"
-                    isActive={isActive[2]}
-                    onClick={() => clickPlayerIndexHandler(2)}
-                  />
-                  <ResultPlayerIndex
-                    avatar={Kisu}
-                    name="Hello"
-                    isActive={isActive[3]}
-                    onClick={() => clickPlayerIndexHandler(3)}
-                  />
+                <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5 -z-10">
+                  {players.map((player, index) => (
+                    <ResultPlayerIndex
+                      key={player.user_id}
+                      avatar={Kisu}
+                      name={player.users!.nickname}
+                      isActive={isActive === index}
+                      onClick={() => clickPlayerIndexHandler(index)}
+                    />
+                  ))}
                 </div>
                 <div
                   // id="scroll-container"
@@ -184,45 +297,24 @@ export default function MultiModeResult() {
                   <div
                     id="scroll-container"
                     ref={divModifyRef}
-                    className="w-[610px] h-[440px] p-5 overflow-y-auto"
+                    className="w-[610px] h-[440px] p-5 overflow-y-auto scroll-custom"
                   >
-                    {/* <ScrollItem> */}
-                    <ScrollItem delay={0.5}>
-                      <ResultChat
-                        userName="트랄랄라"
-                        message="푸바오"
-                        isDrawing={false}
-                      />
-                    </ScrollItem>
-                    {/* <ScrollItem> */}
-                    <ScrollItem delay={1.0}>
-                      <ResultChat
-                        userName="꾸꾸까까"
-                        message={logoTypo}
-                        isDrawing={true}
-                      />
-                    </ScrollItem>
-                    {/* <ScrollItem> */}
-                    <ScrollItem delay={1.5}>
-                      <ResultChat
-                        userName="힣힣힣ㅎ"
-                        message="너구리"
-                        isDrawing={false}
-                      />
-                    </ScrollItem>
-                    {/* <ScrollItem delay={0.5}> */}
-                    <ScrollItem delay={2.0}>
-                      <ResultChat
-                        userName="Micky Park"
-                        message={logoTypo}
-                        isDrawing={true}
-                      />
-                    </ScrollItem>
+                    {playerResults[isActive] &&
+                      playerResults[isActive].map((result, index) => (
+                        <ScrollItem delay={0.5 * (index + 1)}>
+                          <ResultChat
+                            userName={result.by}
+                            message={result.content!}
+                            isDrawing={index % 2 === 1}
+                          />
+                        </ScrollItem>
+                      ))}
                   </div>
                   <img
                     src={sketchBook}
                     alt="스케치북"
-                    className="absolute inset-0 w-full h-full -z-50"
+                    className="absolute right-[1.5px] bottom-0 w-full h-full "
+                    // inset-0 -z-50
                     // -right-8 bottom-0
                   />
                 </div>
