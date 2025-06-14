@@ -55,12 +55,12 @@ const router = createBrowserRouter([
       },
       {
         path: 'multi/drawing',
-        element: <MultiModeDrawing step="DRAWING" />,
+        element: <MultiModeDrawing key="DRAWING" step="DRAWING" />,
       },
       {
         path: 'multi/words',
-        element: <MultiModeDrawing step="WORDS" />,
-      }
+        element: <MultiModeDrawing key="WORDS" step="WORDS" />,
+      },
     ],
   },
 ]);
