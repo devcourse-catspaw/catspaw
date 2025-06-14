@@ -48,16 +48,7 @@ export default function GameWaitingRoom() {
 
   const clickStartHandler = async () => {
     if (!game) return;
-    // const { data: players } = await supabase
-    //   .from('players')
-    //   .select('id')
-    //   .eq('game_id', game.id)
-    //   .eq('is_ready', true);
 
-    // console.log(players);
-    // console.log(game.current_players);
-
-    // if (players && players.length === game.current_players) {
     await supabase
       .from('games')
       .update({ status: 'PLAYING' })
@@ -66,9 +57,6 @@ export default function GameWaitingRoom() {
     console.log('게임을 시작합니다!');
     useGameRoomStore.getState().updateGame({ status: 'PLAYING' });
     console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-    // } else {
-    //   console.log('모든 팀원이 준비하기 전임');
-    // }
   };
 
   const clickReadyHandler = async () => {
@@ -179,28 +167,6 @@ export default function GameWaitingRoom() {
     }
   };
 
-  // const getPlayerList = async () => {
-  //   try {
-  //     const { data } = await supabase
-  //       .from('player_with_user')
-  //       .select(
-  //         `
-  //           *
-  //         `
-  //       )
-  //       .eq('game_id', game_id)
-  //       .order('joined_at', { ascending: true });
-  //     if (data) {
-  //       console.log(data);
-  //       setPlayers(data);
-  //       checkLeader();
-  //       setIsLoading(false);
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
   useEffect(() => {
     useGameRoomStore.getState().loadGameFromSession();
     useGameRoomStore.getState().loadPlayerFromSession();
@@ -228,8 +194,6 @@ export default function GameWaitingRoom() {
 
           const player = newPlayer as PlayerProps;
           let final: PlayerUserProps[];
-          // let readyPlayers = 0;
-          // let currentPlayers = 0;
 
           const { data: user } = await supabase
             .from('users')
@@ -257,8 +221,6 @@ export default function GameWaitingRoom() {
                     },
                   },
                 ];
-                // readyPlayers = [...final].filter((p) => p.is_ready).length;
-                // currentPlayers = final.length;
 
                 useGameRoomStore.getState().updateGame({
                   ready_players: [...final].filter((p) => p.is_ready).length,
@@ -285,8 +247,6 @@ export default function GameWaitingRoom() {
                       }
                     : p
                 );
-                // readyPlayers = [...final].filter((p) => p.is_ready).length;
-                // currentPlayers = final.length;
 
                 useGameRoomStore.getState().updateGame({
                   ready_players: [...final].filter((p) => p.is_ready).length,
@@ -302,8 +262,6 @@ export default function GameWaitingRoom() {
                 final = prevPlayers.filter(
                   (p) => p.id !== (oldPlayer as PlayerProps).id
                 );
-                // readyPlayers = [...final].filter((p) => p.is_ready).length;
-                // currentPlayers = final.length;
 
                 useGameRoomStore.getState().updateGame({
                   ready_players: [...final].filter((p) => p.is_ready).length,
@@ -316,11 +274,6 @@ export default function GameWaitingRoom() {
 
                 return final;
               default:
-                // readyPlayers = [...prevPlayers].filter(
-                //   (p) => p.is_ready
-                // ).length;
-                // currentPlayers = prevPlayers.length;
-
                 useGameRoomStore.getState().updateGame({
                   ready_players: [...prevPlayers].filter((p) => p.is_ready)
                     .length,
@@ -333,15 +286,6 @@ export default function GameWaitingRoom() {
                 return prevPlayers;
             }
           });
-
-          // console.log('readyPlayers: ', readyPlayers);
-          // console.log('currentPlayers: ', currentPlayers);
-
-          // useGameRoomStore.getState().updateGame({
-          //   ready_players: readyPlayers,
-          //   current_players: currentPlayers,
-          // });
-          // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         }
       )
       .subscribe();
@@ -393,7 +337,7 @@ export default function GameWaitingRoom() {
               useGameRoomStore.getState().turn
             );
 
-            navigate('/game/multi/1');
+            navigate('/game/multi');
           }
         }
       )
