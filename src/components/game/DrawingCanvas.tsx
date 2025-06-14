@@ -38,6 +38,34 @@ const DrawingCanvas = ({
   const [hasImage, setHasImage] = useState<boolean>(false);
   const stageRef = useRef<Konva.Stage>(null);
 
+  const addToHistory = useCallback(
+    (newState: HistoryState) => {
+      setHistory((currentHistory) => {
+        const newHistory = currentHistory.slice(0, historyStep + 1);
+        newHistory.push(newState);
+
+        if (newHistory.length > 30) {
+          newHistory.shift();
+          setHistoryStep(newHistory.length - 1);
+        } else {
+          setHistoryStep(historyStep + 1);
+        }
+
+        return newHistory;
+      });
+    },
+    [historyStep]
+  );
+
+  const saveCurrentState = useCallback(() => {
+    const currentState: HistoryState =
+      hasImage && stageRef.current
+        ? { type: "image", data: stageRef.current.toCanvas().toDataURL() }
+        : { type: "lines", data: [...lines] };
+
+    addToHistory(currentState);
+  }, [lines, hasImage, addToHistory]);
+
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
     const rgbaStr = hexToRgba(color);
     const rgba = rgbaStr
@@ -91,17 +119,6 @@ const DrawingCanvas = ({
       try {
         const stage = stageRef.current;
         if (!stage) return;
-
-        const currentState: HistoryState = hasImage
-          ? { type: "image", data: stage.toCanvas().toDataURL() }
-          : { type: "lines", data: [...lines] };
-
-        setHistory((currentHistory) => {
-          const newHistory = currentHistory.slice(0, historyStep + 1);
-          newHistory.push(currentState);
-          return newHistory;
-        });
-        setHistoryStep((prev) => prev + 1);
 
         const canvas = stage.toCanvas();
         const ctx = canvas.getContext("2d");
@@ -163,17 +180,8 @@ const DrawingCanvas = ({
             setLines([]);
             setHasImage(true);
 
-            const newState: HistoryState = {
-              type: "image",
-              data: imageObj.src,
-            };
-
-            setHistory((currentHistory) => {
-              const newHistory = [...currentHistory];
-              newHistory.push(newState);
-              return newHistory;
-            });
-            setHistoryStep((prev) => prev + 1);
+            const finalImageData = stage.toCanvas().toDataURL();
+            addToHistory({ type: "image", data: finalImageData });
           };
           imageObj.src = canvas.toDataURL();
         }
@@ -181,7 +189,7 @@ const DrawingCanvas = ({
         console.error("Flood fill error:", error);
       }
     },
-    [lines, historyStep, hasImage]
+    [saveCurrentState]
   );
 
   const handleMouseDown = (
@@ -236,22 +244,18 @@ const DrawingCanvas = ({
     if (!isDrawing.current || tool === "paint") return;
     isDrawing.current = false;
 
-    const newState: HistoryState = {
-      type: "lines",
-      data: [...lines],
-    };
-
-    setHistory((currentHistory) => {
-      const newHistory = currentHistory.slice(0, historyStep + 1);
-      newHistory.push(newState);
-      return newHistory;
-    });
-    setHistoryStep(historyStep + 1);
+    const stage = stageRef.current;
+    if (stage) {
+      const currentImageData = stage.toCanvas().toDataURL();
+      addToHistory({ type: "image", data: currentImageData });
+    }
   };
 
   useEffect(() => {
     const handleMouseUpOutside = () => {
-      isDrawing.current = false;
+      if (isDrawing.current && tool !== "paint") {
+        isDrawing.current = false;
+      }
     };
 
     window.addEventListener("mouseup", handleMouseUpOutside);
@@ -261,7 +265,7 @@ const DrawingCanvas = ({
       window.removeEventListener("mouseup", handleMouseUpOutside);
       window.removeEventListener("touchend", handleMouseUpOutside);
     };
-  }, []);
+  }, [tool]);
 
   const handleUndo = (): void => {
     if (historyStep <= 0) return;
@@ -436,7 +440,7 @@ const DrawingCanvas = ({
         </div>
       </div>
 
-      <div className="flex justify-between w-[609px] ml-18">
+      <div className="flex justify-between w-[609px] ml-[18px]">
         <div className="flex gap-7 justify-center">
           <div className="flex items-center px-[17px] w-[126px] justify-between">
             <div
