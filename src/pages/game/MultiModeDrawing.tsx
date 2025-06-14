@@ -8,10 +8,19 @@ import GameTimer from '../../components/game/GameTimer';
 import ChatMessage from '../../components/common/ChatMessage';
 import BaseInput from '../../components/common/BaseInput';
 import Button from '../../components/common/Button';
+import supabase from '../../utils/supabase';
+import { useAuthStore } from '../../stores/authStore';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 export default function MultiModeDrawing({ step }: { step: string }) {
-  const { timeLeft, setTime, decrease } = useGameTimerStore();
+  const { user } = useAuthStore();
+  const { game, turn } = useGameRoomStore();
+  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+
   const navigate = useNavigate();
+
+  const [words, setWords] = useState('');
+  const [drawingUrl, setDrawingUrl] = useState('');
 
   const [msg, setMsg] = useState('');
   const [messages, setMessages] = useState([]);
@@ -34,6 +43,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     }
   };
 
+  const getMessages = async () => {
+    setShouldScrollToBottom(true);
+  };
+
   const sendMessageHandler = () => {
     if (msg.trim() === '') return;
     setReloadTrigger((reloadTrigger) => reloadTrigger + 1);
@@ -41,14 +54,239 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     inputRef.current?.focus();
   };
 
-  const sendDrawingHandler = () => {};
+  const getWords = async () => {
+    if (!game || !user) {
+      console.log('game이나 user 없음... game:', game);
+      console.log('game이나 user 없음... user:', user);
+      return;
+    }
+    const { data, error } = await supabase
+      .from('turns')
+      .select(
+        `
+          content
+        `
+      )
+      .eq('game_id', game.id)
+      .eq('turn_number', turn - 1)
+      .eq('receiver_id', user.id);
 
-  const getMessages = async () => {
-    setShouldScrollToBottom(true);
+    if (data) {
+      console.log('제시어 가져오기 성공:', data);
+      setWords(data[0].content!);
+    }
+    if (error) {
+      console.log('제시어 가져오기 실패');
+      console.error(error);
+    }
   };
 
-  // 페이지 진입 시 타이머 설정
+  const getDrawings = async () => {
+    if (!game || !user) {
+      console.log('game이나 user 없음... game:', game);
+      console.log('game이나 user 없음... user:', user);
+      return;
+    }
+    const { data, error } = await supabase
+      .from('turns')
+      .select(
+        `
+          content
+        `
+      )
+      .eq('game_id', game.id)
+      .eq('turn_number', turn - 1)
+      .eq('receiver_id', user.id);
+
+    if (data) {
+      console.log('그림 가져오기 성공:', data);
+      setDrawingUrl(data[0].content!);
+    }
+    if (error) {
+      console.log('그림 가져오기 실패');
+      console.error(error);
+    }
+  };
+
+  const sendWordsHandler = async (answer: string) => {
+    if (!game || !user) return;
+    const { data, error } = await supabase
+      .from('turns')
+      .update({
+        content: answer,
+      })
+      .eq('game_id', game.id)
+      .eq('turn_number', turn)
+      .eq('sender_id', user.id)
+      .select();
+
+    if (data) {
+      console.log('저장 완료:', data);
+
+      const { data: dataGame, error: errorGame } = await supabase
+        .from('games')
+        .update({
+          complete_players: game.complete_players + 1,
+        })
+        .eq('id', game.id)
+        .select();
+
+      if (dataGame) {
+        console.log('complete players 업데이트 완료:', dataGame);
+      }
+      if (errorGame) {
+        console.log('complete players 업데이트 실패');
+        console.error(errorGame);
+      }
+    }
+    if (error) {
+      console.log('저장 실패');
+      console.error(error);
+    }
+  };
+
+  const sendDrawingHandler = async (imageDataUrl: string) => {
+    const filename = `drawing-${Date.now()}.png`;
+    const fileData = await fetch(imageDataUrl);
+    const blob = await fileData.blob();
+
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    const { error: uploadError } = await supabase.storage
+      .from('multimode-images')
+      .upload(`${game?.id}/${filename}`, file);
+
+    if (uploadError) {
+      console.error(uploadError);
+      return;
+    }
+
+    const { data: publicData } = supabase.storage
+      .from('multimode-images')
+      .getPublicUrl(`${game?.id}/${filename}`);
+
+    const publicUrl = publicData.publicUrl;
+
+    if (!game || !user) return;
+    const { data: updateData, error: updateError } = await supabase
+      .from('turns')
+      .update({
+        content: publicUrl,
+      })
+      .eq('game_id', game.id)
+      .eq('turn_number', turn)
+      .eq('sender_id', user.id)
+      .select();
+
+    if (updateData) {
+      console.log('publicUrl 업데이트 완료:', updateData);
+
+      const { data: dataGame, error: errorGame } = await supabase
+        .from('games')
+        .update({
+          complete_players: game.complete_players + 1,
+        })
+        .eq('id', game.id)
+        .select();
+
+      if (dataGame) {
+        console.log('complete players 업데이트 완료:', dataGame);
+      }
+      if (errorGame) {
+        console.log('complete players 업데이트 실패');
+        console.error(errorGame);
+      }
+    }
+    if (updateError) {
+      console.log('publicUrl 업데이트 실패');
+      console.error(updateError);
+    }
+  };
+
+  const moveToNextTurn = async () => {
+    if (!game) return;
+    const { data: dataGame, error: errorGame } = await supabase
+      .from('games')
+      .update({
+        complete_players: 0,
+      })
+      .eq('id', game?.id)
+      .select();
+
+    if (dataGame) {
+      console.log('complete players 초기화 완료:', dataGame);
+      useGameRoomStore
+        .getState()
+        .updateGame({ complete_players: dataGame[0].complete_players });
+      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    }
+    if (errorGame) {
+      console.log('complete players 초기화 실패');
+      console.error(errorGame);
+    }
+
+    console.log('turn:', turn);
+    console.log('game.current_players:', game.current_players);
+
+    if (turn === game.current_players) {
+      // if (turn > game.current_players) {
+      console.log('결과화면으로 이동합니당');
+      navigate('/game/multi/result');
+      return;
+    }
+
+    useGameRoomStore.getState().changeTurn(turn + 1);
+    console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
+
+    if (step === 'DRAWING') {
+      navigate('/game/multi/words');
+      return;
+    } else if (step === 'WORDS') {
+      navigate('/game/multi/drawing');
+      return;
+    }
+  };
+
   useEffect(() => {
+    const channel = supabase
+      .channel(`room-complete-${game?.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'games',
+          filter: `id=eq.${game?.id}`,
+        },
+        (payload) => {
+          const newStatus = payload.new;
+
+          useGameRoomStore
+            .getState()
+            .updateGame({ complete_players: newStatus.complete_players });
+          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+
+          if (newStatus.complete_players === newStatus.current_players) {
+            console.log('전원 제출해서 넘어감');
+            moveToNextTurn();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [game?.id]);
+
+  useEffect(() => {
+    useGameRoomStore.getState().loadGameFromSession();
+    useGameRoomStore.getState().loadPlayerFromSession();
+    useGameRoomStore.getState().loadTurnFromSession();
+
+    if (step === 'DRAWING') getWords();
+    else if (step === 'WORDS') getDrawings();
+
     setTime(180);
     const timer = setInterval(() => {
       decrease();
@@ -57,10 +295,11 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     return () => clearInterval(timer);
   }, []);
 
-  // 시간이 0이 되면 페이지 이동
   useEffect(() => {
-    if (timeLeft && timeLeft <= 0) {
-      navigate('/game/multi/result');
+    if (timeLeft <= 0) {
+      console.log('시간 다 돼서 넘어감');
+      reset();
+      // moveToNextTurn();
     }
   }, [timeLeft]);
 
@@ -82,13 +321,26 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         <div className="flex flex-col gap-5 items-end">
           <div className="mr-3">
             <div className="w-[595px] h-[62px] flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
-              제시어
+              {step === 'DRAWING' ? words : '그림을 맞혀보세요!'}
             </div>
           </div>
-          <DrawingCanvas step={step} onSubmit={sendDrawingHandler} />
+          {step === 'DRAWING' ? (
+            <DrawingCanvas
+              step={step}
+              onSubmitDrawing={sendDrawingHandler}
+              moveToNextTurn={moveToNextTurn}
+            />
+          ) : (
+            <DrawingCanvas
+              step={step}
+              drawingUrl={drawingUrl}
+              onSubmitWords={sendWordsHandler}
+              moveToNextTurn={moveToNextTurn}
+            />
+          )}
         </div>
         <div className="flex items-center mt-3">
-          <GameTimer totalTime={90} />
+          <GameTimer totalTime={180} />
         </div>
         {/* h-[480px]  */}
         <div className="flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
