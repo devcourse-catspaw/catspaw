@@ -7,6 +7,7 @@ import Login from "../pages/Login";
 import Lounge from "../pages/Lounge";
 import LoungeLayout from "./layouts/LoungeLayout";
 import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
+import useAuthInit from "./../utils/useAuthInit";
 
 const LoungeDetail = () => <div>개발 중입니다.</div>;
 const AddPost = () => <div>개발 중입니다.</div>;
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
   },
 ]);
 export default function Router() {
+  useAuthInit();
   return (
     <>
       <RouterProvider router={router} />
