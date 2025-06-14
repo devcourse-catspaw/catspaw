@@ -14,6 +14,10 @@ interface GameRoomState {
   updatePlayer: (player: Partial<PlayerUserProps>) => void;
   resetPlayer: () => void;
   loadPlayerFromSession: () => void;
+
+  turn: number;
+  changeTurn: (turn: number) => void;
+  loadTurnFromSession: () => void;
 }
 
 export const useGameRoomStore = create<GameRoomState>((set, get) => ({
@@ -79,6 +83,25 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
         set({ player });
       } catch (e) {
         console.error("세션스토리지로부터 플레이어 데이터 불러오기 실패:", e);
+      }
+    }
+  },
+
+  turn: 0,
+
+  changeTurn: (turn) => {
+    set({ turn })
+    sessionStorage.setItem("turn", JSON.stringify(turn));
+  },
+
+  loadTurnFromSession: () => {
+    const turnStr = sessionStorage.getItem("turn");
+    if (turnStr) {
+      try {
+        const turn: number = JSON.parse(turnStr);
+        set({ turn });
+      } catch (e) {
+        console.error("세션스토리지로부터 turn 데이터 불러오기 실패:", e);
       }
     }
   },
