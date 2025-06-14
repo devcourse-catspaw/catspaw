@@ -5,7 +5,7 @@ export default function MainBGDoodle4() {
   const pathRef = useRef<SVGPathElement>(null)
   useDrawSVG(pathRef, {
     start: 'top bottom',
-    end: 'bottom-=500 top',
+    end: 'bottom-=800 top',
     scrub: 1,
   })
   return (
