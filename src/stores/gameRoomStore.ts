@@ -17,6 +17,7 @@ interface GameRoomState {
 
   turn: number;
   changeTurn: (turn: number) => void;
+  resetTurn: () => void;
   loadTurnFromSession: () => void;
 }
 
@@ -92,6 +93,11 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
   changeTurn: (turn) => {
     set({ turn })
     sessionStorage.setItem("turn", JSON.stringify(turn));
+  },
+
+  resetTurn: () => {
+    set({ turn: 0 });
+    sessionStorage.removeItem("turn");
   },
 
   loadTurnFromSession: () => {
