@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         element: <GameWaitingRoom />,
       },
       {
-        path: 'multi',
+        path: 'multi/1',
         element: <MultiModeWords />,
       },
     ],
