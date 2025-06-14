@@ -28,8 +28,15 @@ export default function MainLank() {
       y: '-300px',
     })
 
-    gsap.set([sparklerLeft, sparklerRight], {
-      opacity: 0,
+    gsap.set([sparklerLeft], {
+      x: '-10vw',
+      y: '-50vh',
+      // opacity: 0,
+    })
+    gsap.set([sparklerRight], {
+      x: '10vw',
+      y: '-50vh',
+      // opacity: 0,
     })
     gsap.to(sparklerLeft, {
       scrollTrigger: {
@@ -39,7 +46,8 @@ export default function MainLank() {
         scrub: 1,
       },
       x: '8vw',
-      opacity: 1,
+      y: '0',
+      // opacity: 1,
     })
     gsap.to(sparklerRight, {
       scrollTrigger: {
@@ -49,6 +57,7 @@ export default function MainLank() {
         scrub: 1,
       },
       x: '-5vw',
+      y: '0',
       opacity: 1,
     })
   }, [])
