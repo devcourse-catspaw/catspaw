@@ -8,7 +8,7 @@ interface GameTimerState {
 }
 
 export const useGameTimerStore = create<GameTimerState>((set, get) => ({
-  timeLeft: 0,
+  timeLeft: 1,
   setTime: (seconds) => set({ timeLeft: seconds }),
   decrease: () => {
     const current = get().timeLeft;
