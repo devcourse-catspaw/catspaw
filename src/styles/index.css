@@ -1,6 +1,5 @@
 @import './tailwind.css';
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto:wght@500&display=swap');
 :root {
   --white: #ffffff;
   --black: #000000;
@@ -58,12 +57,23 @@
   src: url('/src/assets/fonts/GloriaHallelujah-Regular.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('/src/assets/fonts/PatrickHand-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
 .font-gloria {
   font-family: 'GloriaHallelujah', cursive;
 }
 
 .font-roboto {
   font-family: 'Roboto', sans-serif;
+}
+
+.font-patrickHand {
+  font-family: 'Patrick Hand', cursive;
 }
 
 body {
