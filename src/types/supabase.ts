@@ -71,7 +71,7 @@ export type Database = {
             foreignKeyName: "comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -97,14 +97,14 @@ export type Database = {
             foreignKeyName: "follows_follower_id_fkey"
             columns: ["follower_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "follows_following_id_fkey"
             columns: ["following_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -133,13 +133,14 @@ export type Database = {
             foreignKeyName: "game_scores_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
       games: {
         Row: {
+          complete_players: number
           created_at: string
           current_players: number
           id: number
@@ -150,6 +151,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
@@ -160,6 +162,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
@@ -202,7 +205,7 @@ export type Database = {
             foreignKeyName: "likes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -235,6 +238,13 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_with_user"
             referencedColumns: ["id"]
           },
           {
@@ -283,7 +293,7 @@ export type Database = {
             foreignKeyName: "players_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -321,34 +331,10 @@ export type Database = {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
-      }
-      profiles: {
-        Row: {
-          avatar: string | null
-          created_at: string
-          email: string | null
-          id: string
-          nickname: string
-        }
-        Insert: {
-          avatar?: string | null
-          created_at?: string
-          email?: string | null
-          id: string
-          nickname: string
-        }
-        Update: {
-          avatar?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          nickname?: string
-        }
-        Relationships: []
       }
       results: {
         Row: {
@@ -390,6 +376,13 @@ export type Database = {
             foreignKeyName: "results_origin_player_id_fkey"
             columns: ["origin_player_id"]
             isOneToOne: false
+            referencedRelation: "player_with_user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_origin_player_id_fkey"
+            columns: ["origin_player_id"]
+            isOneToOne: false
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
@@ -397,32 +390,32 @@ export type Database = {
       }
       turns: {
         Row: {
-          content: string
+          content: string | null
           created_at: string
           game_id: number
           id: number
-          receiver_id: number | null
-          sender_id: number
+          receiver_id: string
+          sender_id: string
           turn_number: number
           type: string
         }
         Insert: {
-          content: string
+          content?: string | null
           created_at?: string
           game_id: number
           id?: number
-          receiver_id?: number | null
-          sender_id: number
-          turn_number: number
+          receiver_id: string
+          sender_id: string
+          turn_number?: number
           type: string
         }
         Update: {
-          content?: string
+          content?: string | null
           created_at?: string
           game_id?: number
           id?: number
-          receiver_id?: number | null
-          sender_id?: number
+          receiver_id?: string
+          sender_id?: string
           turn_number?: number
           type?: string
         }
@@ -434,25 +427,63 @@ export type Database = {
             referencedRelation: "games"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      users: {
+        Row: {
+          avatar: string | null
+          created_at: string
+          email: string | null
+          id: string
+          nickname: string
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          nickname: string
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          nickname?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      player_with_user: {
+        Row: {
+          avatar: string | null
+          email: string | null
+          game_id: number | null
+          id: number | null
+          is_leader: boolean | null
+          is_ready: boolean | null
+          joined_at: string | null
+          nickname: string | null
+          user_id: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "turns_receiver_id_fkey"
-            columns: ["receiver_id"]
+            foreignKeyName: "players_game_id_fkey"
+            columns: ["game_id"]
             isOneToOne: false
-            referencedRelation: "players"
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "turns_sender_id_fkey"
-            columns: ["sender_id"]
+            foreignKeyName: "players_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "players"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-    }
-    Views: {
-      [_ in never]: never
     }
     Functions: {
       [_ in never]: never

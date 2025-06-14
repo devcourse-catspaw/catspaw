@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import jungyu from "../../assets/images/aboutus_jungyu .GIF";
+import sneackycat from "../../assets/images/sneakycat.gif";
 import { useNavigate } from "react-router";
 
 export default function SneakyCat({
@@ -31,7 +31,7 @@ export default function SneakyCat({
     const timer = setTimeout(() => {
       setIsError(false);
       navigate("/game");
-    }, 2000);
+    }, 3000);
 
     return () => {
       clearTimeout(timer);
@@ -40,11 +40,17 @@ export default function SneakyCat({
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-40">
-      <h1 className="font-semibold text-3xl">
-        앗! 도둑 고양이 등장! 💨 그림을 낚아채 도망가버렸어요! <br />
+      <h1 className="font-semibold text-3xl font-sinchon">
+        앗! 도둑 고양이 등장! <br />
+        그림을 낚아채 도망가버렸어요! <br />
         다시 멋지게 그려볼까요?
       </h1>
-      <img ref={imageRef} src={jungyu} alt="도둑 고양이" />
+      <img
+        ref={imageRef}
+        src={sneackycat}
+        alt="도둑 고양이"
+        className="w-[380px]"
+      />
     </div>
   );
 }

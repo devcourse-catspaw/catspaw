@@ -59,12 +59,22 @@
   src: url("/src/assets/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "SinchonRhapsody";
+  src: url("/src/assets/fonts/SinchonRhapsodyTTF-ExtraBold.ttf")
+    format("truetype");
+}
+
 .font-gloria {
   font-family: "GloriaHallelujah", cursive;
 }
 
 .font-roboto {
   font-family: "Roboto", sans-serif;
+}
+
+.font-sinchon {
+  font-family: "SinchonRhapsody", sans-serif;
 }
 
 body {
