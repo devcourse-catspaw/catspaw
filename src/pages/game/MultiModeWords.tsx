@@ -14,31 +14,29 @@ import { useGameRoomStore } from '../../stores/gameRoomStore';
 export default function MultiModeWords() {
   const { user } = useAuthStore();
   const { game, turn } = useGameRoomStore();
-  const { timeLeft, setTime, decrease } = useGameTimerStore();
+  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
 
   const navigate = useNavigate();
 
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
 
-  const checkValidation = async () => {
-    if (word.trim() !== '') {
-      console.log('이동합니당');
+  const saveWords = async (isClick: boolean) => {
+    if (!game || !user) return;
+    const { data, error } = await supabase
+      .from('turns')
+      .update({
+        content: word,
+      })
+      .eq('game_id', game.id)
+      .eq('turn_number', turn)
+      .eq('sender_id', user.id)
+      .select();
 
-      if (!game || !user) return;
-      const { data, error } = await supabase
-        .from('turns')
-        .update({
-          content: word,
-        })
-        .eq('game_id', game.id)
-        .eq('turn_number', turn)
-        .eq('sender_id', user.id)
-        .select();
+    if (data) {
+      console.log('저장 완료:', data);
 
-      if (data) {
-        console.log('저장 완료:', data);
-
+      if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
           .from('games')
           .update({
@@ -55,10 +53,17 @@ export default function MultiModeWords() {
           console.error(errorGame);
         }
       }
-      if (error) {
-        console.log('저장 실패');
-        console.error(error);
-      }
+    }
+    if (error) {
+      console.log('저장 실패');
+      console.error(error);
+    }
+  };
+
+  const checkValidation = () => {
+    if (word.trim() !== '') {
+      console.log('이동합니당');
+      saveWords(true);
     } else setInvalid(true);
   };
 
@@ -74,6 +79,10 @@ export default function MultiModeWords() {
 
     if (dataGame) {
       console.log('complete players 초기화 완료:', dataGame);
+      useGameRoomStore
+        .getState()
+        .updateGame({ complete_players: dataGame[0].complete_players });
+      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }
     if (errorGame) {
       console.log('complete players 초기화 실패');
@@ -83,7 +92,7 @@ export default function MultiModeWords() {
     useGameRoomStore.getState().changeTurn(turn + 1);
     console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
 
-    navigate(`/game/multi/${turn + 1}`);
+    navigate('/game/multi/drawing');
   };
 
   useEffect(() => {
@@ -97,7 +106,7 @@ export default function MultiModeWords() {
           table: 'games',
           filter: `id=eq.${game?.id}`,
         },
-        async (payload) => {
+        (payload) => {
           const newStatus = payload.new;
 
           useGameRoomStore
@@ -108,6 +117,7 @@ export default function MultiModeWords() {
           if (newStatus.complete_players === newStatus.current_players) {
             console.log('전원 제출해서 넘어감');
             moveToNextTurn();
+            return;
           }
         }
       )
@@ -134,7 +144,10 @@ export default function MultiModeWords() {
   useEffect(() => {
     if (timeLeft <= 0) {
       console.log('시간 다 돼서 넘어감');
+      saveWords(false);
+      // reset();
       moveToNextTurn();
+      reset();
     }
   }, [timeLeft]);
 
