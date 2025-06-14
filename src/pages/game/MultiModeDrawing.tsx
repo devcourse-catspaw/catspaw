@@ -316,7 +316,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit title="같이 할 사람~" />
+      <NavWithExit title={game?.room_name} />
       <div className="flex gap-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex flex-col gap-5 items-end">
           <div className="mr-3">

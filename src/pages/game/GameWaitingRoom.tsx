@@ -358,7 +358,7 @@ export default function GameWaitingRoom() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit />
+      <NavWithExit title={game?.room_name} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex justify-center items-center gap-[56px] px-[138px]">
           <div className="flex flex-col items-center gap-[23px] w-[321px]">

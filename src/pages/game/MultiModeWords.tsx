@@ -36,6 +36,20 @@ export default function MultiModeWords() {
     if (data) {
       console.log('저장 완료:', data);
 
+      // const { data: dataResult, error: errorResult } = await supabase
+      //   .from('results')
+      //   .insert([
+      //     {
+      //       game_id: game.id,
+      //       origin_player_id: user.id,
+      //       contents: [{ turn: 1, by: user.id, content: word }],
+      //     },
+      //   ])
+      //   .select();
+
+      // if (dataResult) console.log('결과 테이블에 저장 완료:', dataResult);
+      // if (errorResult) console.log('결과 테이블에 저장 실패:', errorResult);
+
       if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
           .from('games')
@@ -153,7 +167,7 @@ export default function MultiModeWords() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit title="같이 할 사람~" />
+      <NavWithExit title={game?.room_name} />
       <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex items-center gap-5">
           <div className="flex flex-col justify-center items-center gap-[22px] rounded-[6px] w-[711px] h-[291px] py-11 bg-[var(--white)] border-2 border-[var(--black)]">
