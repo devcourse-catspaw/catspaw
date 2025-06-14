@@ -4,15 +4,57 @@ import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import kisu from "../assets/images/kisu_ribbon.svg";
 import Pen from "../assets/images/icon_pencil.svg?react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLoaderData } from "react-router-dom";
+import { type fetchPosts } from "../routes/loader/post.loader";
+import { format } from "date-fns";
+import supabase from "../utils/supabase";
+
+export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
 export default function Lounge() {
-  const [isActive, setIsActive] = useState(false);
+  const posts = useLoaderData<Posts>();
 
+  console.log(posts[0].likes);
+
+  // const [likes, setLikes] = useState<Likes>([]);
+
+  // const [likeCount, setLikeCount] = useState<number>(0);
+  const [isActive, setIsActive] = useState(false);
   const activeHandler = () => {
     setIsActive((prev) => !prev);
   };
+
+  useEffect(() => {
+    console.log(posts);
+  }, [posts]); // useEffect(() => {
+  //   const loadLikes = async () => {
+  //     const data = await fetchLikes();
+  //     if (!data) return;
+  //     setLikes(data || []);
+  //   };
+  //   loadLikes();
+  // }, []);
+
+  // const likeCount = p.likes?.filter((l) => l.post_id === post.id).length;
+
+  //좋아요 수 호출
+  // useEffect(() => {
+  //   const fetchLikes = async () => {
+  //     const { count, error } = await supabase
+  //       .from("likes")
+  //       .select("*", { count: "exact", head: true })
+  //       .eq("post_id", post.id);
+
+  //     if (error) {
+  //       console.error("Error fetching like count:", error);
+  //       return;
+  //     }
+  //     setLikeCount(count ?? 0);
+  //   };
+
+  //   fetchLikes();
+  // }, [post.id]);
 
   return (
     <div className="w-full flex justify-center ">
@@ -40,185 +82,22 @@ export default function Lounge() {
 
           {/* (포스트) data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="ㅎㅎ"
-              date="2025.06.09"
-              contents="ai 정답 공유좀.."
-              userName="보리꼬리"
-              likeCount={12}
-              isLiked={false}
-              avatar={kisu}
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
-            <PostCard
-              postId={1}
-              postTitle="잔말말고 파워냉방틀어"
-              date="2025.06.09"
-              contents="잔말말고 파워냉방틀어 제습 틀 생각말고 무조건 파워냉방으로 틀어"
-              userName="헤이야치엘사김용명"
-              likeCount={100}
-              isLiked={true}
-              avatar={kisu}
-              image="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDJfMTAy%2FMDAxNzIyNTI2NjI0NTE4.pO3Di13VrBLozxbsBSS1sUB6wYigutsAlh6OMHhbkDAg.dq8IhZAbwwRED9pHmqjIaLQ-6mk711EBOnJicVPs0AUg.JPEG%2FIMG_0177.JPG&type=l340_165"
-              springImg="yes"
-            />
+            {posts.map((p) => (
+              <PostCard
+                postId={p.id}
+                postTitle={p.title}
+                date={format(new Date(p.created_at), "yyyy.MM.dd")}
+                contents={p.content}
+                userName={p.users.nickname}
+                likeCount={p.likes?.filter((l) => l.post_id === post.id).length}
+                isLiked={true}
+                avatar={p.users.avatar ?? undefined}
+                image={
+                  p.images && p.images.length > 0 ? p.images[0] : undefined
+                }
+                springImg="yes"
+              />
+            ))}
           </div>
         </div>
 
