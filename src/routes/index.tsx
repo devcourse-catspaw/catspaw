@@ -1,24 +1,26 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import Home from '../pages/Home'
-import GameModeSelect from '../pages/game/GameModeSelect'
-import GameLayout from './layouts/GameLayout'
-import SingleModePage from '../pages/SingleModePage'
-import Login from '../pages/Login'
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import Home from "../pages/Home";
+import GameModeSelect from "../pages/game/GameModeSelect";
+import GameLayout from "./layouts/GameLayout";
+import SingleModePage from "../pages/SingleModePage";
+import Login from "../pages/Login";
+import AiAnswering from "../pages/AiAnswering";
+import SingleModeResultPage from "../pages/SingleModeResultPage";
 import useAuthInit from './../utils/useAuthInit'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Home />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/game',
+    path: "/game",
     element: <GameLayout />,
     children: [
       {
@@ -33,14 +35,22 @@ const router = createBrowserRouter([
         path: 'single',
         element: <SingleModePage />,
       },
+      {
+        path: "ai-answering",
+        element: <AiAnswering />,
+      },
+      {
+        path: "single-result",
+        element: <SingleModeResultPage />,
+      },
     ],
   },
-])
+]);
 export default function Router() {
   useAuthInit()
   return (
     <>
       <RouterProvider router={router} />
     </>
-  )
+  );
 }

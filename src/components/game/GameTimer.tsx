@@ -18,7 +18,7 @@ export default function GameTimer({ totalTime }: { totalTime: number }) {
         borderRadius="20px"
         className="rotate-[-90deg]"
         animateOnRender={true}
-        initCompletedOnAnimation={100}
+        initCompletedOnAnimation={percent}
       />
       <img src={timer} alt="타이머" className="absolute bottom-[-20px]" />
     </div>
