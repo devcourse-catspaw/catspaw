@@ -8,6 +8,7 @@ import GameModeSelect from '../pages/game/GameModeSelect';
 import GameLayout from './layouts/GameLayout';
 import SingleModePage from '../pages/SingleModePage';
 import GameRoomList from '../pages/game/GameRoomList';
+import GameWaitingRoom from '../pages/game/GameWaitingRoom';
 import Login from '../pages/Login';
 import useAuthInit from './../utils/useAuthInit';
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: 'list',
         element: <GameRoomList />,
+      },
+      {
+        path: 'room',
+        element: <GameWaitingRoom />,
       },
     ],
   },

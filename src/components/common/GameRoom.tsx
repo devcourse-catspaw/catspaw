@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import type { Database } from '../../types/supabase';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 export type GameRoomProps = Database['public']['Tables']['games']['Row'];
 
@@ -36,10 +37,18 @@ export default function GameRoom({
     }
     if (room_password) {
       setIsRoomPasswordModalOpen(true);
+      return;
     }
 
-    if (!user) return;
-    const { data, error } = await supabase
+    dataHandler();
+  };
+
+  const dataHandler = async () => {
+    if (!user) {
+      console.log('사용자 정보 없음');
+      return;
+    }
+    const { data: dataP, error } = await supabase
       .from('players')
       .insert([
         {
@@ -51,28 +60,38 @@ export default function GameRoom({
       ])
       .select();
 
-    if (data) {
-      const { data, error } = await supabase
+    if (dataP) {
+      useGameRoomStore.getState().setPlayer(dataP[0]);
+      console.log(
+        'useGameRoomStore Player:',
+        useGameRoomStore.getState().player
+      );
+
+      const { data: dataG, error } = await supabase
         .from('games')
         .update({
           current_players: current_players + 1,
         })
-        .eq('id', id);
+        .eq('id', id)
+        .select();
 
-      if (data) {
-        alert('인원 수 증가 성공!');
-        alert('입장합니다.');
-        navigate('/room', { state: { game_id: id } });
+      if (dataG) {
+        console.log('인원 수 증가 성공! :', dataG);
+        console.log('입장합니다.');
+
+        useGameRoomStore.getState().setGame(dataG[0]);
+        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+        navigate('/game/room');
       }
 
       if (error) {
-        alert('인원 수 증가 에러가 발생했습니다.');
-        console.error('Players insert error:', error.message);
+        console.log('인원 수 증가 에러가 발생했습니다.');
+        console.error('Players count error:', error.message);
       }
     }
 
     if (error) {
-      alert('에러가 발생했습니다.');
+      console.log('에러가 발생했습니다.');
       console.error('Players insert error:', error.message);
     }
   };
@@ -123,6 +142,7 @@ export default function GameRoom({
       {isRoomPasswordModalOpen && (
         <RoomPasswordModal
           password={room_password}
+          dataHandler={dataHandler}
           closeRoomPasswordModalHandler={closeRoomPasswordModalHandler}
         />
       )}
