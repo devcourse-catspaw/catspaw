@@ -197,14 +197,14 @@ export type Database = {
           {
             foreignKeyName: "likes_post_id_fkey"
             columns: ["post_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "likes_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -216,21 +216,24 @@ export type Database = {
           created_at: string
           game_id: number
           id: number
-          player_id: number
+          nickname: string | null
+          player_id: string
         }
         Insert: {
           content: string
           created_at?: string
           game_id: number
           id?: number
-          player_id: number
+          nickname?: string | null
+          player_id: string
         }
         Update: {
           content?: string
           created_at?: string
           game_id?: number
           id?: number
-          player_id?: number
+          nickname?: string | null
+          player_id?: string
         }
         Relationships: [
           {
@@ -238,20 +241,6 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "player_with_user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
             referencedColumns: ["id"]
           },
         ]
