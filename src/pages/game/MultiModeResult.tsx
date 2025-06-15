@@ -274,7 +274,7 @@ export default function MultiModeResult() {
               <div className="w-[629px] h-[62px] flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
                 결과 발표
               </div>
-              <div className="flex relative bg-[var(--white)]">
+              <div className="flex relative ">
                 {/* flex flex-col justify-end items-end */}
                 <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5 -z-10">
                   {players.map((player, index) => (
@@ -286,6 +286,7 @@ export default function MultiModeResult() {
                       onClick={() => clickPlayerIndexHandler(index)}
                     />
                   ))}
+                  <div className="absolute top-1 left-15 w-[10px] h-[460px] bg-[var(--white)]"></div>
                 </div>
                 <div
                   // id="scroll-container"
@@ -297,7 +298,7 @@ export default function MultiModeResult() {
                   <div
                     id="scroll-container"
                     ref={divModifyRef}
-                    className="w-[610px] h-[440px] p-5 overflow-y-auto scroll-custom"
+                    className="w-[615px] h-[430px] mt-3 p-5 overflow-y-auto scroll-custom"
                   >
                     {playerResults[isActive] &&
                       playerResults[isActive].map((result, index) => (
@@ -313,7 +314,7 @@ export default function MultiModeResult() {
                   <img
                     src={sketchBook}
                     alt="스케치북"
-                    className="absolute right-[1.5px] bottom-0 w-full h-full "
+                    className="absolute right-[1.5px] bottom-0 w-full h-full -z-10"
                     // inset-0 -z-50
                     // -right-8 bottom-0
                   />
