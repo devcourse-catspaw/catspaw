@@ -10,6 +10,7 @@ import SingleModePage from '../pages/SingleModePage';
 import GameRoomList from '../pages/game/GameRoomList';
 import GameWaitingRoom from '../pages/game/GameWaitingRoom';
 import MultiModeWords from '../pages/game/MultiModeWords';
+import MultiModeDrawing from '../pages/game/MultiModeDrawing';
 import Login from '../pages/Login';
 import useAuthInit from './../utils/useAuthInit';
 
@@ -49,8 +50,16 @@ const router = createBrowserRouter([
         element: <GameWaitingRoom />,
       },
       {
-        path: 'multi/1',
+        path: 'multi',
         element: <MultiModeWords />,
+      },
+      {
+        path: 'multi/drawing',
+        element: <MultiModeDrawing key="DRAWING" step="DRAWING" />,
+      },
+      {
+        path: 'multi/words',
+        element: <MultiModeDrawing key="WORDS" step="WORDS" />,
       },
     ],
   },

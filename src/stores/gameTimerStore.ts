@@ -14,5 +14,5 @@ export const useGameTimerStore = create<GameTimerState>((set, get) => ({
     const current = get().timeLeft;
     if (current > 0) set({ timeLeft: current - 1 });
   },
-  reset: () => set({ timeLeft: 0 }),
+  reset: () => set({ timeLeft: 1 }),
 }));
