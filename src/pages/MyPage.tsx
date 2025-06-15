@@ -1,14 +1,29 @@
 import { useNavigate } from 'react-router-dom'
 import logo_catpaw from '../assets/images/logo_catpaw.svg'
+import icon_change_profile from '../assets/images/icon_change_profile.svg'
 import BaseInput from '../components/common/BaseInput'
 import FriendList from '../components/common/FriendList'
 import kisu from '../assets/images/kisu_.svg'
 import icon_pencil from '../assets/images/icon_pencil.svg'
 import PostList from '../components/common/PostList'
-export default function UserPage() {
+import { useState } from 'react'
+import MyPageCharacterModal from '../components/profile/MyPageCharacterModal'
+import MyPageNameModal from '../components/profile/MyPageNameModal'
+export default function MyPage() {
   const navigate = useNavigate()
+  const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false)
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(null)
+
   return (
     <>
+      {isCharacterModalOpen && (
+        <MyPageCharacterModal
+          onSubmit={(image) => setSelectedCharacter(image)}
+          onClose={() => setIsCharacterModalOpen(false)}
+        />
+      )}
+      {isNameModalOpen && <MyPageNameModal />}
       <div className="flex flex-col gap-[20px] px-[80px] pt-[32px] w-[100vw] h-[100vh]">
         <div className="flex items-center gap-[28px]">
           <img
@@ -29,12 +44,25 @@ export default function UserPage() {
             </div>
           </div>
           <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">
-            <div className="flex items-center">
-              <img className="size-[92px]" src={kisu} alt="character" />
+            <div className="flex items-center gap-[17px]">
+              <div className="relative ">
+                <img
+                  className="size-[92px]"
+                  src={selectedCharacter ?? kisu}
+                  alt="character"
+                />
+                <img
+                  onClick={() => setIsCharacterModalOpen(true)}
+                  className="absolute bottom-[6px] left-[70px] size-[17px] cursor-pointer"
+                  src={icon_change_profile}
+                  alt="change character icon"
+                />
+              </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-[8px]">
                   <span className="font-semibold text-[18px]">user name</span>
                   <img
+                    onClick={() => setIsNameModalOpen(true)}
                     className="size-[14px] cursor-pointer"
                     src={icon_pencil}
                     alt="icon_pencil"

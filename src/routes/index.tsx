@@ -5,6 +5,7 @@ import GameLayout from './layouts/GameLayout'
 import SingleModePage from '../pages/SingleModePage'
 import Login from '../pages/Login'
 import useAuthInit from './../utils/useAuthInit'
+import MyPage from '../pages/MyPage'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
         element: <SingleModePage />,
       },
     ],
+  },
+  {
+    path: '/mypage',
+    element: <MyPage />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
   },
 ])
 export default function Router() {
