@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     element: <LoungeLayout />,
     children: [
       { index: true, element: <Lounge />, loader: fetchPosts },
-      { path: "post/:id", element: <LoungeDetail />, loader: fetchPostDetail },
+      { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },
       { path: "add-post", element: <AddPost /> },
     ],
   },
