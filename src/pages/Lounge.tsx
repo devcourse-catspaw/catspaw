@@ -2,59 +2,95 @@ import BaseInput from "../components/common/BaseInput";
 import Button from "../components/common/Button";
 import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
-import kisu from "../assets/images/kisu_ribbon.svg";
 import Pen from "../assets/images/icon_pencil.svg?react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { type fetchPosts } from "../routes/loader/post.loader";
+import {
+  addLike,
+  fetchLikes,
+  removeLike,
+  type fetchPosts,
+} from "../routes/loader/post.loader";
 import { format } from "date-fns";
-import supabase from "../utils/supabase";
+import { useAuthStore } from "../stores/authStore";
 
+export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
 export default function Lounge() {
+  const user = useAuthStore((state) => state.user);
   const posts = useLoaderData<Posts>();
 
-  console.log(posts[0].likes);
+  const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
+  const [allLikes, setAllLikes] = useState<Likes>([]);
 
-  // const [likes, setLikes] = useState<Likes>([]);
-
-  // const [likeCount, setLikeCount] = useState<number>(0);
   const [isActive, setIsActive] = useState(false);
   const activeHandler = () => {
     setIsActive((prev) => !prev);
   };
 
   useEffect(() => {
-    console.log(posts);
-  }, [posts]); // useEffect(() => {
-  //   const loadLikes = async () => {
-  //     const data = await fetchLikes();
-  //     if (!data) return;
-  //     setLikes(data || []);
-  //   };
-  //   loadLikes();
-  // }, []);
+    const loadLikes = async () => {
+      const data = await fetchLikes();
+      if (!data) return;
 
-  // const likeCount = p.likes?.filter((l) => l.post_id === post.id).length;
+      setAllLikes(data);
 
-  //좋아요 수 호출
-  // useEffect(() => {
-  //   const fetchLikes = async () => {
-  //     const { count, error } = await supabase
-  //       .from("likes")
-  //       .select("*", { count: "exact", head: true })
-  //       .eq("post_id", post.id);
+      // reduce로 post_id별 개수 세기
+      const counts = data.reduce((acc, like) => {
+        const pid = like.post_id;
+        if (pid != null) {
+          acc[pid] = (acc[pid] || 0) + 1;
+        }
 
-  //     if (error) {
-  //       console.error("Error fetching like count:", error);
-  //       return;
-  //     }
-  //     setLikeCount(count ?? 0);
-  //   };
+        return acc;
+      }, {} as Record<number, number>);
+      setLikeCounts(counts);
+    };
 
-  //   fetchLikes();
-  // }, [post.id]);
+    loadLikes();
+  }, []);
+
+  //인기순, 최신순 나열
+  const diplayed = useMemo(() => {
+    if (isActive) {
+      return posts
+        .slice()
+        .sort((a, b) => (likeCounts[b.id] || 0) - likeCounts[a.id || 0]);
+    }
+    return posts
+      .slice()
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+  }, [posts, likeCounts, isActive]);
+
+  const handleLikeClick = async (postId: number) => {
+    if (!user) {
+      alert("로그인 후 좋아요를 눌러주세요.");
+      return;
+    }
+
+    const liked = allLikes.some(
+      (l) => l.post_id === postId && l.user_id === user.id
+    );
+
+    if (liked) {
+      await removeLike(postId, user.id);
+    } else {
+      await addLike(postId, user.id);
+    }
+
+    const freshLikes = await fetchLikes();
+
+    setAllLikes(freshLikes);
+    const counts = freshLikes.reduce((acc, l) => {
+      if (l.post_id !== null) acc[l.post_id] = (acc[l.post_id] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+    setLikeCounts(counts);
+  };
 
   return (
     <div className="w-full flex justify-center ">
@@ -81,23 +117,32 @@ export default function Lounge() {
           </div>
 
           {/* (포스트) data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
+
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
-            {posts.map((p) => (
-              <PostCard
-                postId={p.id}
-                postTitle={p.title}
-                date={format(new Date(p.created_at), "yyyy.MM.dd")}
-                contents={p.content}
-                userName={p.users.nickname}
-                likeCount={p.likes?.filter((l) => l.post_id === post.id).length}
-                isLiked={true}
-                avatar={p.users.avatar ?? undefined}
-                image={
-                  p.images && p.images.length > 0 ? p.images[0] : undefined
-                }
-                springImg="yes"
-              />
-            ))}
+            {diplayed.map((p) => {
+              const isLiked = allLikes.some(
+                (l) => l.post_id === p.id && l.user_id === user!.id
+              );
+
+              return (
+                <PostCard
+                  key={p.id}
+                  postId={p.id}
+                  postTitle={p.title}
+                  date={format(new Date(p.created_at), "yyyy.MM.dd")}
+                  contents={p.content}
+                  userName={p.users.nickname}
+                  likeCount={likeCounts[p.id] ?? 0}
+                  isLiked={isLiked}
+                  avatar={p.users.avatar ?? undefined}
+                  image={
+                    p.images && p.images.length > 0 ? p.images[0] : undefined
+                  }
+                  springImg="yes"
+                  onLike={() => handleLikeClick(p.id)}
+                />
+              );
+            })}
           </div>
         </div>
 

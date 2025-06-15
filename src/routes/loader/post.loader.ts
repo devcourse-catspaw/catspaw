@@ -1,5 +1,8 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
 import supabase from "../../utils/supabase";
+import type { Database } from "../../types/supabase";
+
+export type LikeRow = Database["public"]["Tables"]["likes"]["Row"];
 
 export const fetchPosts = async () => {
   try {
@@ -10,12 +13,7 @@ export const fetchPosts = async () => {
       avatar,
       nickname
     ),
-     likes(
-    id,
-    created_at,
-    post_id,
-    user_id
-    )
+     likes(*)
   `);
 
     return posts;
@@ -47,13 +45,7 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
         avatar
       )
     ),
-    likes(
-    id,
-    created_at,
-    post_id,
-    user_id
-
-    )
+    likes(*)
   `
       )
       .eq("id", Number(params.id))
@@ -65,15 +57,29 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
   }
 };
 
-export const fetchLikes = async () => {
-  try {
-    const { data: likes } = await supabase.from("likes").select(`
-    *,
-  
-  `);
+// 좋아요 불러오기
+export const fetchLikes = async (): Promise<LikeRow[]> => {
+  const { data, error } = await supabase.from("likes").select("*");
+  if (error || !data) return [];
+  return data;
+};
 
-    return likes;
-  } catch (e) {
-    console.error(e);
-  }
+//좋아요 추가
+export const addLike = async (postId: number, userId: string) => {
+  const { error } = await supabase
+    .from("likes")
+    .insert([{ post_id: postId, user_id: userId }]);
+  if (error) console.error("addLike error:", error);
+  return !error;
+};
+
+// 좋아요 취소(삭제)
+export const removeLike = async (postId: number, userId: string) => {
+  const { error } = await supabase
+    .from("likes")
+    .delete()
+    .eq("post_id", postId)
+    .eq("user_id", userId);
+  if (error) console.error("removeLike error:", error);
+  return !error;
 };
