@@ -31,13 +31,10 @@ export default function GameModeSelect() {
               게임 모드를 골라보세요!
             </p>
             <div className="flex gap-[81px]">
-              <div
-                onClick={() => setCount(3)} 
-                className="z-50 cursor-pointer"
-              >
+              <div onClick={() => setCount(3)} className="z-50 cursor-pointer">
                 <GameModeSelectCard mode="single" />
               </div>
-              <div onClick={() => navigate("/game/multi")} className="z-50">
+              <div onClick={() => navigate("/game/list")} className="z-50">
                 <GameModeSelectCard mode="multi" />
               </div>
             </div>
