@@ -20,6 +20,7 @@ export default function MultiModeWords() {
 
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
@@ -36,6 +37,20 @@ export default function MultiModeWords() {
     if (data) {
       console.log('저장 완료:', data);
 
+      // const { data: dataResult, error: errorResult } = await supabase
+      //   .from('results')
+      //   .insert([
+      //     {
+      //       game_id: game.id,
+      //       origin_player_id: user.id,
+      //       contents: [{ turn: 1, by: user.id, content: word }],
+      //     },
+      //   ])
+      //   .select();
+
+      // if (dataResult) console.log('결과 테이블에 저장 완료:', dataResult);
+      // if (errorResult) console.log('결과 테이블에 저장 실패:', errorResult);
+
       if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
           .from('games')
@@ -47,6 +62,7 @@ export default function MultiModeWords() {
 
         if (dataGame) {
           console.log('complete players 업데이트 완료:', dataGame);
+          setIsComplete(true);
         }
         if (errorGame) {
           console.log('complete players 업데이트 실패');
@@ -153,10 +169,13 @@ export default function MultiModeWords() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit title="같이 할 사람~" />
+      <NavWithExit title={game?.room_name} />
       <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex items-center gap-5">
-          <div className="flex flex-col justify-center items-center gap-[22px] rounded-[6px] w-[711px] h-[291px] py-11 bg-[var(--white)] border-2 border-[var(--black)]">
+          <div className="relative flex flex-col justify-center items-center gap-[22px] rounded-[6px] w-[711px] h-[291px] py-11 bg-[var(--white)] border-2 border-[var(--black)]">
+            <div className="absolute top-3 right-4 font-semibold text-[16px] p-2">
+              {game?.complete_players} / {game?.current_players}
+            </div>
             <div className="font-semibold text-[22px]">
               다른 플레이어가 그릴 제시어를 설정해주세요.
             </div>
@@ -172,8 +191,13 @@ export default function MultiModeWords() {
               placeholder="제시어 입력"
               className="w-[500px] h-[50px] pr-[50px]"
             />
-            <Button onClick={checkValidation} className="w-30 h-11 px-0 py-0">
-              제출
+            <Button
+              onClick={checkValidation}
+              className={`w-30 h-11 px-0 py-0 ${
+                isComplete && 'cursor-not-allowed'
+              }`}
+            >
+              {isComplete ? '제출 완료' : '제출'}
             </Button>
           </div>
           <GameTimer totalTime={90} />

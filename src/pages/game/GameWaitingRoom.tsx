@@ -21,7 +21,7 @@ export default function GameWaitingRoom() {
   const navigate = useNavigate();
 
   const { user } = useAuthStore();
-  const { game } = useGameRoomStore();
+  const { game, player } = useGameRoomStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLeader, setIsLeader] = useState(false);
@@ -358,7 +358,7 @@ export default function GameWaitingRoom() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <NavWithExit />
+      <NavWithExit title={game?.room_name} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex justify-center items-center gap-[56px] px-[138px]">
           <div className="flex flex-col items-center gap-[23px] w-[321px]">
@@ -393,7 +393,9 @@ export default function GameWaitingRoom() {
               </Button>
             ) : (
               <Button
-                className="text-[28px] w-[320px] h-[82px] bg-[var(--blue)]"
+                className={`text-[28px] w-[320px] h-[82px] bg-[var(--blue)] ${
+                  player?.is_ready && 'bg-[var(--grey-100)] cursor-not-allowed'
+                }`}
                 onClick={clickReadyHandler}
               >
                 Ready

@@ -16,12 +16,14 @@ export default function NavWithExit({ title }: { title?: string }) {
           />
           {title && <span className="font-semibold text-lg">{title}</span>}
         </div>
-        <img
-          src={exit}
-          alt="나가기 버튼"
-          className="cursor-pointer"
-          onClick={() => navigate(-1)}
-        />
+        {!title && (
+          <img
+            src={exit}
+            alt="나가기 버튼"
+            className="cursor-pointer"
+            onClick={() => navigate(-1)}
+          />
+        )}
       </nav>
     </>
   );

@@ -11,6 +11,7 @@ import GameRoomList from '../pages/game/GameRoomList';
 import GameWaitingRoom from '../pages/game/GameWaitingRoom';
 import MultiModeWords from '../pages/game/MultiModeWords';
 import MultiModeDrawing from '../pages/game/MultiModeDrawing';
+import MultiModeResult from '../pages/game/MultiModeResult';
 import Login from '../pages/Login';
 import useAuthInit from './../utils/useAuthInit';
 
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: 'multi/words',
         element: <MultiModeDrawing key="WORDS" step="WORDS" />,
+      },
+      {
+        path: 'multi/result',
+        element: <MultiModeResult />,
       },
     ],
   },

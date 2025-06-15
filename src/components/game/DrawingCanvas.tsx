@@ -25,12 +25,14 @@ type HistoryState = {
 
 const DrawingCanvas = ({
   step,
+  isComplete,
   drawingUrl,
   onSubmitDrawing,
   onSubmitWords,
   moveToNextTurn,
 }: {
   step: string;
+  isComplete: boolean;
   drawingUrl?: string;
   onSubmitDrawing?: (imageData: string) => Promise<void>;
   onSubmitWords?: (answer: string) => Promise<void>;
@@ -576,8 +578,13 @@ const DrawingCanvas = ({
             placeholder="정답 입력"
             className="text-[18px]"
           />
-          <Button onClick={handleSubmit} className="w-[113px] h-[49px] px-8">
-            제출
+          <Button
+            onClick={handleSubmit}
+            className={`w-[113px] h-[49px] px-8 ${
+              isComplete && 'w-[125px] px-3 cursor-not-allowed'
+            }`}
+          >
+            {isComplete ? '제출 완료' : '제출'}
           </Button>
         </div>
       )}

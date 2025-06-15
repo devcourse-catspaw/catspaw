@@ -342,27 +342,21 @@ export type Database = {
           created_at: string
           game_id: number
           id: number
-          origin_player_id: number
-          origin_word: string | null
-          score: number | null
+          origin_player_id: string
         }
         Insert: {
           contents: Json
           created_at?: string
           game_id: number
           id?: number
-          origin_player_id: number
-          origin_word?: string | null
-          score?: number | null
+          origin_player_id: string
         }
         Update: {
           contents?: Json
           created_at?: string
           game_id?: number
           id?: number
-          origin_player_id?: number
-          origin_word?: string | null
-          score?: number | null
+          origin_player_id?: string
         }
         Relationships: [
           {
@@ -370,20 +364,6 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "results_origin_player_id_fkey"
-            columns: ["origin_player_id"]
-            isOneToOne: false
-            referencedRelation: "player_with_user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "results_origin_player_id_fkey"
-            columns: ["origin_player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
             referencedColumns: ["id"]
           },
         ]
