@@ -140,6 +140,7 @@ export type Database = {
       }
       games: {
         Row: {
+          complete_players: number
           created_at: string
           current_players: number
           id: number
@@ -150,6 +151,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
@@ -160,6 +162,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
@@ -387,32 +390,32 @@ export type Database = {
       }
       turns: {
         Row: {
-          content: string
+          content: string | null
           created_at: string
           game_id: number
           id: number
-          receiver_id: number | null
-          sender_id: number
+          receiver_id: string
+          sender_id: string
           turn_number: number
           type: string
         }
         Insert: {
-          content: string
+          content?: string | null
           created_at?: string
           game_id: number
           id?: number
-          receiver_id?: number | null
-          sender_id: number
-          turn_number: number
+          receiver_id: string
+          sender_id: string
+          turn_number?: number
           type: string
         }
         Update: {
-          content?: string
+          content?: string | null
           created_at?: string
           game_id?: number
           id?: number
-          receiver_id?: number | null
-          sender_id?: number
+          receiver_id?: string
+          sender_id?: string
           turn_number?: number
           type?: string
         }
@@ -422,34 +425,6 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turns_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "player_with_user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turns_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turns_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "player_with_user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "turns_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "players"
             referencedColumns: ["id"]
           },
         ]
