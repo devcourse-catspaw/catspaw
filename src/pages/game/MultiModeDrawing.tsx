@@ -21,6 +21,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
 
   const [words, setWords] = useState('');
   const [drawingUrl, setDrawingUrl] = useState('');
+  const [isComplete, setIsComplete] = useState(false);
 
   const [msg, setMsg] = useState('');
   const [messages, setMessages] = useState([]);
@@ -133,6 +134,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
 
       if (dataGame) {
         console.log('complete players 업데이트 완료:', dataGame);
+        setIsComplete(true);
       }
       if (errorGame) {
         console.log('complete players 업데이트 실패');
@@ -191,6 +193,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
 
       if (dataGame) {
         console.log('complete players 업데이트 완료:', dataGame);
+        setIsComplete(true);
       }
       if (errorGame) {
         console.log('complete players 업데이트 실패');
@@ -320,19 +323,24 @@ export default function MultiModeDrawing({ step }: { step: string }) {
       <div className="flex gap-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex flex-col gap-5 items-end">
           <div className="mr-3">
-            <div className="w-[595px] h-[62px] flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
-              {step === 'DRAWING' ? words : '그림을 맞혀보세요!'}
+            <div className="w-[595px] h-[62px] relative flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
+              <div>{step === 'DRAWING' ? words : '그림을 맞혀보세요!'}</div>
+              <div className="absolute top-2 right-4 font-semibold text-[16px] p-2">
+                {game?.complete_players} / {game?.current_players}
+              </div>
             </div>
           </div>
           {step === 'DRAWING' ? (
             <DrawingCanvas
               step={step}
+              isComplete={isComplete}
               onSubmitDrawing={sendDrawingHandler}
               moveToNextTurn={moveToNextTurn}
             />
           ) : (
             <DrawingCanvas
               step={step}
+              isComplete={isComplete}
               drawingUrl={drawingUrl}
               onSubmitWords={sendWordsHandler}
               moveToNextTurn={moveToNextTurn}

@@ -20,6 +20,7 @@ export default function MultiModeWords() {
 
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
@@ -61,6 +62,7 @@ export default function MultiModeWords() {
 
         if (dataGame) {
           console.log('complete players 업데이트 완료:', dataGame);
+          setIsComplete(true);
         }
         if (errorGame) {
           console.log('complete players 업데이트 실패');
@@ -170,7 +172,10 @@ export default function MultiModeWords() {
       <NavWithExit title={game?.room_name} />
       <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex items-center gap-5">
-          <div className="flex flex-col justify-center items-center gap-[22px] rounded-[6px] w-[711px] h-[291px] py-11 bg-[var(--white)] border-2 border-[var(--black)]">
+          <div className="relative flex flex-col justify-center items-center gap-[22px] rounded-[6px] w-[711px] h-[291px] py-11 bg-[var(--white)] border-2 border-[var(--black)]">
+            <div className="absolute top-3 right-4 font-semibold text-[16px] p-2">
+              {game?.complete_players} / {game?.current_players}
+            </div>
             <div className="font-semibold text-[22px]">
               다른 플레이어가 그릴 제시어를 설정해주세요.
             </div>
@@ -186,8 +191,13 @@ export default function MultiModeWords() {
               placeholder="제시어 입력"
               className="w-[500px] h-[50px] pr-[50px]"
             />
-            <Button onClick={checkValidation} className="w-30 h-11 px-0 py-0">
-              제출
+            <Button
+              onClick={checkValidation}
+              className={`w-30 h-11 px-0 py-0 ${
+                isComplete && 'cursor-not-allowed'
+              }`}
+            >
+              {isComplete ? '제출 완료' : '제출'}
             </Button>
           </div>
           <GameTimer totalTime={90} />
