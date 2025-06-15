@@ -21,7 +21,7 @@ export default function GameWaitingRoom() {
   const navigate = useNavigate();
 
   const { user } = useAuthStore();
-  const { game } = useGameRoomStore();
+  const { game, player } = useGameRoomStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLeader, setIsLeader] = useState(false);
@@ -393,7 +393,9 @@ export default function GameWaitingRoom() {
               </Button>
             ) : (
               <Button
-                className="text-[28px] w-[320px] h-[82px] bg-[var(--blue)]"
+                className={`text-[28px] w-[320px] h-[82px] bg-[var(--blue)] ${
+                  player?.is_ready && 'bg-[var(--grey-100)] cursor-not-allowed'
+                }`}
                 onClick={clickReadyHandler}
               >
                 Ready
