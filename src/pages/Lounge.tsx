@@ -4,7 +4,7 @@ import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import Pen from "../assets/images/icon_pencil.svg?react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import {
   addLike,
   fetchLikes,
@@ -13,6 +13,7 @@ import {
 } from "../routes/loader/post.loader";
 import { format } from "date-fns";
 import { useAuthStore } from "../stores/authStore";
+import toast from "react-hot-toast";
 
 export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
@@ -20,6 +21,7 @@ export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 export default function Lounge() {
   const user = useAuthStore((state) => state.user);
   const posts = useLoaderData<Posts>();
+  const navigate = useNavigate();
 
   const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
   const [allLikes, setAllLikes] = useState<Likes>([]);
@@ -67,10 +69,7 @@ export default function Lounge() {
   }, [posts, likeCounts, isActive]);
 
   const handleLikeClick = async (postId: number) => {
-    if (!user) {
-      alert("로그인 후 좋아요를 눌러주세요.");
-      return;
-    }
+    if (!user) return;
 
     const liked = allLikes.some(
       (l) => l.post_id === postId && l.user_id === user.id
@@ -90,6 +89,14 @@ export default function Lounge() {
       return acc;
     }, {} as Record<number, number>);
     setLikeCounts(counts);
+  };
+
+  const notify = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      navigate("/login");
+    }
+    toast("로그인 후 이용해주세요.");
   };
 
   return (
@@ -121,7 +128,7 @@ export default function Lounge() {
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
             {diplayed.map((p) => {
               const isLiked = allLikes.some(
-                (l) => l.post_id === p.id && l.user_id === user!.id
+                (l) => l.post_id === p.id && l.user_id === user?.id
               );
 
               return (
@@ -146,8 +153,8 @@ export default function Lounge() {
           </div>
         </div>
 
-        {/* TODO 로그인 유저만 볼 수 있게 */}
         <Link
+          onClick={notify}
           to="/lounge/add-post"
           className="fixed bottom-10 right-10 w-[80px] h-[80px] border-2 rounded-full shadow-[0px_5px_0px_var(--black)] bg-[var(--white)] flex items-center justify-center z-50">
           <Pen className="text-[var(--black)] w-[40px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
