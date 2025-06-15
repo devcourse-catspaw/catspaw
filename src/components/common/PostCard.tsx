@@ -5,8 +5,9 @@ import likeFilled from "../../assets/images/icon_like_filled.svg";
 import Paw from "../../assets/images/logo_catpaw.svg?react";
 import Typo from "../../assets/images/logo_typo.svg?react";
 import kisu from "../../assets/images/kisu_.svg";
-import { useState } from "react";
+// import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TimeAgo from "./lounge/TimeAgo";
 
 type PostCardProps = {
   postId: number;
@@ -19,6 +20,7 @@ type PostCardProps = {
   isLiked: boolean;
   avatar?: string;
   springImg: "yes" | "no";
+  onLike: () => void;
 };
 
 const cardLayout =
@@ -27,7 +29,6 @@ const titleStyle =
   "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
-const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
 const likeCountStyle =
   "text-[var(--black)] text-sm font-bold min-w-[27px] text-center";
 
@@ -42,19 +43,29 @@ export default function PostCard({
   isLiked,
   avatar,
   springImg,
+  onLike,
 }: PostCardProps) {
-  const [liked, setLiked] = useState(isLiked);
-  const [count, setCount] = useState(likeCount);
+  // const [liked, setLiked] = useState(isLiked);
+  // const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   setLiked(isLiked);
+  //   setCount(likeCount);
+  // }, [isLiked, likeCount]);
 
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
   };
 
-  const handleLikeClick = () => {
-    setLiked((prev) => !prev);
-    setCount((prev) => prev + (liked ? -1 : +1));
-  };
+  // const handleLikeClick = () => {
+  //   onLike();
+  //   setLiked((prev) => {
+  //     const next = !prev;
+  //     setCount((prevCount) => prevCount + (next ? -1 : +1));
+  //     return next;
+  //   });
+  // };
 
   return (
     <>
@@ -88,7 +99,8 @@ export default function PostCard({
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
               onClick={goToDetail}>
               <span className={twMerge(titleStyle)}>{postTitle}</span>
-              <span className={dateStyle}>{date}</span>
+              {/* <span className={dateStyle}>{date}</span> */}
+              <TimeAgo timestamp={date} />
             </div>
             {/* 내용 */}
             <div className="flex">
@@ -112,12 +124,12 @@ export default function PostCard({
               <div className="flex gap-1 items-center">
                 <img
                   className="w-6 h-6 cursor-pointer"
-                  src={liked ? likeFilled : like}
-                  alt={liked ? "좋아요 취소" : "좋아요"}
-                  onClick={handleLikeClick}
+                  src={isLiked ? likeFilled : like}
+                  alt={isLiked ? "좋아요 취소" : "좋아요"}
+                  onClick={onLike}
                 />
 
-                <span className={likeCountStyle}>{count}</span>
+                <span className={likeCountStyle}>{likeCount}</span>
               </div>
             </div>
           </div>
