@@ -52,7 +52,7 @@ export default function Chat({ size = "large" }: ChatProps) {
       container:
         "flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
       chatArea:
-        "h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+        "h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
       inputContainer: "flex justify-between px-4 py-4",
       formGap: "gap-[10px]",
       input: "text-[14px] h-10",
@@ -64,7 +64,7 @@ export default function Chat({ size = "large" }: ChatProps) {
       container:
         "flex flex-col w-[287px] h-[577px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
       chatArea:
-        "h-[440px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+        "h-[440px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
       inputContainer: "flex justify-between px-4 py-4",
       formGap: "gap-[10px]",
       input: "text-[14px] h-10",
@@ -76,7 +76,7 @@ export default function Chat({ size = "large" }: ChatProps) {
       container:
         "flex flex-col w-[627px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
       chatArea:
-        "h-[434px] flex flex-col gap-2 px-7 py-5 border-y-2 border-[var(--black)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+        "h-[434px] flex flex-col gap-2 px-7 py-5 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
       inputContainer: "flex justify-between px-5 py-5",
       formGap: "gap-[10px]",
       input: "text-[14px]",
