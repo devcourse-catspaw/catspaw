@@ -21,39 +21,78 @@ export default function AddPost() {
   const [imgPath, setImgPath] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
   const navigate = useNavigate();
 
   const addImage = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
+    const newFiles = event.target.files ? Array.from(event.target.files) : [];
+    if (newFiles.length === 0) return;
+
+    setFiles((prev) => [...prev, ...newFiles]);
+
     const newPaths = Array.from(files).map((file) => URL.createObjectURL(file));
     setImgPath((prev) => [...prev, ...newPaths]);
   };
+
+  const uploadAll = async (): Promise<string[]> => {
+    const uploadPromises = files.map(async (file) => {
+      // 파일명 새로 생성
+      const ext = file.name.split(".").pop();
+      const fileName = `${Date.now()}.${ext}`;
+      const filePath = `posts/${user!.id}/${fileName}`;
+
+      // 업로드
+      const { error: uploadError } = await supabase.storage
+        .from("post-images")
+        .upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      // 공개 URL 가져오기
+      const { data: urlData } = supabase.storage
+        .from("post-images")
+        .getPublicUrl(filePath);
+      return urlData.publicUrl;
+    });
+
+    // 모든 업로드가 끝날 때까지 대기 후 URL 리스트 리턴
+    return Promise.all(uploadPromises);
+  };
+
   const deleteImage = (idx: number) => {
     setImgPath((p) => p.filter((_, i) => i !== idx));
+    setFiles((f) => f.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .insert([
-        { title: title, content: content, images: imgPath, user_id: user!.id },
-      ])
-      .select();
+    try {
+      const imageUrls = await uploadAll();
+      const { data, error } = await supabase
+        .from("posts")
+        .insert([
+          {
+            title,
+            content,
+            images: imageUrls,
+            user_id: user!.id,
+          },
+        ])
+        .select();
 
-    if (error || !data) {
-      console.error("포스트 작성 실패: ", error);
-      return;
+      if (error) throw error;
+      console.log("게시물 저장 성공:", data);
+      // TODO: 성공 시 뒤처리 (리다이렉트, 토스트 등)
+      setTitle(title);
+      setContent(content);
+      setImgPath(imgPath);
+      toast("게시물 등록이 완료되었습니다!");
+      navigate("/lounge");
+    } catch (err) {
+      console.error("업로드 또는 DB 저장 중 에러:", err);
     }
-
-    setTitle(title);
-    setContent(content);
-    setImgPath(imgPath);
-    toast("게시물 등록이 완료되었습니다!");
-    navigate("/lounge");
   };
-
   const handleCancel = () => {
     navigate("/lounge");
   };
