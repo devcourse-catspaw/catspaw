@@ -8,8 +8,8 @@ import eraser from '../../assets/images/icon_eraser.svg';
 import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
-import BaseInput from '../common/BaseInput';
 import { useGameTimerStore } from '../../stores/gameTimerStore';
+import LabeledInput from '../common/LabeledInput';
 
 type LineData = {
   tool: string;
@@ -51,6 +51,7 @@ const DrawingCanvas = ({
   const stageRef = useRef<Konva.Stage>(null);
 
   const [answer, setAnswer] = useState('');
+  const [invalid, setInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
@@ -64,8 +65,16 @@ const DrawingCanvas = ({
       lastEnterTime = now;
 
       e.preventDefault();
-      handleSubmit();
+      checkValidation();
+      // handleSubmit();
     }
+  };
+
+  const checkValidation = () => {
+    if (answer.trim() !== '') {
+      console.log('제출합니당');
+      handleSubmit();
+    } else setInvalid(true);
   };
 
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
@@ -354,7 +363,12 @@ const DrawingCanvas = ({
   };
 
   useEffect(() => {
-    setTime(180);
+    if (step === 'DRAWING') {
+      setTime(180);
+    } else if (step === 'WORDS') {
+      setTime(120);
+    }
+    // setTime(180);
     const timer = setInterval(() => {
       decrease();
     }, 1000);
@@ -566,20 +580,43 @@ const DrawingCanvas = ({
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>제출</Button>
+          <Button
+            onClick={handleSubmit}
+            // 113 49
+            className={`w-[113px] h-[49px] px-0 py-0 ${
+              isComplete && 'cursor-not-allowed'
+            }`}
+          >
+            {isComplete ? '제출 완료' : '제출'}
+          </Button>
         </div>
       ) : (
         <div className="flex justify-between gap-7 w-[595px] mr-2">
-          <BaseInput
+          {/* <BaseInput
             ref={inputRef}
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             onKeyDown={keyDownHandler}
             placeholder="정답 입력"
             className="text-[18px]"
+          /> */}
+          <LabeledInput
+            ref={inputRef}
+            value={answer}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+              setInvalid(false);
+            }}
+            title=""
+            invalidMessage="한 글자 이상 입력해주세요."
+            isInvalid={invalid}
+            onKeyDown={keyDownHandler}
+            placeholder="정답 입력"
+            className="w-[464px] text-[18px] mt-[-8px]"
           />
           <Button
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
+            onClick={checkValidation}
             className={`w-[113px] h-[49px] px-8 ${
               isComplete && 'w-[125px] px-3 cursor-not-allowed'
             }`}

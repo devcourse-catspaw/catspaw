@@ -46,7 +46,7 @@ export default function CreateRoomModal({
     console.log(data);
     closeCreateRoomModalHandler();
 
-    useGameRoomStore.getState().setPlayer(data.player);
+    useGameRoomStore.getState().setPlayer(data.player[0]);
     console.log('useGameRoomStore Player:', useGameRoomStore.getState().player);
     useGameRoomStore.getState().setGame(data.game);
     console.log('useGameRoomStore:', useGameRoomStore.getState().game);

@@ -22,11 +22,15 @@ export default function GameRoom({
 
   const { user } = useAuthStore();
 
+  const [disabled, setDisabled] = useState(false);
   const [isFullPlayersModalOpen, setIsFullPlayersModalOpen] = useState(false);
   const [isPlayingModalOpen, setIsPlayingModalOpen] = useState(false);
   const [isRoomPasswordModalOpen, setIsRoomPasswordModalOpen] = useState(false);
 
   const clickHandler = async () => {
+    if (disabled) return;
+
+    setDisabled(true);
     if (status === 'PLAYING') {
       setIsPlayingModalOpen(true);
       return;
@@ -41,6 +45,7 @@ export default function GameRoom({
     }
 
     dataHandler();
+    setTimeout(() => setDisabled(false), 500);
   };
 
   const dataHandler = async () => {

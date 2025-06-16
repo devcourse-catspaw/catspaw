@@ -21,7 +21,7 @@ export default function NavWithExit({ title }: { title?: string }) {
             src={exit}
             alt="나가기 버튼"
             className="cursor-pointer"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/game/select')}
           />
         )}
       </nav>

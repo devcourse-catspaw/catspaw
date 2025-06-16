@@ -1,18 +1,18 @@
-import BaseInput from "../common/BaseInput";
-import Button from "../common/Button";
-import ChatMessage from "../common/ChatMessage";
-import send from "../../assets/images/icon_send.svg";
-import { useGameRoomStore } from "../../stores/gameRoomStore";
-import { useAuthStore } from "../../stores/authStore";
+import BaseInput from '../common/BaseInput';
+import Button from '../common/Button';
+import ChatMessage from '../common/ChatMessage';
+import send from '../../assets/images/icon_send.svg';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
+import { useAuthStore } from '../../stores/authStore';
 import {
   useEffect,
   useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
-} from "react";
-import supabase from "../../utils/supabase";
-import type { RealtimeChannel } from "@supabase/supabase-js";
+} from 'react';
+import supabase from '../../utils/supabase';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 type Message = {
   userName: string;
@@ -29,7 +29,7 @@ type PrevMessage = {
   created_at: string;
 };
 
-type ChatSize = "small" | "medium" | "large";
+type ChatSize = 'small' | 'medium' | 'large';
 
 type ChatProps = {
   size?: ChatSize;
@@ -37,59 +37,59 @@ type ChatProps = {
 
 type ChatMessageData = Message | PrevMessage;
 
-export default function Chat({ size = "large" }: ChatProps) {
+export default function Chat({ size = 'large' }: ChatProps) {
   const game = useGameRoomStore((state) => state.game);
   const user = useAuthStore();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [prevMessages, setPrevMessages] = useState<PrevMessage[]>([]);
   const channelRef = useRef<RealtimeChannel | null>(null);
-  const [userName, setUserName] = useState<string>("");
+  const [userName, setUserName] = useState<string>('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const sizeStyles = {
     small: {
       container:
-        "flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
+        'flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden',
       chatArea:
-        "h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
-      inputContainer: "flex justify-between px-4 py-4",
-      formGap: "gap-[10px]",
-      input: "text-[14px] h-10",
-      button: "w-[46px] h-[35px] px-2 py-0",
-      sendIcon: "w-[20px] h-[20px]",
-      messageSize: "small" as const,
+        'h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom',
+      inputContainer: 'flex justify-between px-4 py-4',
+      formGap: 'gap-[10px]',
+      input: 'text-[14px] h-10',
+      button: 'w-[46px] h-[35px] px-2 py-0',
+      sendIcon: 'w-[20px] h-[20px]',
+      messageSize: 'small' as const,
     },
     medium: {
       container:
-        "flex flex-col w-[287px] h-[577px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
+        'flex flex-col w-[287px] h-[577px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden',
       chatArea:
-        "h-[440px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
-      inputContainer: "flex justify-between px-4 py-4",
-      formGap: "gap-[10px]",
-      input: "text-[14px] h-10",
-      button: "w-[46px] h-[35px] px-2 py-0",
-      sendIcon: "w-[20px] h-[20px]",
-      messageSize: "small" as const,
+        'h-[440px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom',
+      inputContainer: 'flex justify-between px-4 py-4',
+      formGap: 'gap-[10px]',
+      input: 'text-[14px] h-10',
+      button: 'w-[46px] h-[35px] px-2 py-0',
+      sendIcon: 'w-[20px] h-[20px]',
+      messageSize: 'small' as const,
     },
     large: {
       container:
-        "flex flex-col w-[627px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden",
+        'flex flex-col w-[627px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden',
       chatArea:
-        "h-[434px] flex flex-col gap-2 px-7 py-5 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom",
-      inputContainer: "flex justify-between px-5 py-5",
-      formGap: "gap-[10px]",
-      input: "text-[14px]",
-      button: "w-[66px] h-[50px] px-[18px]",
-      sendIcon: "w-[29px] h-[29px]",
-      messageSize: "large" as const,
+        'h-[434px] flex flex-col gap-2 px-7 py-5 border-y-2 border-[var(--black)] overflow-y-auto scroll-custom',
+      inputContainer: 'flex justify-between px-5 py-5',
+      formGap: 'gap-[10px]',
+      input: 'text-[14px]',
+      button: 'w-[66px] h-[50px] px-[18px]',
+      sendIcon: 'w-[29px] h-[29px]',
+      messageSize: 'large' as const,
     },
   };
 
   const currentStyles = sizeStyles[size];
 
   const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +109,7 @@ export default function Chat({ size = "large" }: ChatProps) {
       if (index >= prevMessages.length) {
         return (msg as Message).userName;
       } else {
-        return (msg as PrevMessage).nickname || "";
+        return (msg as PrevMessage).nickname || '';
       }
     };
 
@@ -129,18 +129,18 @@ export default function Chat({ size = "large" }: ChatProps) {
 
       try {
         const { data: users, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", user.user.id)
+          .from('users')
+          .select('*')
+          .eq('id', user.user.id)
           .single();
 
         if (error) {
-          console.error("사용자 정보 불러오기 에러:", error.message);
+          console.error('사용자 정보 불러오기 에러:', error.message);
         } else if (users?.nickname) {
           setUserName(users.nickname);
         }
       } catch (error) {
-        console.error("사용자 정보 불러오기 실패:", error);
+        console.error('사용자 정보 불러오기 실패:', error);
       }
     };
 
@@ -149,18 +149,18 @@ export default function Chat({ size = "large" }: ChatProps) {
 
       try {
         const { data: messagesData, error } = await supabase
-          .from("messages")
-          .select("*")
-          .eq("game_id", game.id)
-          .order("created_at", { ascending: true });
+          .from('messages')
+          .select('*')
+          .eq('game_id', game.id)
+          .order('created_at', { ascending: true });
 
         if (error) {
-          console.error("메시지 불러오기 에러:", error.message);
+          console.error('메시지 불러오기 에러:', error.message);
         } else if (messagesData) {
           setPrevMessages(messagesData);
         }
       } catch (error) {
-        console.error("메시지 불러오기 실패:", error);
+        console.error('메시지 불러오기 실패:', error);
       }
     };
 
@@ -174,7 +174,7 @@ export default function Chat({ size = "large" }: ChatProps) {
     const gameChannel = supabase.channel(`chat-${game.id}`);
 
     gameChannel
-      .on("broadcast", { event: "shout" }, (payload) => {
+      .on('broadcast', { event: 'shout' }, (payload) => {
         const res = payload.payload;
         setMessages((prev) => [
           ...prev,
@@ -194,7 +194,7 @@ export default function Chat({ size = "large" }: ChatProps) {
       try {
         supabase.removeChannel(gameChannel);
       } catch (error) {
-        console.error("채널 제거 실패:", error);
+        console.error('채널 제거 실패:', error);
       }
     };
   }, [game?.id, user.user?.user_metadata?.full_name]);
@@ -219,15 +219,15 @@ export default function Chat({ size = "large" }: ChatProps) {
     ]);
 
     channelRef.current?.send({
-      type: "broadcast",
-      event: "shout",
+      type: 'broadcast',
+      event: 'shout',
       payload: newMessage,
     });
 
-    setMessage("");
+    setMessage('');
 
     try {
-      const { error } = await supabase.from("messages").insert([
+      const { error } = await supabase.from('messages').insert([
         {
           game_id: game.id,
           player_id: user.user.id,
@@ -237,10 +237,10 @@ export default function Chat({ size = "large" }: ChatProps) {
       ]);
 
       if (error) {
-        console.error("메시지 전송 실패:", error.message);
+        console.error('메시지 전송 실패:', error.message);
       }
     } catch (error) {
-      console.error("메시지 저장 실패:", error);
+      console.error('메시지 저장 실패:', error);
     }
   };
 
@@ -251,14 +251,14 @@ export default function Chat({ size = "large" }: ChatProps) {
       </div>
 
       <div className={currentStyles.chatArea}>
-        {size === "small" ? (
+        {size === 'small' ? (
           <div className="py-2 space-y-2">
             {prevMessages.map((msg, index) => {
               const showProfile = shouldShowProfile(index);
               return (
                 <div key={`prev-${msg.id}-${index}`}>
                   <ChatMessage
-                    userName={msg.nickname || "알수없음"}
+                    userName={msg.nickname || '알수없음'}
                     message={msg.content}
                     isMine={msg.player_id === user.user?.id}
                     size={currentStyles.messageSize}
@@ -275,7 +275,7 @@ export default function Chat({ size = "large" }: ChatProps) {
               return (
                 <div key={`real-${index}`}>
                   <ChatMessage
-                    userName={msg.userName || "알수없음"}
+                    userName={msg.userName || '알수없음'}
                     message={msg.message}
                     isMine={msg.isMine}
                     size={currentStyles.messageSize}
@@ -290,7 +290,7 @@ export default function Chat({ size = "large" }: ChatProps) {
             {prevMessages.map((msg, index) => (
               <ChatMessage
                 key={`prev-${msg.id}-${index}`}
-                userName={msg.nickname || "알수없음"}
+                userName={msg.nickname || '알수없음'}
                 message={msg.content}
                 isMine={msg.player_id === user.user?.id}
                 size={currentStyles.messageSize}
@@ -301,7 +301,7 @@ export default function Chat({ size = "large" }: ChatProps) {
             {messages.map((msg, index) => (
               <ChatMessage
                 key={`real-${index}`}
-                userName={msg.userName || "알수없음"}
+                userName={msg.userName || '알수없음'}
                 message={msg.message}
                 isMine={msg.isMine}
                 size={currentStyles.messageSize}

@@ -3,13 +3,14 @@ import pawPencil from '../../assets/images/paw_pencil_big.svg';
 import doodle from '../../assets/images/background_doodle4.svg';
 import NavWithExit from '../../components/common/NavWithExit';
 import LabeledInput from '../../components/common/LabeledInput';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGameTimerStore } from '../../stores/gameTimerStore';
 import { useNavigate } from 'react-router-dom';
 import GameTimer from '../../components/game/GameTimer';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
+import toast from 'react-hot-toast';
 
 export default function MultiModeWords() {
   const { user } = useAuthStore();
@@ -21,6 +22,10 @@ export default function MultiModeWords() {
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  // const [isComplete, setIsComplete] = useState(
+  //   useGameRoomStore.getState().complete
+  // );
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
@@ -63,6 +68,13 @@ export default function MultiModeWords() {
         if (dataGame) {
           console.log('complete players 업데이트 완료:', dataGame);
           setIsComplete(true);
+
+          // useGameRoomStore.getState().changeComplete(1);
+          // console.log(
+          //   'useGameRoomStore Complete:',
+          //   useGameRoomStore.getState().complete
+          // );
+          // setIsComplete(useGameRoomStore.getState().complete);
         }
         if (errorGame) {
           console.log('complete players 업데이트 실패');
@@ -73,6 +85,20 @@ export default function MultiModeWords() {
     if (error) {
       console.log('저장 실패');
       console.error(error);
+    }
+  };
+
+  let lastEnterTime = 0;
+  const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const now = Date.now();
+      if (now - lastEnterTime < 500) return;
+
+      lastEnterTime = now;
+
+      e.preventDefault();
+      checkValidation();
+      // saveWords(true);
     }
   };
 
@@ -112,6 +138,11 @@ export default function MultiModeWords() {
   };
 
   useEffect(() => {
+    useGameRoomStore.getState().loadGameFromSession();
+    useGameRoomStore.getState().loadPlayerFromSession();
+    useGameRoomStore.getState().loadTurnFromSession();
+    // useGameRoomStore.getState().loadCompleteFromSession();
+
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
       .on(
@@ -145,11 +176,12 @@ export default function MultiModeWords() {
   }, [game?.id]);
 
   useEffect(() => {
-    useGameRoomStore.getState().loadGameFromSession();
-    useGameRoomStore.getState().loadPlayerFromSession();
-    useGameRoomStore.getState().loadTurnFromSession();
+    // useGameRoomStore.getState().loadGameFromSession();
+    // useGameRoomStore.getState().loadPlayerFromSession();
+    // useGameRoomStore.getState().loadTurnFromSession();
+    toast.success('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
 
-    setTime(90);
+    setTime(60);
     const timer = setInterval(() => {
       decrease();
     }, 1000);
@@ -167,6 +199,10 @@ export default function MultiModeWords() {
     }
   }, [timeLeft]);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
       <NavWithExit title={game?.room_name} />
@@ -179,7 +215,7 @@ export default function MultiModeWords() {
             <div className="font-semibold text-[22px]">
               다른 플레이어가 그릴 제시어를 설정해주세요.
             </div>
-            <LabeledInput
+            {/* <LabeledInput
               value={word}
               onChange={(e) => {
                 setWord(e.target.value);
@@ -188,6 +224,20 @@ export default function MultiModeWords() {
               title=""
               invalidMessage="한 단어로 설정해주세요."
               isInvalid={invalid}
+              placeholder="제시어 입력"
+              className="w-[500px] h-[50px] pr-[50px]"
+            /> */}
+            <LabeledInput
+              ref={inputRef}
+              value={word}
+              onChange={(e) => {
+                setWord(e.target.value);
+                setInvalid(false);
+              }}
+              title=""
+              invalidMessage="한 글자 이상 입력해주세요."
+              isInvalid={invalid}
+              onKeyDown={keyDownHandler}
               placeholder="제시어 입력"
               className="w-[500px] h-[50px] pr-[50px]"
             />
@@ -200,7 +250,7 @@ export default function MultiModeWords() {
               {isComplete ? '제출 완료' : '제출'}
             </Button>
           </div>
-          <GameTimer totalTime={90} />
+          <GameTimer totalTime={60} />
         </div>
       </div>
       <img
