@@ -169,7 +169,7 @@ export default function Chat({ size = "large" }: ChatProps) {
   }, [user.user?.id, game?.id]);
 
   useEffect(() => {
-    if (!game?.id || !user.user?.user_metadata?.full_name) return;
+    if (!game?.id) return;
 
     const gameChannel = supabase.channel(`chat-${game.id}`);
 
