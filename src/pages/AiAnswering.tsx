@@ -36,7 +36,13 @@ export default function AiAnswering() {
       setImageUrl(data.publicUrl);
     };
 
-    fetchImage();
+    const timer = setTimeout(() => {
+      fetchImage();
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [filename]);
 
   useEffect(() => {
@@ -61,7 +67,12 @@ export default function AiAnswering() {
       }
     };
 
-    predict();
+    const timer = setTimeout(() => {
+      predict();
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [imageUrl, imageReady]);
 
   useEffect(() => {
