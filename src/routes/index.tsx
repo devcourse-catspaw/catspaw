@@ -1,16 +1,17 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import Home from "../pages/Home";
 import GameModeSelect from "../pages/game/GameModeSelect";
 import GameLayout from "./layouts/GameLayout";
 import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
-import useAuthInit from "./../utils/useAuthInit";
+import Lounge from "../pages/Lounge";
 import LoungeLayout from "./layouts/LoungeLayout";
+import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
+import useAuthInit from "./../utils/useAuthInit";
 import LoungeDetail from "../pages/lounge/LoungeDetail";
+
+const AddPost = () => <div>개발 중입니다.</div>;
+const EditPost = () => <div>개발 중입니다.</div>;
 
 const router = createBrowserRouter([
   {
@@ -45,9 +46,10 @@ const router = createBrowserRouter([
     path: "/lounge",
     element: <LoungeLayout />,
     children: [
-      // { index: true, element: <Lounge /> },
-      { path: "/:id", element: <LoungeDetail /> },
-      // { path: "add-post", element: <AddPost /> },
+      { index: true, element: <Lounge />, loader: fetchPosts },
+      { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },
+      { path: "add-post", element: <AddPost /> },
+      { path: "edit-post", element: <EditPost /> },
     ],
   },
 ]);

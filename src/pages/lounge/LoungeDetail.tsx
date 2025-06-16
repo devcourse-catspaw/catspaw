@@ -4,48 +4,89 @@ import Writer from "../../components/lounge/Writer";
 import kisu from "../../assets/images/kisu_.svg";
 import Spring from "../../assets/images/spring_big.svg?react";
 import Back from "../../assets/images/icon_back_page.svg?react";
-import backImg from "../../assets/images/background_doodle_2.svg";
-import { useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { twMerge } from "tailwind-merge";
+import { format } from "date-fns";
+import { useAuthStore } from "../../stores/authStore";
+
 const cardLayout =
   "w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ";
+// export type PostDetail = NonNullable<
+//   Awaited<ReturnType<typeof fetchPostDetail>>
+// >;
+
+type PostDetail = {
+  content: string;
+  created_at: string;
+  id: number;
+  images: string[] | null;
+  title: string;
+  updated_at: string;
+  user_id: string;
+  users: {
+    avatar: string | null;
+    created_at: string;
+    email: string | null;
+    id: string;
+    nickname: string;
+  };
+  comments: {
+    content: string;
+    created_at: string;
+    id: number;
+    post_id: number;
+    updated_at: string;
+    user_id: string;
+  }[];
+  likes:
+    | {
+        created_at: string;
+        id: number;
+        post_id: number | null;
+        user_id: string | null;
+      }[];
+};
 
 export default function LoungeDetail() {
+  const post = useLoaderData<PostDetail>();
+  const user = useAuthStore((state) => state.user);
+
+  const comments = post.comments ?? [];
+  const isLiked = post.likes.some((like) => like.user_id === user?.id);
+
   const navigate = useNavigate();
 
   return (
-    <div className="relative overflow-hidden py-[94px]">
-      <img
-        src={backImg}
-        alt="배경이미지"
-        className="-z-10 absolute inset-0 w-full h-full "
-      />
-      <div className="flex justify-center">
-        <div className="relative overflow-visible">
-          <Spring className="w-[1078px] absolute -top-8  z-1 text-[var(--black)]" />
-          <div
-            className={twMerge(
-              cardLayout,
-              "px-[100px] py-[94px] gap-8 bg-[var(--white)]"
-            )}>
-            <div className="w-[840px] flex items-start pb-[32px]">
-              <Back
-                className="w-[65px] h-[23px]  text-[var(--black)] cursor-pointer"
-                onClick={() => navigate(-1)}
-              />
-            </div>
-
-            <Writer avatar={kisu} userName="김용명씨" date="2025.06.10" />
-
-            <Contents
-              title="작업 다 날린거 실화?"
-              content="진짜 열심히 했는데 작업 다날림... 진짜.. 너무 ..열심히 했는데... 페이지 하나 퍼블리싱 하나 했는데...... 다 어디갔어...어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉어어엉어어어어어엉ㅇ어엉 "
-              isLiked={false}
-              likeCount={10}
-              commentsCount={1}
+    <div className="flex justify-center">
+      <div className="relative overflow-visible">
+        <Spring className="w-[1078px] absolute -top-8  z-1 text-[var(--black)]" />
+        <div
+          className={twMerge(
+            cardLayout,
+            "px-[100px] py-[94px] gap-8 bg-[var(--white)]"
+          )}>
+          <div className="w-[840px] flex items-start pb-[32px]">
+            <Back
+              className="w-[65px] h-[23px]  text-[var(--black)] cursor-pointer"
+              onClick={() => navigate(-1)}
             />
-            <Comments />
           </div>
+
+          <Writer
+            avatar={post.users.avatar || kisu}
+            userName={post.users.nickname}
+            date={format(new Date(post.created_at), "yyyy.MM.dd")}
+          />
+
+          <Contents
+            title={post.title}
+            content={post.content}
+            isLiked={isLiked}
+            postId={post.id}
+            likeCount={post.likes?.length ?? 0}
+            commentsCount={post.comments ? post.comments.length : 0}
+          />
+          <Comments postId={post.id} initialComments={comments} />
         </div>
       </div>
     </div>
