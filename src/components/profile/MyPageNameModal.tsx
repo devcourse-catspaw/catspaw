@@ -17,6 +17,17 @@ export default function MyPageNameModal({
     onSubmit(changedName)
     onClose()
   }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value
+
+    const isKorean = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(input)
+
+    if (isKorean && input.length > 8) return
+    if (!isKorean && input.length > 10) return
+
+    setChangedName(input)
+  }
   return (
     <>
       <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-[1000]">
@@ -32,7 +43,8 @@ export default function MyPageNameModal({
           </span>
           <div className="flex flex-col gap-[5px] justify-center items-center">
             <BaseInput
-              onChange={(e) => setChangedName(e.target.value)}
+              value={changedName ?? ''}
+              onChange={handleInputChange}
               className="w-[185px] h-[50px]"
               placeholder="닉네임 입력"
             />
