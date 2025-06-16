@@ -25,10 +25,25 @@ export default function FriendRequsetDiv() {
     if (!userId) return
     const { data, error } = await supabase
       .from('friend_requests')
-      .select('id, sender_id, receiver_id, status') // 필요한 컬럼만 선택
-      .eq('receiver_id', userId)
-
-    console.log('요청 목록:', data)
+      .select(
+        `
+        id,
+        sender_id,
+        receiver_id,
+        status,
+        sender:sender_id (
+          id,
+          nickname,
+          avatar
+        ),
+        receiver:receiver_id (
+          id,
+          nickname,
+          avatar
+        )
+      `
+      )
+      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
     if (!error) {
       setRequests(data)
     }
@@ -41,7 +56,7 @@ export default function FriendRequsetDiv() {
   useEffect(() => {
     if (!userId) return
     console.log(userId)
-    const channel = supabase
+    const receiveChannel = supabase
       .channel('friend-requests')
       .on(
         'postgres_changes',
@@ -52,14 +67,32 @@ export default function FriendRequsetDiv() {
           filter: `receiver_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('실시간 변경:', payload)
+          console.log('받은 요청 변경:', payload)
+          fetchFriendRequests()
+        }
+      )
+      .subscribe()
+
+    const sendChannel = supabase
+      .channel('friend-requests-send')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'friend_requests',
+          filter: `sender_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log('보낸 요청 변경', payload)
           fetchFriendRequests()
         }
       )
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      supabase.removeChannel(receiveChannel)
+      supabase.removeChannel(sendChannel)
     }
   }, [userId])
 
@@ -80,14 +113,33 @@ export default function FriendRequsetDiv() {
         </SubnavItem>
       </div>
       {activeTab == 'tab1' && (
-        <div className="w-full flex flex-col divide-y-1 divide-[var(--grey-100)]"></div>
-      )}
-      {activeTab == 'tab2' && (
         <div className="w-full flex flex-col divide-y-1 divide-[var(--grey-100)]">
           {requests
             .filter((r) => r.sender_id === userId)
             .map((req) => (
-              <FriendList key={req.id} userId={req.receiver_id} />
+              <FriendList
+                key={req.id}
+                userId={req.receiver_id}
+                userCharacter={req.receiver?.avatar}
+                userName={req.receiver?.nickname}
+                status={req.status}
+                type="sent" // 예: 보낸 요청이라는 의미로 prop 전달
+              />
+            ))}
+        </div>
+      )}
+      {activeTab == 'tab2' && (
+        <div className="w-full flex flex-col divide-y-1 divide-[var(--grey-100)]">
+          {requests
+            .filter((r) => r.receiver_id === userId)
+            .map((req) => (
+              <FriendList
+                key={req.id}
+                userId={req.sender_id}
+                userCharacter={req.sender?.avatar}
+                userName={req.sender?.nickname}
+                type="received"
+              />
             ))}
         </div>
       )}

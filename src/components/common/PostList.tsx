@@ -14,7 +14,7 @@ export default function PostList({ postTitle, comments, date }: PostListProps) {
           </span>
           <span className="text-[12px]">[{comments}]</span>
         </div>
-        <div className="text-[12px]">{date}</div>
+        <div className="text-[12px]">{date.slice(0, 10)}</div>
       </div>
     </>
   )
