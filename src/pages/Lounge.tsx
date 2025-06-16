@@ -11,7 +11,6 @@ import {
   removeLike,
   type fetchPosts,
 } from "../routes/loader/post.loader";
-import { format } from "date-fns";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 
@@ -137,7 +136,7 @@ export default function Lounge() {
                   key={p.id}
                   postId={p.id}
                   postTitle={p.title}
-                  date={format(new Date(p.created_at), "yyyy.MM.dd")}
+                  date={p.created_at}
                   contents={p.content}
                   userName={p.users.nickname}
                   likeCount={likeCounts[p.id] ?? 0}
