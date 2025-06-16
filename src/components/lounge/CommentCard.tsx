@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { useAuthStore } from "../../stores/authStore";
 import supabase from "../../utils/supabase";
 import { format } from "date-fns";
+import TimeAgo from "./TimeAgo";
 
 type CommentCardProps = {
   id: number;
@@ -84,9 +85,7 @@ export default function CommentCard({
             alt="프로필 사진"
           />
           <span className="font-semibold text-base mr-[16px] ">{userName}</span>
-          <span className="font-medium text-xs text-[var(--grey-100)]">
-            {commentDate}
-          </span>
+          <TimeAgo timestamp={commentDate} />
         </div>
 
         {isAuthor && (
@@ -134,7 +133,7 @@ export default function CommentCard({
           <div className="flex justify-center items-center gap-2">
             <span
               className={twMerge(moreTextStyle, "cursor-pointer")}
-              onClick={() => handleComplete}>
+              onClick={() => handleComplete()}>
               완료
             </span>
             <span className="cursor-pointer" onClick={handleCancelEdit}>
