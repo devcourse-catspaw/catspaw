@@ -91,12 +91,13 @@ export default function Lounge() {
     setLikeCounts(counts);
   };
 
-  const notify = (e: React.MouseEvent) => {
+  const handleAddPostClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      navigate("/login");
+      toast("로그인 후 이용해주세요.");
+      return;
     }
-    toast("로그인 후 이용해주세요.");
+    navigate("/lounge/add-post");
   };
 
   return (
@@ -154,8 +155,8 @@ export default function Lounge() {
         </div>
 
         <Link
-          onClick={notify}
           to="/lounge/add-post"
+          onClick={handleAddPostClick}
           className="fixed bottom-10 right-10 w-[80px] h-[80px] border-2 rounded-full shadow-[0px_5px_0px_var(--black)] bg-[var(--white)] flex items-center justify-center z-50">
           <Pen className="text-[var(--black)] w-[40px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
         </Link>
