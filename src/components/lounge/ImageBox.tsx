@@ -1,4 +1,4 @@
-import deleteIcon from "../../../assets/images/icon_cancel.svg";
+import deleteIcon from "../../assets/images/icon_cancel.svg";
 
 type Props = {
   image: string;
