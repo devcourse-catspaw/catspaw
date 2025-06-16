@@ -7,6 +7,7 @@ import Typo from "../../assets/images/logo_typo.svg?react";
 import kisu from "../../assets/images/kisu_.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TimeAgo from "../lounge/TimeAgo";
 
 type PostCardProps = {
   postId: number;
@@ -19,6 +20,7 @@ type PostCardProps = {
   isLiked: boolean;
   avatar?: string;
   springImg: "yes" | "no";
+  onLike?: () => void;
 };
 
 const cardLayout =
@@ -27,7 +29,7 @@ const titleStyle =
   "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
-const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
+// const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
 const likeCountStyle = "text-[var(--black)] text-sm font-bold";
 
 export default function PostCard({
@@ -41,7 +43,8 @@ export default function PostCard({
   isLiked,
   avatar,
   springImg,
-}: PostCardProps) {
+}: // onLike,
+PostCardProps) {
   const [liked, setLiked] = useState(isLiked);
   const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
@@ -87,7 +90,7 @@ export default function PostCard({
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
               onClick={goToDetail}>
               <span className={twMerge(titleStyle)}>{postTitle}</span>
-              <span className={dateStyle}>{date}</span>
+              <TimeAgo timestamp={date} />
             </div>
             {/* 내용 */}
             <div className="flex">
