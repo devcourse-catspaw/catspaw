@@ -12,6 +12,7 @@ type ContentsType = {
   likeCount: number;
   commentsCount: number;
   postId: number;
+  images?: string[];
 };
 
 export default function Contents({
@@ -21,6 +22,7 @@ export default function Contents({
   likeCount,
   commentsCount,
   postId,
+  images,
 }: ContentsType) {
   const user = useAuthStore((state) => state.user);
 
@@ -49,6 +51,15 @@ export default function Contents({
         {/* title + content */}
         <div className="w-[840px] flex flex-col px-[16px] gap-[24px]">
           <div className="w-[808px] h-[25px] text-xl font-bold">{title}</div>
+          <ul>
+            {images &&
+              images.map((img) => (
+                <li key={img}>
+                  {" "}
+                  <img src={img} alt="" />
+                </li>
+              ))}
+          </ul>
           <div className="w-[808px] font-medium text-sm overflow-wrap">
             {content}
           </div>

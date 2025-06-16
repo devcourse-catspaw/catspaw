@@ -81,6 +81,7 @@ export default function LoungeDetail() {
           <Contents
             title={post.title}
             content={post.content}
+            images={post.images ?? []}
             isLiked={isLiked}
             postId={post.id}
             likeCount={post.likes?.length ?? 0}
