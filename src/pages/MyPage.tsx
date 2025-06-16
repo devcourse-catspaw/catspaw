@@ -33,7 +33,6 @@ export default function MyPage() {
   const [selectedCharacter, setSelectedCharacter] = useState<string>(null)
   const [changedName, setChangedName] = useState<string>(null)
   const [activeTab, setActiveTab] = useState('tab1')
-
   const avatarUrl = selectedCharacter
     ? `${
         import.meta.env.VITE_SUPABASE_URL
@@ -89,6 +88,23 @@ export default function MyPage() {
 
     // 상태도 업데이트 (선택적으로 user 상태에도 반영 가능)
     setUser((prev) => prev && { ...prev, avatar: selectedImageName })
+  }
+
+  const handleNameChange = async (newName: string) => {
+    if (!user) return
+
+    const { error } = await supabase
+      .from('users')
+      .update({ nickname: newName })
+      .eq('id', user.id)
+
+    if (error) {
+      console.error('닉네임 업데이트 실패:', error)
+      return
+    }
+
+    setChangedName(newName)
+    setUser((prev) => prev && { ...prev, nickname: newName })
   }
 
   const loadMorePosts = useCallback(async () => {
@@ -153,7 +169,7 @@ export default function MyPage() {
       )}
       {isNameModalOpen && (
         <MyPageNameModal
-          onSubmit={(name) => setChangedName(name)}
+          onSubmit={handleNameChange}
           onClose={() => setIsNameModalOpen(false)}
         />
       )}
