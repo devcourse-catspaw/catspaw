@@ -2,6 +2,8 @@ import { useState } from "react";
 import like from "../../assets/images/icon_like.svg";
 import likeFilled from "../../assets/images/icon_like_filled.svg";
 import { twMerge } from "tailwind-merge";
+import { useAuthStore } from "../../stores/authStore";
+import { addLike, removeLike } from "../../routes/loader/post.loader";
 
 type ContentsType = {
   title: string;
@@ -9,6 +11,7 @@ type ContentsType = {
   isLiked: boolean;
   likeCount: number;
   commentsCount: number;
+  postId: number;
 };
 
 export default function Contents({
@@ -17,12 +20,23 @@ export default function Contents({
   isLiked,
   likeCount,
   commentsCount,
+  postId,
 }: ContentsType) {
+  const user = useAuthStore((state) => state.user);
+
   const [liked, setLiked] = useState(isLiked);
   const [count, setCount] = useState(likeCount);
 
   // 좋아요 핸들러
-  const handleLikeClick = () => {
+  const handleLikeClick = async (postId: number) => {
+    if (!user) return;
+
+    if (liked) {
+      await removeLike(postId, user.id);
+    } else {
+      await addLike(postId, user.id);
+    }
+
     setLiked((prev) => !prev);
     setCount((prev) => prev + (liked ? -1 : +1));
   };
@@ -47,7 +61,7 @@ export default function Contents({
               className="w-[24px] h-[24px] cursor-pointer"
               src={liked ? likeFilled : like}
               alt={liked ? "좋아요 취소" : "좋아요"}
-              onClick={handleLikeClick}
+              onClick={() => handleLikeClick(postId)}
             />
             <span className={twMerge(likeCountStyle)}>{count}</span>
           </div>
