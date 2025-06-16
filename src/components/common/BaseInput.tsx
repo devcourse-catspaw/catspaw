@@ -1,16 +1,17 @@
-import type { InputHTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
+import type { InputHTMLAttributes } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 type BaseInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  className?: string;
-};
+  className?: string
+  placeholder?: string
+}
 export default function BaseInput({
   className,
-  placeholder = "제시어 입력",
+  placeholder = '제시어 입력',
   ...props
 }: BaseInputProps) {
   const baseInputStyle =
-    "border-2 border-[color:var(--black)] px-4 py-3 rounded-[6px] w-full text-lg";
+    'border-2 border-[color:var(--black)] px-4 py-3 rounded-[6px] w-full text-lg'
   return (
     <input
       type="text"
@@ -18,5 +19,5 @@ export default function BaseInput({
       placeholder={placeholder}
       {...props}
     />
-  );
+  )
 }

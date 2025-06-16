@@ -5,6 +5,7 @@ import FriendList from '../components/common/FriendList'
 import kisu from '../assets/images/kisu_.svg'
 import icon_pencil from '../assets/images/icon_pencil.svg'
 import PostList from '../components/common/PostList'
+import TabButton from '../components/profile/TabButton'
 export default function UserPage() {
   const navigate = useNavigate()
   return (
@@ -45,6 +46,7 @@ export default function UserPage() {
                 </span>
               </div>
             </div>
+            <TabButton>게시글</TabButton>
             <div className="border-t-2 w-full divide-y divide-[var(--grey-100)]">
               <PostList />
               <PostList />

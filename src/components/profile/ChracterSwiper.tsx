@@ -1,8 +1,8 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper-bundle.css'
-import kisu from '../../assets/images/kisu_.svg'
+import kisu_ from '../../assets/images/kisu_.svg'
 import kisu_cap from '../../assets/images/kisu_cap.svg'
-import kisu_pipi from '../../assets/images/kisu_pippi.svg'
+import kisu_pippi from '../../assets/images/kisu_pippi.svg'
 import kisu_ribbon from '../../assets/images/kisu_ribbon.svg'
 import kisu_sunglasses from '../../assets/images/kisu_sunglasses.svg'
 import kisu_tie from '../../assets/images/kisu_tie.svg'
@@ -14,22 +14,23 @@ import { Navigation } from 'swiper/modules'
 export default function ChracterSwiper({
   onChange,
 }: {
-  onChange: (src: string) => void
+  onChange: (characterName: string) => void
 }) {
   const kisuArray = [
-    kisu,
-    kisu_cap,
-    kisu_pipi,
-    kisu_ribbon,
-    kisu_sunglasses,
-    kisu_tie,
+    { name: 'kisu_.svg', src: kisu_ },
+    { name: 'kisu_cap.svg', src: kisu_cap },
+    { name: 'kisu_pippi.svg', src: kisu_pippi },
+    { name: 'kisu_ribbon.svg', src: kisu_ribbon },
+    { name: 'kisu_sunglasses.svg', src: kisu_sunglasses },
+    { name: 'kisu_tie.svg', src: kisu_tie },
   ]
+
   const [activeIndex, setActiveIndex] = useState(0)
   const prevRef = useRef(null)
   const nextRef = useRef(null)
 
   useEffect(() => {
-    onChange(kisuArray[activeIndex])
+    onChange(kisuArray[activeIndex].name)
   }, [activeIndex])
 
   return (
@@ -64,10 +65,10 @@ export default function ChracterSwiper({
           }}
           className="mySwiper absolute w-full flex justify-center items-center"
         >
-          {kisuArray.map((src, i) => (
+          {kisuArray.map((img, i) => (
             <SwiperSlide key={i} className="size-[117px]">
               <img
-                src={src}
+                src={img.src}
                 className={`w-full ease-in-out ${
                   activeIndex === i
                     ? 'opacity-100 scale-100'
