@@ -4,6 +4,7 @@ import sparklers from '../../../assets/images/birthday_sparklers.svg'
 import { ScrollTrigger } from 'gsap/all'
 import { useEffect, useRef, useState } from 'react'
 import supabase from '../../../utils/supabase'
+import crown from '../../../assets/images/crown.svg'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -12,26 +13,17 @@ export default function MainLank() {
   const imgRef = useRef<HTMLImageElement>(null)
   const sparklerLeftRef = useRef<HTMLImageElement>(null)
   const sparklerRightRef = useRef<HTMLImageElement>(null)
+  const rankerNameRef = useRef<HTMLDivElement>(null)
+  const rankerAvatarRef = useRef<HTMLDivElement>(null)
   const [ranking, setRanking] = useState([])
+  const customOrder = [1, 0, 2]
 
   useEffect(() => {
     const fetchRanking = async () => {
-      const { data, error } = await supabase
-        .from('game_scores')
-        .select(
-          `
-          score,
-          users (
-            nickname,
-            avatar
-          )
-        `
-        )
-        .order('score', { ascending: false })
-        .limit(3)
+      const { data, error } = await supabase.rpc('get_top_3_user_scores')
 
       if (error) {
-        console.error('랭킹 불러오기 실패:', error)
+        console.error(error)
       } else {
         setRanking(data)
         console.log(data)
@@ -46,6 +38,8 @@ export default function MainLank() {
     const imgPosition = imgRef.current
     const sparklerLeft = sparklerLeftRef.current
     const sparklerRight = sparklerRightRef.current
+    const rankerNameArea = rankerNameRef.current
+    const rankerAvatarArea = rankerAvatarRef.current
 
     gsap.to(imgPosition, {
       scrollTrigger: {
@@ -54,18 +48,39 @@ export default function MainLank() {
         end: 'bottom bottom',
         scrub: 1,
       },
-      y: '-300px',
+      y: '-80vh',
+    })
+    gsap.to(rankerNameArea, {
+      scrollTrigger: {
+        trigger: divArea,
+        start: 'top center',
+        end: 'bottom bottom',
+        scrub: 3,
+      },
+      y: '-80vh',
+    })
+
+    gsap.set(rankerAvatarArea, {
+      opacity: 0,
+    })
+    gsap.to(rankerAvatarArea, {
+      scrollTrigger: {
+        trigger: divArea,
+        start: 'top center',
+        end: 'bottom bottom',
+        scrub: 3,
+      },
+      opacity: 1,
+      y: '30vh',
     })
 
     gsap.set([sparklerLeft], {
       x: '-10vw',
       y: '-50vh',
-      // opacity: 0,
     })
     gsap.set([sparklerRight], {
       x: '10vw',
       y: '-50vh',
-      // opacity: 0,
     })
     gsap.to(sparklerLeft, {
       scrollTrigger: {
@@ -76,7 +91,6 @@ export default function MainLank() {
       },
       x: '8vw',
       y: '0',
-      // opacity: 1,
     })
     gsap.to(sparklerRight, {
       scrollTrigger: {
@@ -106,13 +120,54 @@ export default function MainLank() {
           src={sparklers}
           className="absolute w-[10vw] top-[20vh] right-0 -scale-x-100"
         />
+        <div>
+          <img src={crown} alt="crown" className="size-[90px]" />
+        </div>
+        <div
+          ref={rankerAvatarRef}
+          className="w-[50vw] absolute top-[-50vh] flex justify-between "
+        >
+          {customOrder.map((i) => {
+            const ranker = ranking[i]
+            if (!ranker) return null
+            const avatarUrl = `${
+              import.meta.env.VITE_SUPABASE_URL
+            }/storage/v1/object/public/avatar-image/${ranker.avatar}`
+
+            const avatarClass = [
+              'size-[150px] relative -translate-y-[5vh]',
+              'size-[150px] relative translate-y-[15vh]',
+              'size-[150px] relative translate-y-[20vh]',
+            ][i]
+
+            return <img key={i} src={avatarUrl} className={avatarClass} />
+          })}
+        </div>
 
         <img
           ref={imgRef}
           src={main_rank}
           alt="rank"
-          className="w-[50vw] absolute bottom-[-200px]"
+          className="w-[50vw] absolute bottom-[-50vh]"
         />
+        <div
+          ref={rankerNameRef}
+          className="w-[50vw] absolute bottom-[-60vh] flex justify-between"
+        >
+          {customOrder.map((i) => {
+            const ranker = ranking[i]
+            if (!ranker) return null
+
+            return (
+              <span
+                key={i}
+                className="font-semibold text-[30px] text-center w-1/3"
+              >
+                {ranker.nickname}
+              </span>
+            )
+          })}
+        </div>
       </div>
     </>
   )
