@@ -7,6 +7,7 @@ import Back from "../../assets/images/icon_back_page.svg?react";
 import { useLoaderData, useNavigate } from "react-router";
 import { twMerge } from "tailwind-merge";
 import { useAuthStore } from "../../stores/authStore";
+import { useState } from "react";
 
 const cardLayout =
   "w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ";
@@ -49,6 +50,8 @@ type PostDetail = {
 export default function LoungeDetail() {
   const post = useLoaderData<PostDetail>();
   const user = useAuthStore((state) => state.user);
+
+  const [commentsCount, setCommentsCount] = useState(post.comments.length);
 
   const allowedAvatars = [
     "kisu_.svg",
@@ -93,15 +96,18 @@ export default function LoungeDetail() {
           />
 
           <Contents
-            images={post.images ?? ""}
+            images={post.images ?? []}
             title={post.title}
             content={post.content}
             isLiked={isLiked}
             postId={post.id}
             likeCount={post.likes?.length ?? 0}
-            commentsCount={post.comments ? post.comments.length : 0}
+            commentsCount={commentsCount}
           />
-          <Comments />
+          <Comments
+            onAddComment={() => setCommentsCount((c) => c + 1)}
+            onDeleteComment={() => setCommentsCount((c) => c - 1)}
+          />
         </div>
       </div>
     </div>

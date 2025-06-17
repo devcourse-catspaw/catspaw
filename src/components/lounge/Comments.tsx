@@ -15,7 +15,13 @@ export type PostDetail = NonNullable<
 // 댓글 하나 타입은 PostDetail.comments 요소 타입
 type CommentRow = PostDetail["comments"][number];
 
-export default function Comments() {
+export default function Comments({
+  onAddComment,
+  onDeleteComment,
+}: {
+  onAddComment: () => void;
+  onDeleteComment: () => void;
+}) {
   const user = useAuthStore((state) => state.user);
   // loader에서 post.comments, post.id 모두 가져옵니다
   const post = useLoaderData<PostDetail>();
@@ -47,6 +53,7 @@ export default function Comments() {
 
     // data 타입이 CommentRow 이므로 바로 추가 가능
     setComments((prev) => [...prev, data]);
+    onAddComment();
     setNewComment("");
   };
 
@@ -62,9 +69,10 @@ export default function Comments() {
             avatar={c.users.avatar ?? kisu}
             date={c.updated_at}
             comment={c.content}
-            onDelete={(deletedId: number) =>
-              setComments((prev) => prev.filter((x) => x.id !== deletedId))
-            }
+            onDelete={(deletedId) => {
+              setComments((prev) => prev.filter((x) => x.id !== deletedId));
+              onDeleteComment();
+            }}
           />
         ))}
       </div>
