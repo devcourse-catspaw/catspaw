@@ -23,12 +23,22 @@ export default function Comments({
   onDeleteComment: () => void;
 }) {
   const user = useAuthStore((state) => state.user);
+
   // loader에서 post.comments, post.id 모두 가져옵니다
   const post = useLoaderData<PostDetail>();
   const { comments: initialComments = [], id: postId } = post;
 
   const [comments, setComments] = useState<CommentRow[]>(initialComments);
   const [newComment, setNewComment] = useState("");
+
+  const allowedAvatars = [
+    "kisu_.svg",
+    "kisu_ribbon.svg",
+    "kisu_sunglasses.svg",
+    "kisu_cap.svg",
+    "kisu_pippi.svg",
+    "kisu_tie.svg",
+  ];
 
   const handleAddComment = async () => {
     if (!user || !newComment.trim()) return;
@@ -60,21 +70,34 @@ export default function Comments({
   return (
     <div className="flex flex-col gap-[40px]">
       <div className="flex flex-col divide-y divide-[var(--grey-100)]">
-        {comments.map((c) => (
-          <CommentCard
-            key={c.id}
-            id={c.id}
-            userId={c.users.id}
-            userName={c.users.nickname}
-            avatar={c.users.avatar ?? kisu}
-            date={c.updated_at}
-            comment={c.content}
-            onDelete={(deletedId) => {
-              setComments((prev) => prev.filter((x) => x.id !== deletedId));
-              onDeleteComment();
-            }}
-          />
-        ))}
+        {comments.map((c) => {
+          const rawAvatar = c.users.avatar;
+
+          const avatarFile =
+            rawAvatar && allowedAvatars.includes(rawAvatar)
+              ? rawAvatar
+              : "kisu_.svg";
+
+          const avatarSrc = `${
+            import.meta.env.VITE_SUPABASE_URL
+          }/storage/v1/object/public/avatar-image/${avatarFile}`;
+
+          return (
+            <CommentCard
+              key={c.id}
+              id={c.id}
+              userId={c.users.id}
+              userName={c.users.nickname}
+              avatar={avatarSrc}
+              date={c.updated_at}
+              comment={c.content}
+              onDelete={(deletedId) => {
+                setComments((prev) => prev.filter((x) => x.id !== deletedId));
+                onDeleteComment();
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* 댓글 입력 */}
