@@ -24,6 +24,17 @@ import toast from "react-hot-toast";
 export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
+// export const fetchUserInfo = async () => {
+//   try {
+//     const { data: users } = await supabase.from("users").select(`
+//     *
+//   `);
+//     return users;
+//   } catch (e) {
+//     console.error(e);
+//   }
+// };
+
 export default function Lounge() {
   const user = useAuthStore((state) => state.user);
   const posts = useLoaderData<Posts>();
@@ -117,13 +128,12 @@ export default function Lounge() {
     }
     navigate("/lounge/add-post");
   };
-  console.log(posts);
 
   return (
-    <div className="w-full flex justify-center ">
+    <div className="w-full flex justify-center">
       <div className="relative overflow-visible py-[94px]">
         <div className="flex flex-col px-[160px] gap-[82px] ">
-          {/* 서브탭, 검색 TODO 필터링(날짜, 인기) */}
+          {/* 서브탭, 검색 */}
           <div className="flex w-full justify-between items-center sticky top-0 z-50 bg-[var(--white)]">
             <div className="w-[210px] h-[49px] flex justify-center">
               <SubnavItem active={!isActive} onClick={activeHandler}>

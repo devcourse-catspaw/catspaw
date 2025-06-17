@@ -50,7 +50,6 @@ export default function Writer({ avatar, userName, date }: WriterType) {
   const post = useLoaderData<PostDetail>();
   const navigate = useNavigate();
 
-  console.log(user);
   const isAuthor = user?.id === post.user_id;
   const [showMenu, setShowMenu] = useState(false);
 

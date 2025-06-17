@@ -54,8 +54,6 @@ export default function PostCard({
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
   };
-  console.log(userId);
-  console.log(loginUser?.id);
 
   const goToUserPage = () => {
     if (userId === loginUser?.id) return navigate("/mypage");
