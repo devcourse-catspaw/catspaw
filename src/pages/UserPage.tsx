@@ -121,7 +121,8 @@ export default function UserPage() {
           },
           (payload) => {
             const oldRow = payload.old
-            if (isRelated(oldRow)) {
+
+            if (oldRow) {
               checkFriendStatus(user.id)
             }
           }
