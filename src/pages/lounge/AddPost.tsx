@@ -67,6 +67,9 @@ export default function AddPost() {
   };
 
   const handleSubmit = async () => {
+    if (!title.trim() || !content.trim())
+      return toast("게시물 작성 후 등록해주세요.");
+
     try {
       const imageUrls = await uploadAll();
       const { data, error } = await supabase
