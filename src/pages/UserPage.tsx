@@ -69,7 +69,7 @@ export default function UserPage() {
       fetchUserInfo()
     }
 
-    let channel: any
+    let channel: ReturnType<typeof supabase.channel> | null = null
 
     const subscribeToRealtime = async () => {
       const {
@@ -77,6 +77,15 @@ export default function UserPage() {
       } = await supabase.auth.getUser()
 
       if (!user || !userIdFromParams) return
+
+      const isRelated = (row: any) =>
+        row &&
+        [row.user_id_1, row.user_id_2, row.sender_id, row.receiver_id].includes(
+          user.id
+        ) &&
+        [row.user_id_1, row.user_id_2, row.sender_id, row.receiver_id].includes(
+          userIdFromParams
+        )
 
       channel = supabase
         .channel('user-page-friend-status')
@@ -88,20 +97,9 @@ export default function UserPage() {
             table: 'friends',
           },
           (payload) => {
-            if (
-              [
-                payload.new?.user_id_1,
-                payload.new?.user_id_2,
-                payload.old?.user_id_1,
-                payload.old?.user_id_2,
-              ].includes(user.id) &&
-              [
-                payload.new?.user_id_1,
-                payload.new?.user_id_2,
-                payload.old?.user_id_1,
-                payload.old?.user_id_2,
-              ].includes(userIdFromParams)
-            ) {
+            const newRow = payload.new as any
+            const oldRow = payload.old as any
+            if (isRelated(newRow) || isRelated(oldRow)) {
               checkFriendStatus(user.id)
             }
           }
@@ -114,20 +112,9 @@ export default function UserPage() {
             table: 'friend_requests',
           },
           (payload) => {
-            if (
-              [
-                payload.new?.sender_id,
-                payload.new?.receiver_id,
-                payload.old?.sender_id,
-                payload.old?.receiver_id,
-              ].includes(user.id) &&
-              [
-                payload.new?.sender_id,
-                payload.new?.receiver_id,
-                payload.old?.sender_id,
-                payload.old?.receiver_id,
-              ].includes(userIdFromParams)
-            ) {
+            const newRow = payload.new as any
+            const oldRow = payload.old as any
+            if (isRelated(newRow) || isRelated(oldRow)) {
               checkFriendStatus(user.id)
             }
           }
@@ -138,7 +125,9 @@ export default function UserPage() {
     subscribeToRealtime()
 
     return () => {
-      if (channel) supabase.removeChannel(channel)
+      if (channel) {
+        supabase.removeChannel(channel)
+      }
     }
   }, [userIdFromParams])
 
