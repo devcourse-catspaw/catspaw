@@ -169,7 +169,7 @@ export default function Chat({ size = 'large' }: ChatProps) {
   }, [user.user?.id, game?.id]);
 
   useEffect(() => {
-    if (!game?.id) return;
+    if (!game?.id || !userName) return;
 
     const gameChannel = supabase.channel(`chat-${game.id}`);
 
@@ -181,7 +181,7 @@ export default function Chat({ size = 'large' }: ChatProps) {
           {
             userName: res.userName,
             message: res.message,
-            isMine: res.userName === user.user?.user_metadata?.full_name,
+            isMine: res.userName === userName,
           },
         ]);
       })
@@ -197,7 +197,7 @@ export default function Chat({ size = 'large' }: ChatProps) {
         console.error('채널 제거 실패:', error);
       }
     };
-  }, [game?.id, user.user?.user_metadata?.full_name]);
+  }, [game?.id, userName]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -206,7 +206,7 @@ export default function Chat({ size = 'large' }: ChatProps) {
 
     const newMessage = {
       message: message.trim(),
-      userName: user.user?.user_metadata?.full_name ?? userName,
+      userName: userName,
     };
 
     setMessages((prev) => [
