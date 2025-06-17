@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import supabase from "../utils/supabase";
 import { useGameTimerStore } from "../stores/gameTimerStore";
 import { useAuthStore } from "../stores/authStore.ts";
+import toast from "react-hot-toast";
 
 export default function SingleModePage() {
   const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
@@ -16,6 +17,7 @@ export default function SingleModePage() {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
+    toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
     getRandomTopic();
   }, []);
 
