@@ -3,7 +3,6 @@ import Button from "../components/common/Button";
 import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import Pen from "../assets/images/icon_pencil.svg?react";
-import kisu from "../assets/images/kisu_.svg";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import {
@@ -25,6 +24,8 @@ export default function Lounge() {
 
   const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
   const [allLikes, setAllLikes] = useState<Likes>([]);
+
+  const [input, setInput] = useState("");
 
   const [isActive, setIsActive] = useState(false);
   const activeHandler = () => {
@@ -53,20 +54,30 @@ export default function Lounge() {
     loadLikes();
   }, []);
 
-  //인기순, 최신순 나열
-  const diplayed = useMemo(() => {
-    if (isActive) {
-      return posts
-        .slice()
-        .sort((a, b) => (likeCounts[b.id] || 0) - likeCounts[a.id || 0]);
-    }
-    return posts
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-  }, [posts, likeCounts, isActive]);
+  //검색필터, 인기순, 최신순
+  const filteredAndSorted = useMemo(() => {
+    const keyword = input.trim().toLowerCase();
+    const filtered =
+      keyword === ""
+        ? posts
+        : posts.filter(
+            (p) =>
+              p.title.toLowerCase().includes(keyword) ||
+              p.content.toLowerCase().includes(keyword) ||
+              p.users.nickname.toLowerCase().includes(keyword)
+          );
+    return isActive
+      ? filtered
+          .slice()
+          .sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0))
+      : filtered
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          );
+  }, [posts, likeCounts, isActive, input]);
 
   const handleLikeClick = async (postId: number) => {
     if (!user) return;
@@ -115,7 +126,11 @@ export default function Lounge() {
               </SubnavItem>
             </div>
             <div className="flex justify-between items-start gap-2 h-[40px]">
-              <BaseInput className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]" />
+              <BaseInput
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]"
+              />
               <Button
                 className="w-[64px] h-[35px] font-medium text-base px-[16px] bg-[var(--white)]"
                 onClick={() => console.log("click")}>
@@ -127,7 +142,7 @@ export default function Lounge() {
           {/* (포스트) data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
 
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
-            {diplayed.map((p) => {
+            {filteredAndSorted.map((p) => {
               const isLiked = allLikes.some(
                 (l) => l.post_id === p.id && l.user_id === user?.id
               );
@@ -142,10 +157,8 @@ export default function Lounge() {
                   userName={p.users.nickname}
                   likeCount={likeCounts[p.id] ?? 0}
                   isLiked={isLiked}
-                  avatar={p.users.avatar ?? kisu}
-                  image={
-                    p.images && p.images.length > 0 ? p.images[0] : undefined
-                  }
+                  avatar={p.users.avatar ?? undefined}
+                  image={p.images && p.images.length > 0 ? p.images[0] : ""}
                   springImg="yes"
                   onLike={() => handleLikeClick(p.id)}
                 />
