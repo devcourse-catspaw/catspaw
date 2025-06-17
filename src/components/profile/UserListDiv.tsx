@@ -16,9 +16,10 @@ export default function UserListDiv() {
     const fetchUsers = async () => {
       const { data, error } = await supabase
         .from('users')
-        .select('id, nickname, avatar')
+        .select('id, nickname, avatar, email')
       if (!error && data) {
-        setUserList(data)
+        const realNameUsers = data.filter((user) => user.email !== null)
+        setUserList(realNameUsers)
       }
     }
     fetchUsers()
