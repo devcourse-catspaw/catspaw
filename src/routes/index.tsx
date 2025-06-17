@@ -19,6 +19,7 @@ import {
   fetchExactPost,
   fetchPostDetail,
   fetchPosts,
+  fetchUsers,
 } from "./loader/post.loader";
 import useAuthInit from "./../utils/useAuthInit";
 import LoungeDetail from "../pages/lounge/LoungDetail";
@@ -81,6 +82,7 @@ const router = createBrowserRouter([
   {
     path: "/lounge",
     element: <LoungeLayout />,
+    loader: fetchUsers,
     children: [
       { index: true, element: <Lounge />, loader: fetchPosts },
       { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },

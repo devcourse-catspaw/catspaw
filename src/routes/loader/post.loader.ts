@@ -94,3 +94,14 @@ export const removeLike = async (postId: number, userId: string) => {
   if (error) console.error("removeLike error:", error);
   return !error;
 };
+
+export const fetchUsers = async () => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, nickname, avatar");
+  if (error) {
+    console.error("fetchUsers error", error);
+    throw new Response("유저 조회 실패", { status: 500 });
+  }
+  return data ?? [];
+};

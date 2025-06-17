@@ -19,12 +19,11 @@ export default function Header({
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-[60px] justify-between items-center mb-[106px] px-[80px]">
-      <div className="flex  h-[60px] justify-start items-center gap-[20px]">
-        <LogoCatPaw
-          onClick={() => navigate("/")}
-          className="w-[60px] text-[var(--black)]"
-        />
+    <div className="flex h-[60px] justify-between items-center mb-[60px] px-[80px]">
+      <div
+        onClick={() => navigate("/")}
+        className="flex  h-[60px] justify-start items-center gap-[20px]">
+        <LogoCatPaw className="w-[60px] text-[var(--black)]" />
         <span className="font-semibold text-lg text-[var(--black)]">
           {pageTitle}
         </span>
