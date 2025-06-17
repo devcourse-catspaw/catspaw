@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import logo_catpaw from '../assets/images/logo_catpaw.svg'
 import PostList from '../components/common/PostList'
 import TabButton from '../components/profile/TabButton'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -32,7 +31,7 @@ export default function UserPage() {
   const [postList, setPostList] = useState<PostInfo[]>([])
   const [friendRequestStatus, setFriendRequestStatus] =
     useState<FriendRequestStatus>('none')
-  const navigate = useNavigate()
+
   const characterUrl = `${
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/avatar-image/${character}`
@@ -276,89 +275,91 @@ export default function UserPage() {
 
   return (
     <>
-      <NavBar />
-      <div className="flex flex-col gap-[20px] px-[80px] pt-[32px] w-[100vw] h-[100vh]">
-        <div className="flex items-end gap-[37px] mx-auto">
-          <div className="flex flex-col gap-0 items-end">
-            <div className="flex gap-0 items-end">
-              <TabButton
-                isActive={activeTab === 'tab1'}
-                onClick={() => setActiveTab('tab1')}
-              >
-                친구목록
-              </TabButton>
-              <TabButton
-                isActive={activeTab === 'tab2'}
-                onClick={() => setActiveTab('tab2')}
-              >
-                유저목록
-              </TabButton>
+      <div className="w-screen h-screen flex flex-col">
+        <NavBar />
+        <div className="flex-1 flex justify-center items-center">
+          <div className="flex items-end gap-[37px] mx-auto">
+            <div className="flex flex-col gap-0 items-end">
+              <div className="flex gap-0 items-end">
+                <TabButton
+                  isActive={activeTab === 'tab1'}
+                  onClick={() => setActiveTab('tab1')}
+                >
+                  친구목록
+                </TabButton>
+                <TabButton
+                  isActive={activeTab === 'tab2'}
+                  onClick={() => setActiveTab('tab2')}
+                >
+                  유저목록
+                </TabButton>
+              </div>
+              <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px] overflow-y-auto overflow-x-hidden">
+                {activeTab == 'tab1' && (
+                  <FriendListDiv
+                    key={`${friendRequestStatus}-${userIdFromParams}`}
+                    userIdProp={userIdFromParams}
+                  />
+                )}
+                {activeTab == 'tab2' && <UserListDiv />}
+              </div>
             </div>
-            <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px] overflow-y-auto overflow-x-hidden">
-              {activeTab == 'tab1' && (
-                <FriendListDiv
-                  key={`${friendRequestStatus}-${userIdFromParams}`}
-                  userIdProp={userIdFromParams}
-                />
-              )}
-              {activeTab == 'tab2' && <UserListDiv />}
-            </div>
-          </div>
-          <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <img
-                  className="size-[92px]"
-                  src={characterUrl}
-                  alt="character"
-                />
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-[8px]">
-                    <span className="font-semibold text-[18px]">
-                      {userInfo.nickname}
+            <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <img
+                    className="size-[92px]"
+                    src={characterUrl}
+                    alt="character"
+                  />
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-[8px]">
+                      <span className="font-semibold text-[18px]">
+                        {userInfo.nickname}
+                      </span>
+                    </div>
+                    <span className="font-medium text-[12px] text-[var(--grey-100)]">
+                      {userInfo.email}
                     </span>
                   </div>
-                  <span className="font-medium text-[12px] text-[var(--grey-100)]">
-                    {userInfo.email}
-                  </span>
                 </div>
-              </div>
-              <Button
-                className="w-[134px] h-[44px] text-[18px] px-0"
-                onClick={handleFriendRequest}
-                disabled={friendRequestStatus === 'pending'}
-              >
-                {
+                <Button
+                  className="w-[134px] h-[44px] text-[18px] px-0"
+                  onClick={handleFriendRequest}
+                  disabled={friendRequestStatus === 'pending'}
+                >
                   {
-                    none: '친구신청',
-                    pending: '신청됨',
-                    accepted: '친구끊기',
-                    rejected: '친구신청',
-                  }[friendRequestStatus]
-                }
-              </Button>
-            </div>
-            <div className="flex flex-col gap-0 overflow-hidden flex-1">
-              <TabButton>게시글</TabButton>
-              <div
-                id="scrollableDiv"
-                className="flex-1 min-h-0 border-t-2 w-full divide-y divide-[var(--grey-100)] overflow-y-auto"
-              >
-                {postList.map((post) => (
-                  <PostList
-                    key={post.id}
-                    postId={post.id}
-                    postTitle={post.title}
-                    comments={post.comments?.[0]?.count ?? 0}
-                    date={post.created_at}
-                  />
-                ))}
-                {hasMore && <div ref={observerRef} className="h-[1px]" />}
-                {!hasMore && (
-                  <p className="text-center text-sm py-2 text-gray-400">
-                    모든 게시글을 불러왔습니다
-                  </p>
-                )}
+                    {
+                      none: '친구신청',
+                      pending: '신청됨',
+                      accepted: '친구끊기',
+                      rejected: '친구신청',
+                    }[friendRequestStatus]
+                  }
+                </Button>
+              </div>
+              <div className="flex flex-col gap-0 overflow-hidden flex-1">
+                <TabButton>게시글</TabButton>
+                <div
+                  id="scrollableDiv"
+                  className="flex-1 min-h-0 border-t-2 w-full divide-y divide-[var(--grey-100)] overflow-y-auto"
+                >
+                  {postList.map((post) => (
+                    <PostList
+                      key={post.id}
+                      postId={post.id}
+                      postTitle={post.title}
+                      comments={post.comments?.[0]?.count ?? 0}
+                      date={post.created_at}
+                    />
+                  ))}
+                  {hasMore && <div ref={observerRef} className="h-[1px]" />}
+                  {!hasMore && (
+                    <p className="text-center text-sm py-2 text-gray-400">
+                      모든 게시글을 불러왔습니다
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
