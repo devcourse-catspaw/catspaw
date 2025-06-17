@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import PostList from '../components/common/PostList'
 import TabButton from '../components/profile/TabButton'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -43,8 +43,16 @@ export default function UserPage() {
   const observerRef = useRef<HTMLDivElement | null>(null)
 
   const [activeTab, setActiveTab] = useState('tab1')
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setCurrentUserId(user.id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!currentUserId || !userIdFromParams) return
     setUserInfo(undefined)
     setCharacter(null)
     setPostList([])
@@ -97,9 +105,23 @@ export default function UserPage() {
             table: 'friends',
           },
           (payload) => {
-            const newRow = payload.new as any
-            const oldRow = payload.old as any
+            const newRow = payload.new
+            const oldRow = payload.old
             if (isRelated(newRow) || isRelated(oldRow)) {
+              checkFriendStatus(user.id)
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'friends',
+          },
+          (payload) => {
+            const oldRow = payload.old
+            if (isRelated(oldRow)) {
               checkFriendStatus(user.id)
             }
           }
@@ -112,8 +134,8 @@ export default function UserPage() {
             table: 'friend_requests',
           },
           (payload) => {
-            const newRow = payload.new as any
-            const oldRow = payload.old as any
+            const newRow = payload.new
+            const oldRow = payload.old
             if (isRelated(newRow) || isRelated(oldRow)) {
               checkFriendStatus(user.id)
             }
@@ -129,7 +151,7 @@ export default function UserPage() {
         supabase.removeChannel(channel)
       }
     }
-  }, [userIdFromParams])
+  }, [currentUserId, userIdFromParams])
 
   const loadMorePosts = useCallback(async () => {
     if (isLoading || !hasMore || !userInfo) return
