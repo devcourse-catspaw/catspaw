@@ -14,6 +14,13 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 
+// import kisu from "../assets/images/kisu_.svg";
+// import kisuRibbon from "../assets/images/kisu_ribbon.svg";
+// import kisuSunglasses from "../assets/images/kisu_sunglasses.svg";
+// import kisuCap from "../assets/images/kisu_cap.svg";
+// import kisuPippi from "../assets/images/kisu_pippi.svg";
+// import kisuTie from "../assets/images/kisu_tie.svg";
+
 export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
@@ -110,6 +117,7 @@ export default function Lounge() {
     }
     navigate("/lounge/add-post");
   };
+  console.log(posts);
 
   return (
     <div className="w-full flex justify-center ">
@@ -146,6 +154,21 @@ export default function Lounge() {
               const isLiked = allLikes.some(
                 (l) => l.post_id === p.id && l.user_id === user?.id
               );
+              const allowedAvatars = [
+                "kisu_.svg",
+                "kisu_ribbon.svg",
+                "kisu_sunglasses.svg",
+                "kisu_cap.svg",
+                "kisu_pippi.svg",
+                "kisu_tie.svg",
+              ];
+              const rawAvatar = p.users!.avatar!;
+              const avatarFile = allowedAvatars.includes(rawAvatar)
+                ? rawAvatar
+                : "kisu_.svg";
+              const avatarSrc = `${
+                import.meta.env.VITE_SUPABASE_URL
+              }/storage/v1/object/public/avatar-image/${avatarFile}`;
 
               return (
                 <PostCard
@@ -157,7 +180,7 @@ export default function Lounge() {
                   userName={p.users.nickname}
                   likeCount={likeCounts[p.id] ?? 0}
                   isLiked={isLiked}
-                  avatar={p.users.avatar ?? undefined}
+                  avatar={avatarSrc}
                   image={p.images && p.images.length > 0 ? p.images[0] : ""}
                   springImg="yes"
                   onLike={() => handleLikeClick(p.id)}

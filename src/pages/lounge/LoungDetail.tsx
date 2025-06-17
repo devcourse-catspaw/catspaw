@@ -50,6 +50,22 @@ export default function LoungeDetail() {
   const post = useLoaderData<PostDetail>();
   const user = useAuthStore((state) => state.user);
 
+  const allowedAvatars = [
+    "kisu_.svg",
+    "kisu_ribbon.svg",
+    "kisu_sunglasses.svg",
+    "kisu_cap.svg",
+    "kisu_pippi.svg",
+    "kisu_tie.svg",
+  ];
+  const rawAvatar = post.users!.avatar!;
+  const avatarFile = allowedAvatars.includes(rawAvatar)
+    ? rawAvatar
+    : "kisu_.svg";
+  const avatarSrc = `${
+    import.meta.env.VITE_SUPABASE_URL
+  }/storage/v1/object/public/avatar-image/${avatarFile}`;
+
   const isLiked = post.likes.some((like) => like.user_id === user?.id);
 
   const navigate = useNavigate();
@@ -71,7 +87,7 @@ export default function LoungeDetail() {
           </div>
 
           <Writer
-            avatar={post.users.avatar || kisu}
+            avatar={avatarSrc}
             userName={post.users.nickname}
             date={post.created_at}
           />
