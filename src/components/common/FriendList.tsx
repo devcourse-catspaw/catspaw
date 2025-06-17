@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import icon_accept from '../../assets/images/icon_accept.svg'
 import icon_cancel from '../../assets/images/icon_cancel.svg'
 import kisu from '../../assets/images/kisu_.svg'
@@ -5,8 +6,8 @@ import supabase from '../../utils/supabase'
 
 type FriendListProps = {
   userId: string
-  userCharacter: string
-  userName: string
+  userCharacter: string | undefined
+  userName: string | undefined
   type?: 'sent' | 'received'
   status?: 'pending' | 'accepted' | 'rejected'
 }
@@ -22,6 +23,7 @@ export default function FriendList({
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/avatar-image/${userCharacter}`
 
+  const navigate = useNavigate()
   const handleAccept = async () => {
     const {
       data: { user },
@@ -74,7 +76,10 @@ export default function FriendList({
   return (
     <>
       <div className="w-full h-[57px] flex justify-between items-center px-[16px] py-[8px]">
-        <div className="flex gap-[10px] items-center cursor-pointer">
+        <div
+          onClick={() => navigate(`/user/${userId}`)}
+          className="flex gap-[10px] items-center cursor-pointer"
+        >
           <img
             src={characterUrl ?? kisu}
             alt="userCharacter"

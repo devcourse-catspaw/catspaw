@@ -4,10 +4,33 @@ import SubnavItem from '../common/SubnavItem'
 import { useEffect } from 'react'
 import supabase from '../../utils/supabase'
 
+type FriendRequest = {
+  id: string
+  sender_id: string
+  receiver_id: string
+  status: 'pending' | 'accepted' | 'rejected'
+  sender?: {
+    id: string
+    nickname: string
+    avatar: string
+  }
+  receiver?: {
+    id: string
+    nickname: string
+    avatar: string
+  }
+}
+
+type FriendRequestRow = {
+  sender_id: string
+  receiver_id: string
+  [key: string]: any
+}
+
 export default function FriendRequsetDiv() {
   const [activeTab, setActiveTab] = useState('tab1')
   const [userId, setUserId] = useState<string | null>(null)
-  const [requests, setRequests] = useState<any[]>([])
+  const [requests, setRequests] = useState<FriendRequest[]>([])
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,44 +78,34 @@ export default function FriendRequsetDiv() {
 
   useEffect(() => {
     if (!userId) return
-    console.log(userId)
-    const receiveChannel = supabase
-      .channel('friend-requests')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'friend_requests',
-          filter: `receiver_id=eq.${userId}`,
-        },
-        (payload) => {
-          console.log('받은 요청 변경:', payload)
-          fetchFriendRequests()
-        }
-      )
-      .subscribe()
 
-    const sendChannel = supabase
-      .channel('friend-requests-send')
+    const channel = supabase
+      .channel('friend-requests-realtime')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'friend_requests',
-          filter: `sender_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('보낸 요청 변경', payload)
-          fetchFriendRequests()
+          const newRow = payload.new as FriendRequestRow | null
+          const oldRow = payload.old as FriendRequestRow | null
+          if (
+            newRow?.sender_id === userId ||
+            newRow?.receiver_id === userId ||
+            oldRow?.sender_id === userId ||
+            oldRow?.receiver_id === userId
+          ) {
+            console.log('요청 변경 감지됨:', payload)
+            fetchFriendRequests()
+          }
         }
       )
       .subscribe()
 
     return () => {
-      supabase.removeChannel(receiveChannel)
-      supabase.removeChannel(sendChannel)
+      supabase.removeChannel(channel)
     }
   }, [userId])
 
@@ -123,7 +136,7 @@ export default function FriendRequsetDiv() {
                 userCharacter={req.receiver?.avatar}
                 userName={req.receiver?.nickname}
                 status={req.status}
-                type="sent" // 예: 보낸 요청이라는 의미로 prop 전달
+                type="sent"
               />
             ))}
         </div>

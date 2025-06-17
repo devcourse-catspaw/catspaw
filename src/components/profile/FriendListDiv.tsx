@@ -15,22 +15,24 @@ type UserSummary = {
   avatar: string
 }
 
-export default function FriendListDiv() {
-  const [userId, setUserId] = useState<string | null>(null)
+export default function FriendListDiv({ userIdProp }: { userIdProp?: string }) {
+  const [userId, setUserId] = useState<string | null>(userIdProp ?? null)
   const [friends, setFriends] = useState<FriendRow[]>([])
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (user) {
-        setUserId(user.id)
+      if (!userIdProp) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (user) {
+          setUserId(user.id)
+        }
       }
     }
     fetchUser()
-  }, [])
+  }, [userIdProp])
 
   const fetchFriends = async () => {
     if (!userId) return
@@ -70,7 +72,7 @@ export default function FriendListDiv() {
   }
 
   useEffect(() => {
-    console.log('🟢 friends 업데이트됨:', friends)
+    console.log('friends 업데이트됨:', friends)
   }, [friends])
 
   useEffect(() => {
@@ -86,12 +88,19 @@ export default function FriendListDiv() {
           event: '*',
           schema: 'public',
           table: 'friends',
-          filter: `user_id_1=eq.${userId},user_id_2=eq.${userId}`,
         },
         (payload) => {
-          console.log('친구 목록 실시간 변경:', payload)
-
-          fetchFriends()
+          const newRow = payload.new as FriendRow | null
+          const oldRow = payload.old as FriendRow | null
+          if (
+            newRow?.user_id_1 === userId ||
+            newRow?.user_id_2 === userId ||
+            oldRow?.user_id_1 === userId ||
+            oldRow?.user_id_2 === userId
+          ) {
+            console.log('✅ 실시간 반영됨:', payload)
+            fetchFriends()
+          }
         }
       )
       .subscribe()
