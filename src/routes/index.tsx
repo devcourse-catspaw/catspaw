@@ -1,36 +1,23 @@
-<<<<<<< HEAD
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
-import Home from "../pages/Home";
-import GameModeSelect from "../pages/game/GameModeSelect";
-import GameLayout from "./layouts/GameLayout";
-import SingleModePage from "../pages/SingleModePage";
-import Login from "../pages/Login";
-import Lounge from "../pages/Lounge";
-import LoungeLayout from "./layouts/LoungeLayout";
-import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
-import useAuthInit from "./../utils/useAuthInit";
-import LoungeDetail from "../pages/lounge/LoungeDetail";
-
-const AddPost = () => <div>개발 중입니다.</div>;
-const EditPost = () => <div>개발 중입니다.</div>;
-=======
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
-} from 'react-router-dom';
-import Home from '../pages/Home';
-import GameModeSelect from '../pages/game/GameModeSelect';
-import GameLayout from './layouts/GameLayout';
-import SingleModePage from '../pages/SingleModePage';
-import GameRoomList from '../pages/game/GameRoomList';
-import GameWaitingRoom from '../pages/game/GameWaitingRoom';
-import MultiModeWords from '../pages/game/MultiModeWords';
-import MultiModeDrawing from '../pages/game/MultiModeDrawing';
-import MultiModeResult from '../pages/game/MultiModeResult';
-import Login from '../pages/Login';
-import useAuthInit from './../utils/useAuthInit';
->>>>>>> dev
+} from "react-router-dom";
+import Home from "../pages/Home";
+import GameModeSelect from "../pages/game/GameModeSelect";
+import GameLayout from "./layouts/GameLayout";
+import SingleModePage from "../pages/SingleModePage";
+import GameRoomList from "../pages/game/GameRoomList";
+import GameWaitingRoom from "../pages/game/GameWaitingRoom";
+import MultiModeWords from "../pages/game/MultiModeWords";
+import MultiModeDrawing from "../pages/game/MultiModeDrawing";
+import MultiModeResult from "../pages/game/MultiModeResult";
+import Login from "../pages/Login";
+import useAuthInit from "./../utils/useAuthInit";
+import LoungeDetail from "../pages/lounge/LoungeDetail";
+import Lounge from "../pages/Lounge";
+import LoungeLayout from "./layouts/LoungeLayout";
+import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
 
 const router = createBrowserRouter([
   {
@@ -60,32 +47,31 @@ const router = createBrowserRouter([
         element: <SingleModePage />,
       },
       {
-        path: 'list',
+        path: "list",
         element: <GameRoomList />,
       },
       {
-        path: 'room',
+        path: "room",
         element: <GameWaitingRoom />,
       },
       {
-        path: 'multi',
+        path: "multi",
         element: <MultiModeWords />,
       },
       {
-        path: 'multi/drawing',
+        path: "multi/drawing",
         element: <MultiModeDrawing key="DRAWING" step="DRAWING" />,
       },
       {
-        path: 'multi/words',
+        path: "multi/words",
         element: <MultiModeDrawing key="WORDS" step="WORDS" />,
       },
       {
-        path: 'multi/result',
+        path: "multi/result",
         element: <MultiModeResult />,
       },
     ],
   },
-<<<<<<< HEAD
   {
     path: "/lounge",
     element: <LoungeLayout />,
@@ -96,8 +82,6 @@ const router = createBrowserRouter([
       { path: "edit-post", element: <EditPost /> },
     ],
   },
-=======
->>>>>>> dev
 ]);
 export default function Router() {
   useAuthInit();
