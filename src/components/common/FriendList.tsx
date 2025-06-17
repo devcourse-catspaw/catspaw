@@ -3,6 +3,8 @@ import icon_accept from '../../assets/images/icon_accept.svg'
 import icon_cancel from '../../assets/images/icon_cancel.svg'
 import kisu from '../../assets/images/kisu_.svg'
 import supabase from '../../utils/supabase'
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 type FriendListProps = {
   userId: string
@@ -23,14 +25,45 @@ export default function FriendList({
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/avatar-image/${userCharacter}`
 
+  const [isLoggedUser, setIsLoggedUser] = useState<string>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (!error) {
+        setIsLoggedUser(data.id)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
   const navigate = useNavigate()
+
+  const handleNavigate = () => {
+    if (userId !== isLoggedUser) {
+      navigate(`/user/${userId}`)
+    } else navigate('/mypage')
+  }
+
   const handleAccept = async () => {
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      alert('사용자 인증 오류')
+      toast('사용자 인증 오류')
       return
     }
 
@@ -43,9 +76,9 @@ export default function FriendList({
 
     if (error) {
       console.error(error)
-      alert('친구 요청 수락 중 에러 발생')
+      toast('친구 요청 수락 중 에러 발생')
     } else {
-      alert('친구 요청을 수락했어요!')
+      toast('친구 요청을 수락했어요!')
     }
   }
 
@@ -55,7 +88,7 @@ export default function FriendList({
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      alert('사용자 인증 오류')
+      toast('사용자 인증 오류')
       return
     }
 
@@ -68,16 +101,16 @@ export default function FriendList({
 
     if (error) {
       console.error(error)
-      alert('친구 요청 거절 중 에러 발생')
+      toast('친구 요청 거절 중 에러 발생')
     } else {
-      alert('친구 요청을 거절했어요!')
+      toast('친구 요청을 거절했어요!')
     }
   }
   return (
     <>
       <div className="w-full h-[57px] flex justify-between items-center px-[16px] py-[8px]">
         <div
-          onClick={() => navigate(`/user/${userId}`)}
+          onClick={handleNavigate}
           className="flex gap-[10px] items-center cursor-pointer"
         >
           <img

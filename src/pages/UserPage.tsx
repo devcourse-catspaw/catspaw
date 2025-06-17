@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import supabase from '../utils/supabase'
 import FriendListDiv from '../components/profile/FriendListDiv'
 import Button from '../components/common/Button'
+import toast from 'react-hot-toast'
 
 type UserInfo = {
   id: string
@@ -19,12 +20,13 @@ type PostInfo = {
   created_at: string
   comments: { count: number }[]
 }
+
 type FriendRequestStatus = 'none' | 'pending' | 'accepted' | 'rejected'
 
 export default function UserPage() {
   const { id: userIdFromParams } = useParams<{ id: string | undefined }>()
   const [userInfo, setUserInfo] = useState<UserInfo>()
-  const [friends, setFriends] = useState([])
+  // const [friends, setFriends] = useState([])
   const [character, setCharacter] = useState<string | null>(null)
   const [postList, setPostList] = useState<PostInfo[]>([])
   const [friendRequestStatus, setFriendRequestStatus] =
@@ -41,6 +43,13 @@ export default function UserPage() {
   const observerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    setUserInfo(undefined)
+    setCharacter(null)
+    setPostList([])
+    // setFriends([])
+    setPage(0)
+    setHasMore(true)
+
     const fetchUserInfo = async () => {
       if (!userIdFromParams) return
       const { data, error } = await supabase
@@ -55,36 +64,36 @@ export default function UserPage() {
       }
     }
 
-    const fetchFriends = async () => {
-      const { data } = await supabase.from('friends').select(`
-          id,
-          user_id_1,
-          user_id_2,
-          user1:user_id_1(id, nickname, avatar),
-          user2:user_id_2(id, nickname, avatar)
-        `)
+    // const fetchFriends = async () => {
+    //   const { data } = await supabase.from('friends').select(`
+    //       id,
+    //       user_id_1,
+    //       user_id_2,
+    //       user1:user_id_1(id, nickname, avatar),
+    //       user2:user_id_2(id, nickname, avatar)
+    //     `)
 
-      const filtered = data
-        .filter(
-          (f) =>
-            f.user_id_1 === userIdFromParams || f.user_id_2 === userIdFromParams
-        )
-        .map((f) => {
-          const friend = f.user_id_1 === userIdFromParams ? f.user2 : f.user1
-          return {
-            id: f.id,
-            user_id_1: f.user_id_1,
-            user_id_2: f.user_id_2,
-            friend,
-          }
-        })
+    //   const filtered = data
+    //     .filter(
+    //       (f) =>
+    //         f.user_id_1 === userIdFromParams || f.user_id_2 === userIdFromParams
+    //     )
+    //     .map((f) => {
+    //       const friend = f.user_id_1 === userIdFromParams ? f.user2 : f.user1
+    //       return {
+    //         id: f.id,
+    //         user_id_1: f.user_id_1,
+    //         user_id_2: f.user_id_2,
+    //         friend,
+    //       }
+    //     })
 
-      setFriends(filtered)
-    }
+    //   setFriends(filtered)
+    // }
 
     if (userIdFromParams) {
       fetchUserInfo()
-      fetchFriends()
+      // fetchFriends()
     }
   }, [userIdFromParams])
 
@@ -147,7 +156,7 @@ export default function UserPage() {
     } = await supabase.auth.getUser()
 
     if (authError || !user || !userIdFromParams) {
-      alert('요청 실패')
+      toast('요청 실패')
       return
     }
 
@@ -161,7 +170,7 @@ export default function UserPage() {
 
       if (!error) {
         setFriendRequestStatus('none')
-        alert('친구를 끊었습니다.')
+        toast('친구를 끊었습니다.')
       }
       return
     }
@@ -176,10 +185,10 @@ export default function UserPage() {
 
     if (error) {
       console.error(error)
-      alert('친구 요청 실패')
+      toast('친구 요청 실패')
     } else {
       setFriendRequestStatus('pending')
-      alert('친구 요청을 보냈습니다!')
+      toast('친구 요청을 보냈습니다!')
     }
   }
 
@@ -282,7 +291,7 @@ export default function UserPage() {
                     none: '친구신청',
                     pending: '신청됨',
                     accepted: '친구끊기',
-                    rejected: '다시 친구신청',
+                    rejected: '친구신청',
                   }[friendRequestStatus]
                 }
               </Button>

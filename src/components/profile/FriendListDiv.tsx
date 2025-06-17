@@ -56,8 +56,8 @@ export default function FriendListDiv({ userIdProp }: { userIdProp?: string }) {
 
     if (!error && data) {
       const filtered = data
-        .filter((f: any) => f.user_id_1 === userId || f.user_id_2 === userId)
-        .map((f: any) => {
+        .filter((f) => f.user_id_1 === userId || f.user_id_2 === userId)
+        .map((f) => {
           const isUser1 = f.user_id_1 === userId
           const friendInfo = isUser1 ? f.user2 : f.user1
           return {

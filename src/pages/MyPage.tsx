@@ -86,7 +86,6 @@ export default function MyPage() {
     setSelectedCharacter(selectedImageName)
     console.log(avatarUrl)
 
-    // 상태도 업데이트 (선택적으로 user 상태에도 반영 가능)
     setUser((prev) => prev && { ...prev, avatar: selectedImageName })
   }
 
@@ -241,6 +240,7 @@ export default function MyPage() {
                 {postList.map((post) => (
                   <PostList
                     key={post.id}
+                    postId={post.id}
                     postTitle={post.title}
                     comments={post.comments?.[0]?.count ?? 0}
                     date={post.created_at}
