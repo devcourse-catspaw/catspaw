@@ -8,6 +8,7 @@ import FriendListDiv from '../components/profile/FriendListDiv'
 import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
 import UserListDiv from '../components/profile/UserListDiv'
+import NavBar from '../components/common/NavBar'
 
 type UserInfo = {
   id: string
@@ -275,18 +276,8 @@ export default function UserPage() {
 
   return (
     <>
+      <NavBar />
       <div className="flex flex-col gap-[20px] px-[80px] pt-[32px] w-[100vw] h-[100vh]">
-        <div className="flex items-center gap-[28px]">
-          <img
-            onClick={() => navigate('/')}
-            className="size-[87px] cursor-pointer"
-            src={logo_catpaw}
-            alt="logo_catpaw"
-          />
-          <span className="text-[18px] font-semibold">
-            {userInfo.nickname}님의 페이지
-          </span>
-        </div>
         <div className="flex items-end gap-[37px] mx-auto">
           <div className="flex flex-col gap-0 items-end">
             <div className="flex gap-0 items-end">

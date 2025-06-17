@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-import logo_catpaw from '../assets/images/logo_catpaw.svg'
 import icon_change_profile from '../assets/images/icon_change_profile.svg'
 import icon_pencil from '../assets/images/icon_pencil.svg'
 import PostList from '../components/common/PostList'
@@ -11,6 +9,7 @@ import FriendListDiv from '../components/profile/FriendListDiv'
 import FriendRequestDiv from '../components/profile/FriendRequestDiv'
 import supabase from '../utils/supabase.ts'
 import UserListDiv from '../components/profile/UserListDiv.tsx'
+import NavBar from '../components/common/NavBar.tsx'
 
 export default function MyPage() {
   type UserInfo = {
@@ -28,7 +27,6 @@ export default function MyPage() {
 
   const [user, setUser] = useState<UserInfo | null>(null)
   const [postList, setPostList] = useState<PostInfo[]>([])
-  const navigate = useNavigate()
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [isNameModalOpen, setIsNameModalOpen] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState<string>(null)
@@ -173,16 +171,8 @@ export default function MyPage() {
           onClose={() => setIsNameModalOpen(false)}
         />
       )}
+      <NavBar />
       <div className="flex flex-col gap-[20px] px-[80px] pt-[32px] w-[100vw] h-[100vh]">
-        <div className="flex items-center gap-[28px]">
-          <img
-            onClick={() => navigate('/')}
-            className="size-[87px] cursor-pointer"
-            src={logo_catpaw}
-            alt="logo_catpaw"
-          />
-          <span className="text-[18px] font-semibold">마이 페이지</span>
-        </div>
         <div className="flex gap-[37px] items-end mx-auto">
           <div className="flex flex-col gap-0 items-end">
             <div className="flex gap-0 items-end">
