@@ -173,6 +173,7 @@ export default function Lounge() {
               return (
                 <PostCard
                   key={p.id}
+                  userId={p.user_id}
                   postId={p.id}
                   postTitle={p.title}
                   date={p.created_at}
