@@ -115,12 +115,14 @@ export default function FriendRequsetDiv() {
         <SubnavItem
           active={activeTab === 'tab1'}
           onClick={() => setActiveTab('tab1')}
+          className="mx-0 border-0 text-[14px] w-[50px]"
         >
           보낸신청
         </SubnavItem>
         <SubnavItem
           active={activeTab === 'tab2'}
           onClick={() => setActiveTab('tab2')}
+          className="mx-0 border-0 text-[14px] w-[50px]"
         >
           받은신청
         </SubnavItem>
