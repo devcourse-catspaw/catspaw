@@ -12,7 +12,7 @@ type ContentsType = {
   likeCount: number;
   commentsCount: number;
   postId: number;
-  images?: string[];
+  images: string[] | "";
 };
 
 export default function Contents({

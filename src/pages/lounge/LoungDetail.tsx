@@ -6,7 +6,6 @@ import Spring from "../../assets/images/spring_big.svg?react";
 import Back from "../../assets/images/icon_back_page.svg?react";
 import { useLoaderData, useNavigate } from "react-router";
 import { twMerge } from "tailwind-merge";
-import { format } from "date-fns";
 import { useAuthStore } from "../../stores/authStore";
 
 const cardLayout =
@@ -51,7 +50,6 @@ export default function LoungeDetail() {
   const post = useLoaderData<PostDetail>();
   const user = useAuthStore((state) => state.user);
 
-  const comments = post.comments ?? [];
   const isLiked = post.likes.some((like) => like.user_id === user?.id);
 
   const navigate = useNavigate();
@@ -75,19 +73,19 @@ export default function LoungeDetail() {
           <Writer
             avatar={post.users.avatar || kisu}
             userName={post.users.nickname}
-            date={format(new Date(post.created_at), "yyyy.MM.dd")}
+            date={post.created_at}
           />
 
           <Contents
+            images={post.images ?? ""}
             title={post.title}
             content={post.content}
-            images={post.images ?? []}
             isLiked={isLiked}
             postId={post.id}
             likeCount={post.likes?.length ?? 0}
             commentsCount={post.comments ? post.comments.length : 0}
           />
-          <Comments postId={post.id} initialComments={comments} />
+          <Comments />
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ type PostCardProps = {
   image?: string;
   likeCount: number;
   isLiked: boolean;
-  avatar?: string;
+  avatar: string;
   springImg: "yes" | "no";
   onLike: () => void;
 };
@@ -45,27 +45,11 @@ export default function PostCard({
   springImg,
   onLike,
 }: PostCardProps) {
-  // const [liked, setLiked] = useState(isLiked);
-  // const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   setLiked(isLiked);
-  //   setCount(likeCount);
-  // }, [isLiked, likeCount]);
 
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
   };
-
-  // const handleLikeClick = () => {
-  //   onLike();
-  //   setLiked((prev) => {
-  //     const next = !prev;
-  //     setCount((prevCount) => prevCount + (next ? -1 : +1));
-  //     return next;
-  //   });
-  // };
 
   return (
     <>
@@ -98,7 +82,6 @@ export default function PostCard({
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
               onClick={goToDetail}>
               <span className={twMerge(titleStyle)}>{postTitle}</span>
-              {/* <span className={dateStyle}>{date}</span> */}
               <TimeAgo timestamp={date} />
             </div>
             {/* 내용 */}
@@ -111,12 +94,8 @@ export default function PostCard({
             </div>
             {/* 프로필 사진 + 유저 이름 */}
             <div className="flex justify-between">
-              <div className="flex justify-between items-center">
-                <img
-                  className="w-[32px]"
-                  src={avatar || kisu}
-                  alt="프로필사진"
-                />
+              <div className="flex justify-between items-center gap-1">
+                <img className="w-[28px]" src={avatar} alt="프로필사진" />
                 <span className={contentStyle}>{userName}</span>
               </div>
               {/* 좋아요 */}

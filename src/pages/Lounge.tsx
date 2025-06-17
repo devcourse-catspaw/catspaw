@@ -3,6 +3,7 @@ import Button from "../components/common/Button";
 import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import Pen from "../assets/images/icon_pencil.svg?react";
+import kisu from "../assets/images/kisu_.svg";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import {
@@ -11,7 +12,6 @@ import {
   removeLike,
   type fetchPosts,
 } from "../routes/loader/post.loader";
-import { format } from "date-fns";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 
@@ -91,12 +91,13 @@ export default function Lounge() {
     setLikeCounts(counts);
   };
 
-  const notify = (e: React.MouseEvent) => {
+  const handleAddPostClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      navigate("/login");
+      toast("로그인 후 이용해주세요.");
+      return;
     }
-    toast("로그인 후 이용해주세요.");
+    navigate("/lounge/add-post");
   };
 
   return (
@@ -136,12 +137,12 @@ export default function Lounge() {
                   key={p.id}
                   postId={p.id}
                   postTitle={p.title}
-                  date={format(new Date(p.created_at), "yyyy.MM.dd")}
+                  date={p.created_at}
                   contents={p.content}
                   userName={p.users.nickname}
                   likeCount={likeCounts[p.id] ?? 0}
                   isLiked={isLiked}
-                  avatar={p.users.avatar ?? undefined}
+                  avatar={p.users.avatar ?? kisu}
                   image={
                     p.images && p.images.length > 0 ? p.images[0] : undefined
                   }
@@ -154,8 +155,8 @@ export default function Lounge() {
         </div>
 
         <Link
-          onClick={notify}
           to="/lounge/add-post"
+          onClick={handleAddPostClick}
           className="fixed bottom-10 right-10 w-[80px] h-[80px] border-2 rounded-full shadow-[0px_5px_0px_var(--black)] bg-[var(--white)] flex items-center justify-center z-50">
           <Pen className="text-[var(--black)] w-[40px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
         </Link>

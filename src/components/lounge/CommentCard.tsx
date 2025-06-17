@@ -143,7 +143,7 @@ export default function CommentCard({
         </div>
       ) : (
         <div className="pl-[51px] w-[660px] min-h-[32px]  flex items-center font-medium text-sm overflow-wrap">
-          {comment}
+          {commentText}
         </div>
       )}
     </div>

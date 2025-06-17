@@ -54,10 +54,14 @@ export default function Writer({ avatar, userName, date }: WriterType) {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleToggle = () => {
-    setShowMenu((prev) => !prev);
+    setShowMenu(true);
   };
 
   const handleEdit = () => {
+    setShowMenu(false);
+  };
+
+  const handleCancel = () => {
     setShowMenu(false);
   };
 
@@ -89,7 +93,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
             <div className="flex items-center gap-x-2">
               <div className="flex gap-x-1">
                 <Link
-                  to="/lounge/edit-post"
+                  to={`/lounge/${post.id}/edit-post`}
                   className={moreTextStyle}
                   onClick={handleEdit}>
                   수정
@@ -102,13 +106,13 @@ export default function Writer({ avatar, userName, date }: WriterType) {
               <span>
                 <Cancel
                   className="w-[8px] cursor-pointer text-[var(--grey-100)]"
-                  onClick={() => handleDelete}
+                  onClick={handleCancel}
                 />
               </span>
             </div>
           )}
 
-          {isAuthor && (
+          {isAuthor && !showMenu && (
             <span
               onClick={handleToggle}
               className="cursor-pointer text-[var(--black)] inline-flex items-center">
