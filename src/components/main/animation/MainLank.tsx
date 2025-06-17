@@ -2,7 +2,8 @@ import gsap from 'gsap'
 import main_rank from '../../../assets/images/main_rank.svg'
 import sparklers from '../../../assets/images/birthday_sparklers.svg'
 import { ScrollTrigger } from 'gsap/all'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import supabase from '../../../utils/supabase'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -11,6 +12,34 @@ export default function MainLank() {
   const imgRef = useRef<HTMLImageElement>(null)
   const sparklerLeftRef = useRef<HTMLImageElement>(null)
   const sparklerRightRef = useRef<HTMLImageElement>(null)
+  const [ranking, setRanking] = useState([])
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+      const { data, error } = await supabase
+        .from('game_scores')
+        .select(
+          `
+          score,
+          users (
+            nickname,
+            avatar
+          )
+        `
+        )
+        .order('score', { ascending: false })
+        .limit(3)
+
+      if (error) {
+        console.error('랭킹 불러오기 실패:', error)
+      } else {
+        setRanking(data)
+        console.log(data)
+      }
+    }
+
+    fetchRanking()
+  }, [])
 
   useEffect(() => {
     const divArea = divRef.current

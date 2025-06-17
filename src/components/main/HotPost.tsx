@@ -8,15 +8,12 @@ export default function HotPost() {
     <>
       <Swiper
         slidesPerView={4}
-        spaceBetween={32}
+        spaceBetween={30}
         centeredSlides={true}
         centeredSlidesBounds={true}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
-        }}
-        pagination={{
-          clickable: true,
         }}
         navigation={false}
         modules={[Autoplay, Pagination, Navigation]}
