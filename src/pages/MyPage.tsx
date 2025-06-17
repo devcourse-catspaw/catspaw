@@ -10,6 +10,7 @@ import TabButton from '../components/profile/TabButton'
 import FriendListDiv from '../components/profile/FriendListDiv'
 import FriendRequestDiv from '../components/profile/FriendRequestDiv'
 import supabase from '../utils/supabase.ts'
+import UserListDiv from '../components/profile/UserListDiv.tsx'
 
 export default function MyPage() {
   type UserInfo = {
@@ -197,10 +198,17 @@ export default function MyPage() {
               >
                 친구신청
               </TabButton>
+              <TabButton
+                isActive={activeTab === 'tab3'}
+                onClick={() => setActiveTab('tab3')}
+              >
+                유저목록
+              </TabButton>
             </div>
-            <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px]">
+            <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px] overflow-y-auto overflow-x-hidden">
               {activeTab == 'tab1' && <FriendListDiv />}
               {activeTab == 'tab2' && <FriendRequestDiv />}
+              {activeTab == 'tab3' && <UserListDiv />}
             </div>
           </div>
           <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">

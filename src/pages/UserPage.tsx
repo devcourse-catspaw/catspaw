@@ -7,6 +7,7 @@ import supabase from '../utils/supabase'
 import FriendListDiv from '../components/profile/FriendListDiv'
 import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
+import UserListDiv from '../components/profile/UserListDiv'
 
 type UserInfo = {
   id: string
@@ -26,7 +27,6 @@ type FriendRequestStatus = 'none' | 'pending' | 'accepted' | 'rejected'
 export default function UserPage() {
   const { id: userIdFromParams } = useParams<{ id: string | undefined }>()
   const [userInfo, setUserInfo] = useState<UserInfo>()
-  // const [friends, setFriends] = useState([])
   const [character, setCharacter] = useState<string | null>(null)
   const [postList, setPostList] = useState<PostInfo[]>([])
   const [friendRequestStatus, setFriendRequestStatus] =
@@ -42,11 +42,12 @@ export default function UserPage() {
   const [hasMore, setHasMore] = useState(true)
   const observerRef = useRef<HTMLDivElement | null>(null)
 
+  const [activeTab, setActiveTab] = useState('tab1')
+
   useEffect(() => {
     setUserInfo(undefined)
     setCharacter(null)
     setPostList([])
-    // setFriends([])
     setPage(0)
     setHasMore(true)
 
@@ -64,36 +65,8 @@ export default function UserPage() {
       }
     }
 
-    // const fetchFriends = async () => {
-    //   const { data } = await supabase.from('friends').select(`
-    //       id,
-    //       user_id_1,
-    //       user_id_2,
-    //       user1:user_id_1(id, nickname, avatar),
-    //       user2:user_id_2(id, nickname, avatar)
-    //     `)
-
-    //   const filtered = data
-    //     .filter(
-    //       (f) =>
-    //         f.user_id_1 === userIdFromParams || f.user_id_2 === userIdFromParams
-    //     )
-    //     .map((f) => {
-    //       const friend = f.user_id_1 === userIdFromParams ? f.user2 : f.user1
-    //       return {
-    //         id: f.id,
-    //         user_id_1: f.user_id_1,
-    //         user_id_2: f.user_id_2,
-    //         friend,
-    //       }
-    //     })
-
-    //   setFriends(filtered)
-    // }
-
     if (userIdFromParams) {
       fetchUserInfo()
-      // fetchFriends()
     }
   }, [userIdFromParams])
 
@@ -256,10 +229,24 @@ export default function UserPage() {
         <div className="flex items-end gap-[37px] mx-auto">
           <div className="flex flex-col gap-0 items-end">
             <div className="flex gap-0 items-end">
-              <TabButton isActive>친구목록</TabButton>
+              <TabButton
+                isActive={activeTab === 'tab1'}
+                onClick={() => setActiveTab('tab1')}
+              >
+                친구목록
+              </TabButton>
+              <TabButton
+                isActive={activeTab === 'tab2'}
+                onClick={() => setActiveTab('tab2')}
+              >
+                유저목록
+              </TabButton>
             </div>
-            <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px]">
-              <FriendListDiv userIdProp={userIdFromParams} />
+            <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px] overflow-y-auto overflow-x-hidden">
+              {activeTab == 'tab1' && (
+                <FriendListDiv userIdProp={userIdFromParams} />
+              )}
+              {activeTab == 'tab2' && <UserListDiv />}
             </div>
           </div>
           <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">

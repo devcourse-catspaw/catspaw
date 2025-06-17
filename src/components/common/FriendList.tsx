@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 
 type FriendListProps = {
   userId: string
-  userCharacter: string | undefined
+  userCharacter: string
   userName: string | undefined
   type?: 'sent' | 'received'
   status?: 'pending' | 'accepted' | 'rejected'
