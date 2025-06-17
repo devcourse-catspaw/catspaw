@@ -29,6 +29,23 @@ export default function SingleModeResultPage() {
   const correctCount = aiAnswerList.filter(
     (answer, i) => answer === usedTopic[i]
   ).length;
+  const [nickName, setNickName] = useState("");
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchUserData = async () => {
+      const { data: users, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user!.id)
+        .single();
+      if (error) console.error("사용자 정보를 불러올 수 없음:", error);
+
+      setNickName(users!.nickname);
+    };
+
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -171,7 +188,7 @@ export default function SingleModeResultPage() {
                 <div className="flex flex-col gap-[6px] items-center justify-center">
                   <h1 className="text-center text-lg font-extrabold flex gap-2">
                     <span>"</span>
-                    {user?.user_metadata.full_name}
+                    {nickName}
                     <span>"</span>
                   </h1>
                   <h2 className="text-center text-sm font-extrabold">
