@@ -280,7 +280,7 @@ export default function UserPage() {
         <div className="flex-1 flex justify-center items-center">
           <div className="flex items-end gap-[37px] mx-auto">
             <div className="flex flex-col gap-0 items-end">
-              <div className="flex gap-0 items-end">
+              <div className="flex gap-0 items-end pr-[4px]">
                 <TabButton
                   isActive={activeTab === 'tab1'}
                   onClick={() => setActiveTab('tab1')}
