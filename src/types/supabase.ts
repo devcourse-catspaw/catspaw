@@ -68,14 +68,14 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "comments_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string;
@@ -94,21 +94,21 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "follows_follower_id_fkey";
-            columns: ["follower_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "follows_following_id_fkey";
-            columns: ["following_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_scores: {
         Row: {
           id: number;
@@ -130,50 +130,51 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "game_scores_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "game_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       games: {
         Row: {
-          complete_players: number;
-          created_at: string;
-          current_players: number;
-          id: number;
-          leader_id: string;
-          ready_players: number;
-          room_name: string;
-          room_password: string | null;
-          status: string;
-        };
+          complete_players: number
+          created_at: string
+          current_players: number
+          id: number
+          leader_id: string
+          ready_players: number
+          room_name: string
+          room_password: string | null
+          status: string
+        }
         Insert: {
-          complete_players?: number;
-          created_at?: string;
-          current_players?: number;
-          id?: number;
-          leader_id?: string;
-          ready_players?: number;
-          room_name: string;
-          room_password?: string | null;
-          status?: string;
-        };
+          complete_players?: number
+          created_at?: string
+          current_players?: number
+          id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name: string
+          room_password?: string | null
+          status?: string
+        }
         Update: {
-          complete_players?: number;
-          created_at?: string;
-          current_players?: number;
-          id?: number;
-          leader_id?: string;
-          ready_players?: number;
-          room_name?: string;
-          room_password?: string | null;
-          status?: string;
-        };
-        Relationships: [];
-      };
+          complete_players?: number
+          created_at?: string
+          current_players?: number
+          id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name?: string
+          room_password?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+>>>>>>> dev
       likes: {
         Row: {
           created_at: string;
@@ -195,43 +196,47 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "likes_post_id_fkey";
-            columns: ["post_id"];
-            isOneToOne: true;
-            referencedRelation: "posts";
-            referencedColumns: ["id"];
+            foreignKeyName: "likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "likes_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
-          content: string;
-          created_at: string;
-          game_id: number;
-          id: number;
-          player_id: number;
-        };
+          content: string
+          created_at: string
+          game_id: number
+          id: number
+          nickname: string | null
+          player_id: string
+        }
         Insert: {
-          content: string;
-          created_at?: string;
-          game_id: number;
-          id?: number;
-          player_id: number;
-        };
+          content: string
+          created_at?: string
+          game_id: number
+          id?: number
+          nickname?: string | null
+          player_id: string
+        }
         Update: {
-          content?: string;
-          created_at?: string;
-          game_id?: number;
-          id?: number;
-          player_id?: number;
-        };
+          content?: string
+          created_at?: string
+          game_id?: number
+          id?: number
+          nickname?: string | null
+          player_id?: string
+        }
+>>>>>>> dev
         Relationships: [
           {
             foreignKeyName: "messages_game_id_fkey";
@@ -240,47 +245,34 @@ export type Database = {
             referencedRelation: "games";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "messages_player_id_fkey";
-            columns: ["player_id"];
-            isOneToOne: false;
-            referencedRelation: "player_with_user";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "messages_player_id_fkey";
-            columns: ["player_id"];
-            isOneToOne: false;
-            referencedRelation: "players";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+        ]
+      }
       players: {
         Row: {
-          game_id: number;
-          id: number;
-          is_leader: boolean | null;
-          is_ready: boolean | null;
-          joined_at: string;
-          user_id: string;
-        };
+          game_id: number
+          id: number
+          is_leader: boolean | null
+          is_ready: boolean | null
+          joined_at: string
+          user_id: string
+        }
         Insert: {
-          game_id: number;
-          id?: number;
-          is_leader?: boolean | null;
-          is_ready?: boolean | null;
-          joined_at?: string;
-          user_id: string;
-        };
+          game_id: number
+          id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
+          joined_at?: string
+          user_id: string
+        }
         Update: {
-          game_id?: number;
-          id?: number;
-          is_leader?: boolean | null;
-          is_ready?: boolean | null;
-          joined_at?: string;
-          user_id?: string;
-        };
+          game_id?: number
+          id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
+          joined_at?: string
+          user_id?: string
+        }
+>>>>>>> dev
         Relationships: [
           {
             foreignKeyName: "players_game_id_fkey";
@@ -290,14 +282,14 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "players_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "players_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           content: string;
@@ -328,42 +320,37 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "posts_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       results: {
         Row: {
-          contents: Json;
-          created_at: string;
-          game_id: number;
-          id: number;
-          origin_player_id: number;
-          origin_word: string | null;
-          score: number | null;
-        };
+          contents: Json
+          created_at: string
+          game_id: number
+          id: number
+          origin_player_id: string
+        }
         Insert: {
-          contents: Json;
-          created_at?: string;
-          game_id: number;
-          id?: number;
-          origin_player_id: number;
-          origin_word?: string | null;
-          score?: number | null;
-        };
+          contents: Json
+          created_at?: string
+          game_id: number
+          id?: number
+          origin_player_id: string
+        }
         Update: {
-          contents?: Json;
-          created_at?: string;
-          game_id?: number;
-          id?: number;
-          origin_player_id?: number;
-          origin_word?: string | null;
-          score?: number | null;
-        };
+          contents?: Json
+          created_at?: string
+          game_id?: number
+          id?: number
+          origin_player_id?: string
+        }
+>>>>>>> dev
         Relationships: [
           {
             foreignKeyName: "results_game_id_fkey";
@@ -372,119 +359,106 @@ export type Database = {
             referencedRelation: "games";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "results_origin_player_id_fkey";
-            columns: ["origin_player_id"];
-            isOneToOne: false;
-            referencedRelation: "player_with_user";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "results_origin_player_id_fkey";
-            columns: ["origin_player_id"];
-            isOneToOne: false;
-            referencedRelation: "players";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+        ]
+      }
       turns: {
         Row: {
-          content: string | null;
-          created_at: string;
-          game_id: number;
-          id: number;
-          receiver_id: string;
-          sender_id: string;
-          turn_number: number;
-          type: string;
-        };
+          content: string | null
+          created_at: string
+          game_id: number
+          id: number
+          receiver_id: string
+          sender_id: string
+          turn_number: number
+          type: string
+        }
         Insert: {
-          content?: string | null;
-          created_at?: string;
-          game_id: number;
-          id?: number;
-          receiver_id: string;
-          sender_id: string;
-          turn_number?: number;
-          type: string;
-        };
+          content?: string | null
+          created_at?: string
+          game_id: number
+          id?: number
+          receiver_id: string
+          sender_id: string
+          turn_number?: number
+          type: string
+        }
         Update: {
-          content?: string | null;
-          created_at?: string;
-          game_id?: number;
-          id?: number;
-          receiver_id?: string;
-          sender_id?: string;
-          turn_number?: number;
-          type?: string;
-        };
+          content?: string | null
+          created_at?: string
+          game_id?: number
+          id?: number
+          receiver_id?: string
+          sender_id?: string
+          turn_number?: number
+          type?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "turns_game_id_fkey";
-            columns: ["game_id"];
-            isOneToOne: false;
-            referencedRelation: "games";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
+            foreignKeyName: "turns_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
-          avatar: string | null;
-          created_at: string;
-          email: string | null;
-          id: string;
-          nickname: string;
-        };
+          avatar: string | null
+          created_at: string
+          email: string | null
+          id: string
+          nickname: string
+        }
         Insert: {
-          avatar?: string | null;
-          created_at?: string;
-          email?: string | null;
-          id: string;
-          nickname: string;
-        };
+          avatar?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          nickname: string
+        }
         Update: {
-          avatar?: string | null;
-          created_at?: string;
-          email?: string | null;
-          id?: string;
-          nickname?: string;
-        };
-        Relationships: [];
-      };
-    };
+          avatar?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          nickname?: string
+        }
+        Relationships: []
+      }
+    }
     Views: {
       player_with_user: {
         Row: {
-          avatar: string | null;
-          email: string | null;
-          game_id: number | null;
-          id: number | null;
-          is_leader: boolean | null;
-          is_ready: boolean | null;
-          joined_at: string | null;
-          nickname: string | null;
-          user_id: string | null;
-        };
+          avatar: string | null
+          email: string | null
+          game_id: number | null
+          id: number | null
+          is_leader: boolean | null
+          is_ready: boolean | null
+          joined_at: string | null
+          nickname: string | null
+          user_id: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "players_game_id_fkey";
-            columns: ["game_id"];
-            isOneToOne: false;
-            referencedRelation: "games";
-            referencedColumns: ["id"];
+            foreignKeyName: "players_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "players_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-    };
+            foreignKeyName: "players_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+>>>>>>> dev
     Functions: {
       [_ in never]: never;
     };
