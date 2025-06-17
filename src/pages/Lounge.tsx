@@ -4,15 +4,16 @@ import PostCard from "../components/common/PostCard";
 import SubnavItem from "../components/common/SubnavItem";
 import Pen from "../assets/images/icon_pencil.svg?react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   addLike,
   fetchLikes,
+  fetchPosts,
   removeLike,
-  type fetchPosts,
 } from "../routes/loader/post.loader";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
+import useInfiniteScroll from "../components/hooks/useInfiniteScroll";
 
 // import kisu from "../assets/images/kisu_.svg";
 // import kisuRibbon from "../assets/images/kisu_ribbon.svg";
@@ -24,21 +25,17 @@ import toast from "react-hot-toast";
 export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
-// export const fetchUserInfo = async () => {
-//   try {
-//     const { data: users } = await supabase.from("users").select(`
-//     *
-//   `);
-//     return users;
-//   } catch (e) {
-//     console.error(e);
-//   }
-// };
-
 export default function Lounge() {
   const user = useAuthStore((state) => state.user);
-  const posts = useLoaderData<Posts>();
+  // const posts = useLoaderData<Posts>();
   const navigate = useNavigate();
+
+  const [posts, setPosts] = useState<Posts>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 12;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
   const [allLikes, setAllLikes] = useState<Likes>([]);
@@ -49,6 +46,24 @@ export default function Lounge() {
   const activeHandler = () => {
     setIsActive((prev) => !prev);
   };
+
+  const loadMorePosts = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    const offset = page * limit;
+    const newPosts = await fetchPosts(offset, limit);
+    if (!newPosts || newPosts.length < limit) setHasMore(false);
+    setPosts((prev) => [...prev, ...(newPosts ?? [])]);
+    setPage((prev) => prev + 1);
+    setIsLoading(false);
+  };
+
+  const loaderRef = useInfiniteScroll(loadMorePosts, hasMore, isLoading);
+
+  useEffect(() => {
+    loadMorePosts();
+  }, []);
 
   useEffect(() => {
     const loadLikes = async () => {
@@ -131,7 +146,7 @@ export default function Lounge() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="relative overflow-visible py-[94px]">
+      <div className="relative overflow-visible ">
         <div className="flex flex-col px-[160px] gap-[82px] ">
           {/* 서브탭, 검색 */}
           <div className="flex w-full justify-between items-center sticky top-0 z-50 bg-[var(--white)]">
@@ -198,6 +213,12 @@ export default function Lounge() {
                 />
               );
             })}
+          </div>
+          <div
+            ref={loaderRef}
+            className="h-12 flex justify-center items-center">
+            {isLoading && <span>로딩 중...</span>}
+            {!hasMore && <span>모든 글을 불러왔습니다!</span>}
           </div>
         </div>
 

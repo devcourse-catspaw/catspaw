@@ -4,9 +4,12 @@ import type { Database } from "../../types/supabase";
 
 export type LikeRow = Database["public"]["Tables"]["likes"]["Row"];
 
-export const fetchPosts = async () => {
+export const fetchPosts = async (offset: number, limit: number) => {
   try {
-    const { data: posts } = await supabase.from("posts").select(`
+    const { data: posts } = await supabase
+      .from("posts")
+      .select(
+        `
     *,
     users (
       id, 
@@ -14,7 +17,9 @@ export const fetchPosts = async () => {
       nickname
     ),
      likes(*)
-  `);
+  `
+      )
+      .range(offset, offset + limit - 1);
 
     return posts;
   } catch (e) {
