@@ -18,7 +18,7 @@ export default function NavBarDropBox() {
   }
   return (
     <>
-      <div className="flex flex-col justify-between w-[130px] h-[80px] border-2 rounded-[6px] divide-y-2 divide-[var(--gray-100)]">
+      <div className="flex flex-col justify-between w-[130px] h-[80px] border-2 rounded-[6px] divide-y-2 bg-[var(--white)]">
         <div
           onClick={() => navigate('/mypage')}
           className="text-[14px] font-bold flex items-center justify-center w-full h-1/2 cursor-pointer hover:bg-[var(--red)]"

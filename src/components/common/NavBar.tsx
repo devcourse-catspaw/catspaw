@@ -4,17 +4,18 @@ import Button from './Button'
 import { useAuthStore } from '../../stores/authStore'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import supabase from '../../utils/supabase'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NavBarDropBox from './NavBarDropBox'
 
 export default function NavBar() {
   const { user } = useAuthStore()
-  const [avatarUrl, setAvatarUrl] = useState<string>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string>()
   const navigate = useNavigate()
   const location = useLocation()
   const { id: userIdFromParams } = useParams()
   const [userNickname, setUserNickname] = useState('')
   const [isDropBox, setIsDropBox] = useState(false)
+  const dropBoxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchNickname = async () => {
@@ -51,6 +52,24 @@ export default function NavBar() {
 
     fetchAvatar()
   }, [user])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropBoxRef.current && !dropBoxRef.current.contains(event.target)) {
+        setIsDropBox(false)
+      }
+    }
+
+    if (isDropBox) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isDropBox])
 
   return (
     <>
@@ -96,7 +115,7 @@ export default function NavBar() {
             </Button>
           )}
           {user && (
-            <div className="relative">
+            <div className="relative" ref={dropBoxRef}>
               <img
                 src={avatarUrl}
                 onClick={() => setIsDropBox((prev) => !prev)}
