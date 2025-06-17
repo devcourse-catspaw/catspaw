@@ -89,10 +89,10 @@ export default function GameRoom({
 
     if (dataP) {
       useGameRoomStore.getState().setPlayer(dataP[0]);
-      console.log(
-        'useGameRoomStore Player:',
-        useGameRoomStore.getState().player
-      );
+      // console.log(
+      //   'useGameRoomStore Player:',
+      //   useGameRoomStore.getState().player
+      // );
 
       const { data: dataG, error } = await supabase
         .from('games')
@@ -103,11 +103,11 @@ export default function GameRoom({
         .select();
 
       if (dataG) {
-        console.log('인원 수 증가 성공! :', dataG);
-        console.log('입장합니다.');
+        // console.log('인원 수 증가 성공! :', dataG);
+        // console.log('입장합니다.');
 
         useGameRoomStore.getState().setGame(dataG[0]);
-        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+        // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         navigate('/game/room');
       }
 

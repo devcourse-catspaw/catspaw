@@ -1,4 +1,3 @@
-// import kisu from '../../assets/images/kisu_.svg';
 import Crown from '../..//assets/images/crown.svg?react';
 import type { Database } from '../../types/supabase';
 
@@ -20,13 +19,7 @@ export default function WaitingRoom({
     <>
       <div className="w-full h-[77px] px-7 bg-[var(--white)] flex justify-between items-center text-[16px] font-bold rounded-md border-2 border-[var(--black)]">
         <div className="flex items-center gap-[7px]">
-          <img
-            // src={avatar ? avatar : kisu}
-            // src={kisu}
-            src={avatarUrl}
-            alt="캐릭터"
-            className="w-[49px] h-[49px]"
-          />
+          <img src={avatarUrl} alt="캐릭터" className="w-[49px] h-[49px]" />
           <div className="flex items-center gap-[7px] w-[140px]">
             <div className="truncate">{users?.nickname}</div>
             {is_leader && (

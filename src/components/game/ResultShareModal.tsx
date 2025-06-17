@@ -28,7 +28,7 @@ export default function ResultShareModal({
       setInvalid((prev) => [prev[0], true]);
     }
     if (title.trim() !== '' && content.trim() !== '') {
-      console.log('게시합니당');
+      // console.log('게시합니당');
       clickCreateButtonHandler();
       closeResultShareModalHandler();
     }
@@ -122,14 +122,8 @@ export default function ResultShareModal({
           <div className="flex flex-col justify-center items-center gap-[38px] px-[57px]">
             <div className="font-bold text-xl">게임 결과 공유하기</div>
             <div className="flex gap-12">
-              {/* border-2 border-black */}
               <div className="flex items-start w-[300px] min-h-[300px]">
-                {/* <img src={logoTypo} alt="공유 이미지" /> */}
-                <img
-                  src={imageUrl}
-                  alt="공유 이미지"
-                  // className="w-[300px] h-[380px]"
-                />
+                <img src={imageUrl} alt="공유 이미지" />
               </div>
               <div className="flex flex-col items-end gap-3">
                 <div className="flex flex-col gap-3">

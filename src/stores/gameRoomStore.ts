@@ -54,7 +54,7 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
       try {
         const game: GameRoomProps = JSON.parse(gameStr);
         set({ game });
-        console.log('세션스토리지로부터 게임 데이터 불러오기 성공:', game)
+        // console.log('세션스토리지로부터 게임 데이터 불러오기 성공:', game)
       } catch (e) {
         console.error("세션스토리지로부터 게임 데이터 불러오기 실패:", e);
       }
@@ -88,7 +88,7 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
       try {
         const player: PlayerUserProps = JSON.parse(playerStr);
         set({ player });
-        console.log('세션스토리지로부터 플레이어 데이터 불러오기 성공:', player)
+        // console.log('세션스토리지로부터 플레이어 데이터 불러오기 성공:', player)
       } catch (e) {
         console.error("세션스토리지로부터 플레이어 데이터 불러오기 실패:", e);
       }
@@ -113,7 +113,7 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
       try {
         const turn: number = JSON.parse(turnStr);
         set({ turn });
-        console.log('세션스토리지로부터 turn 데이터 불러오기 성공:', turn)
+        // console.log('세션스토리지로부터 turn 데이터 불러오기 성공:', turn)
       } catch (e) {
         console.error("세션스토리지로부터 turn 데이터 불러오기 실패:", e);
       }
@@ -138,7 +138,7 @@ export const useGameRoomStore = create<GameRoomState>((set, get) => ({
       try {
         const complete: number = JSON.parse(completeStr);
         set({ complete });
-        console.log('세션스토리지로부터 complete 데이터 불러오기 성공:', complete)
+        // console.log('세션스토리지로부터 complete 데이터 불러오기 성공:', complete)
       } catch (e) {
         console.error("세션스토리지로부터 complete 데이터 불러오기 실패:", e);
       }

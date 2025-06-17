@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import sketchBook from '../../assets/images/sketchbook_big.svg';
 import loading from '../../assets/images/doodle_loading.svg';
 import pawPencil from '../../assets/images/paw_pencil.svg';
-// import Kisu from '../../assets/images/kisu_.svg?react';
 import NavWithExit from '../../components/common/NavWithExit';
 import { useNavigate } from 'react-router';
 import Button from '../../components/common/Button';
@@ -16,7 +15,6 @@ import { useGameRoomStore } from '../../stores/gameRoomStore';
 import type { PlayerUserProps } from '../../components/common/WaitingRoom';
 import type { Database } from '../../types/supabase';
 import Chat from '../../components/game/Chat';
-// import toast from 'react-hot-toast';
 
 type TurnType = Database['public']['Tables']['turns']['Row'];
 
@@ -82,7 +80,7 @@ export default function MultiModeResult() {
     setPlayers(players);
     setPlayerResults(players.map((p) => chainsByUserId[p.user_id] ?? []));
 
-    console.log('결과 불러오기');
+    // console.log('결과 불러오기');
   };
 
   const makeChains = (
@@ -138,13 +136,13 @@ export default function MultiModeResult() {
       .select();
 
     if (dataG) {
-      console.log('1명 나가기 완료:', dataG);
+      // console.log('1명 나가기 완료:', dataG);
 
       if (dataG[0].current_players >= 1) {
         resetGame();
         resetPlayer();
         resetTurn();
-        // resetComplete();
+
         navigate('/game/list');
       }
     }
@@ -152,47 +150,6 @@ export default function MultiModeResult() {
       console.log('1명 나가기 실패');
       console.error(errorG);
     }
-
-    // const { data, error } = await supabase.storage
-    //   .from('multimode-images')
-    //   .list(`${game?.id}`);
-
-    // if (error) {
-    //   console.error(error);
-    //   return;
-    // }
-
-    // if (data) {
-    //   const fileNames = data.map((file) => `${game?.id}/${file.name}`);
-
-    //   if (fileNames.length > 0) {
-    //     const { error } = await supabase.storage
-    //       .from('multimode-images')
-    //       .remove(fileNames);
-    //     if (error) {
-    //       console.error(error);
-    //     }
-    //   }
-
-    //   if (game) {
-    //     const { error } = await supabase
-    //       .from('games')
-    //       .delete()
-    //       .eq('id', game?.id);
-
-    //     if (error) {
-    //       console.error('삭제 실패:', error.message);
-    //     } else {
-    //       console.log('삭제 성공');
-
-    //       resetGame();
-    //       resetPlayer();
-    //       resetTurn();
-
-    //       navigate('/game/list');
-    //     }
-    //   }
-    // }
   };
 
   const clickShareHandler = async () => {
@@ -204,9 +161,6 @@ export default function MultiModeResult() {
     div.classList.add('h-full');
     divModify.classList.remove('overflow-y-auto');
     divModify.classList.add('h-full');
-
-    // const originalHeight = divModify.style.height;
-    // divModify.style.height = divModify.scrollHeight + 'px';
 
     try {
       setIsCapturing(true);
@@ -227,8 +181,6 @@ export default function MultiModeResult() {
       divModify.classList.add('overflow-y-auto');
       divModify.classList.remove('h-full');
       setIsCapturing(false);
-
-      // divModify.style.height = originalHeight;
     }
   };
 
@@ -273,12 +225,7 @@ export default function MultiModeResult() {
 
           console.log('newStatus:', newStatus);
           if (newStatus.current_players < 1) {
-            // useGameRoomStore
-            //   .getState()
-            //   .updateGame({ status: newStatus.status });
-            // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-
-            console.log('마지막으로 나갑니당');
+            // console.log('마지막으로 나갑니당');
 
             const { data, error } = await supabase.storage
               .from('multimode-images')
@@ -310,12 +257,11 @@ export default function MultiModeResult() {
                 if (error) {
                   console.error('삭제 실패:', error.message);
                 } else {
-                  console.log('삭제 성공');
+                  // console.log('삭제 성공');
 
                   resetGame();
                   resetPlayer();
                   resetTurn();
-                  // resetComplete();
 
                   navigate('/game/list');
                 }
@@ -325,7 +271,7 @@ export default function MultiModeResult() {
             useGameRoomStore
               .getState()
               .updateGame({ current_players: newStatus.current_players });
-            console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+            // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
           }
         }
       )
@@ -354,23 +300,14 @@ export default function MultiModeResult() {
         </div>
       ) : (
         <div className="flex flex-col gap-[55px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          {/* absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 */}
           <div className="flex gap-7 ">
             <div className="flex flex-col gap-5 items-end">
               <div className="w-[629px] h-[62px] flex justify-center items-center text-[18px] font-semibold bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)]">
                 결과 발표
               </div>
               <div className="flex relative ">
-                {/* flex flex-col justify-end items-end */}
                 <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5 -z-10">
                   {players.map((player, index) => (
-                    // <ResultPlayerIndex
-                    //   key={player.user_id}
-                    //   avatar={Kisu}
-                    //   name={player.users!.nickname}
-                    //   isActive={isActive === index}
-                    //   onClick={() => clickPlayerIndexHandler(index)}
-                    // />
                     <ResultPlayerIndex
                       key={player.user_id}
                       avatar={player.users!.avatar!}
@@ -382,12 +319,9 @@ export default function MultiModeResult() {
                   <div className="absolute top-1 left-15 w-[10px] h-[460px] bg-[var(--white)]"></div>
                 </div>
                 <div
-                  // id="scroll-container"
                   ref={divRef}
-                  // h-full overflow-hidden
                   className="flex relative w-[629px] h-[495px] justify-center items-center pt-9 pr-2 overflow-hidden"
                 >
-                  {/* h-full overflow-y-auto */}
                   <div
                     id="scroll-container"
                     ref={divModifyRef}
@@ -408,13 +342,10 @@ export default function MultiModeResult() {
                     src={sketchBook}
                     alt="스케치북"
                     className="absolute right-[1.5px] bottom-0 w-full h-full -z-10"
-                    // inset-0 -z-50
-                    // -right-8 bottom-0
                   />
                 </div>
               </div>
             </div>
-            {/* h-[480px]  */}
             <Chat size="medium" />
           </div>
           <div className="flex justify-center items-center gap-[39px]">
@@ -439,12 +370,6 @@ export default function MultiModeResult() {
           closeResultShareModalHandler={closeResultShareModalHandler}
         />
       )}
-      {/* <div className={`${!isResultShareModalOpen && 'hidden'}`}>
-        <ResultShareModal
-          imageUrl={imageUrl}
-          closeResultShareModalHandler={closeResultShareModalHandler}
-        />
-      </div> */}
     </div>
   );
 }

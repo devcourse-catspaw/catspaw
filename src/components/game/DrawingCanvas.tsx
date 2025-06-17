@@ -8,10 +8,7 @@ import eraser from '../../assets/images/icon_eraser.svg';
 import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
-// import { useGameTimerStore } from '../../stores/gameTimerStore';
 import LabeledInput from '../common/LabeledInput';
-// import { debounce } from 'lodash';
-// import supabase from '../../utils/supabase';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 type LineData = {
@@ -30,7 +27,7 @@ const DrawingCanvas = ({
   step,
   isComplete,
   timeLeft,
-  isTimeout,
+  // isTimeout,
   trigger,
   drawingUrl,
   // isZero,
@@ -41,7 +38,7 @@ const DrawingCanvas = ({
   step: string;
   isComplete: boolean;
   timeLeft: number;
-  isTimeout: boolean;
+  // isTimeout: boolean;
   trigger?: boolean;
   drawingUrl?: string;
   // isZero?: () => Promise<void>;
@@ -62,13 +59,9 @@ const DrawingCanvas = ({
   const stageRef = useRef<Konva.Stage>(null);
 
   const [disabled, setDisabled] = useState(false);
-  const [isSent, setIsSent] = useState(false);
   const [answer, setAnswer] = useState('');
   const [invalid, setInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const { game } = useGameRoomStore();
-  // const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -80,7 +73,6 @@ const DrawingCanvas = ({
 
       e.preventDefault();
       checkValidation();
-      // debouncedcheckValidation();
     }
   };
 
@@ -89,20 +81,12 @@ const DrawingCanvas = ({
 
     setDisabled(true);
     if (answer.trim() !== '') {
-      console.log('제출합니당');
-      // handleSubmit();
+      // console.log('제출합니당');
       handleSubmitAuto(false);
     } else setInvalid(true);
 
     setTimeout(() => setDisabled(false), 500);
   };
-
-  // const debouncedcheckValidation = useCallback(
-  //   debounce(() => {
-  //     checkValidation();
-  //   }, 500),
-  //   [answer]
-  // );
 
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
     const rgbaStr = hexToRgba(color);
@@ -373,26 +357,6 @@ const DrawingCanvas = ({
     }
   };
 
-  // const handleSubmit = async () => {
-  //   // if (disabled) return;
-
-  //   // setDisabled(true);
-  //   if (step === 'DRAWING') {
-  //     const stage = stageRef.current;
-  //     if (!stage) return;
-
-  //     const imageDataURL = stage.toDataURL({
-  //       mimeType: 'image/png',
-  //       quality: 1.0,
-  //       pixelRatio: 1,
-  //     });
-  //     await onSubmitDrawing!(imageDataURL);
-  //   } else if (step === 'WORDS') {
-  //     await onSubmitWords!(answer);
-  //   }
-  //   // setTimeout(() => setDisabled(false), 500);
-  // };
-
   const handleSubmit = async () => {
     if (disabled) return;
 
@@ -452,56 +416,21 @@ const DrawingCanvas = ({
   //   }
   // };
 
-  // useEffect(() => {
-  //   if (step === 'DRAWING') {
-  //     setTime(180);
-  //   } else if (step === 'WORDS') {
-  //     setTime(120);
-  //   }
-  //   // setTime(180);
-  //   const timer = setInterval(() => {
-  //     decrease();
-  //   }, 1000);
-
-  //   return () => clearInterval(timer);
-  // }, []);
-
   useEffect(() => {
     if (timeLeft <= 0) {
       // isZero();
-      console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
+      // console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
       (async () => {
-        // await isZero();
-        // await isZeros();
         if (!isComplete || trigger) await handleSubmitAuto(false);
-
-        // if (!isComplete || isTimeout) await handleSubmitAuto();
 
         await moveToNextTurn();
       })();
-
-      // isZeros();
-      // moveToNextTurn();
-
-      // reset();
     }
   }, [timeLeft]);
-
-  // useEffect(() => {
-  //   if (isTimeout) {
-  //     console.log('자식에서 isTimeout true 감지');
-  //     // isZeros();
-  //     moveToNextTurn();
-  //   }
-  // }, [isTimeout]);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  // useEffect(() => {
-  //   handleSubmitAuto(false);
-  // }, [trigger]);
 
   return (
     <div className="flex flex-col items-end gap-2">
@@ -692,15 +621,6 @@ const DrawingCanvas = ({
               />
             </div>
           </div>
-          {/* <Button
-            onClick={handleSubmit}
-            // 113 49
-            className={`w-[113px] h-[49px] px-0 py-0 ${
-              isComplete && 'cursor-not-allowed'
-            }`}
-          >
-            {isComplete ? '제출 완료' : '제출'}
-          </Button> */}
           {isComplete ? (
             <Button
               disabled
@@ -719,14 +639,6 @@ const DrawingCanvas = ({
         </div>
       ) : (
         <div className="flex justify-between gap-7 w-[595px] mr-2">
-          {/* <BaseInput
-            ref={inputRef}
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            onKeyDown={keyDownHandler}
-            placeholder="정답 입력"
-            className="text-[18px]"
-          /> */}
           <LabeledInput
             ref={inputRef}
             value={answer}
@@ -742,15 +654,6 @@ const DrawingCanvas = ({
             placeholder="정답 입력"
             className="w-[464px] text-[18px] mt-[-8px]"
           />
-          {/* <Button
-            // onClick={handleSubmit}
-            onClick={checkValidation}
-            className={`w-[113px] h-[49px] px-8 ${
-              isComplete && 'w-[125px] px-3 cursor-not-allowed'
-            }`}
-          >
-            {isComplete ? '제출 완료' : '제출'}
-          </Button> */}
           {isComplete ? (
             <Button
               disabled
@@ -761,7 +664,6 @@ const DrawingCanvas = ({
           ) : (
             <Button
               onClick={checkValidation}
-              // onClick={debouncedcheckValidation}
               className="w-[113px] h-[49px] px-8"
             >
               제출

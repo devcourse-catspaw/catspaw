@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export default function ResultPlayerIndex({
-  // avatar: Avatar,
   avatar,
   name,
   isActive,
   onClick,
 }: {
-  // avatar: React.FC<React.SVGProps<SVGSVGElement>>;
   avatar: string;
   name: string;
   isActive: boolean;
@@ -51,19 +49,6 @@ export default function ResultPlayerIndex({
         onClick={onClick}
       >
         <div>
-          {/* <img
-            src={avatar}
-            alt="캐릭터"
-            className={twMerge(
-              isActive ? 'w-[40px] h-[40px]' : 'w-[30px] h-[30px]'
-            )}
-          /> */}
-          {/* <Avatar
-            className={twMerge(
-              'w-[40px] h-[40px]',
-              isActive && 'text-[var(--red)]'
-            )}
-          /> */}
           <div
             dangerouslySetInnerHTML={{ __html: svgContent || '' }}
             className="w-[40px] h-[40px]"

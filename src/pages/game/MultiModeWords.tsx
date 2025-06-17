@@ -11,7 +11,6 @@ import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
 import toast from 'react-hot-toast';
-// import { debounce } from 'lodash';
 
 export default function MultiModeWords() {
   const { user } = useAuthStore();
@@ -24,9 +23,6 @@ export default function MultiModeWords() {
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  // const [isComplete, setIsComplete] = useState(
-  //   useGameRoomStore.getState().complete
-  // );
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // const saveWords = useCallback(
@@ -44,21 +40,7 @@ export default function MultiModeWords() {
       .select();
 
     if (data) {
-      console.log('저장 완료:', data);
-
-      // const { data: dataResult, error: errorResult } = await supabase
-      //   .from('results')
-      //   .insert([
-      //     {
-      //       game_id: game.id,
-      //       origin_player_id: user.id,
-      //       contents: [{ turn: 1, by: user.id, content: word }],
-      //     },
-      //   ])
-      //   .select();
-
-      // if (dataResult) console.log('결과 테이블에 저장 완료:', dataResult);
-      // if (errorResult) console.log('결과 테이블에 저장 실패:', errorResult);
+      // console.log('저장 완료:', data);
 
       if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
@@ -70,15 +52,8 @@ export default function MultiModeWords() {
           .select();
 
         if (dataGame) {
-          console.log('complete players 업데이트 완료:', dataGame);
+          // console.log('complete players 업데이트 완료:', dataGame);
           setIsComplete(true);
-
-          // useGameRoomStore.getState().changeComplete(1);
-          // console.log(
-          //   'useGameRoomStore Complete:',
-          //   useGameRoomStore.getState().complete
-          // );
-          // setIsComplete(useGameRoomStore.getState().complete);
         }
         if (errorGame) {
           console.log('complete players 업데이트 실패');
@@ -105,7 +80,6 @@ export default function MultiModeWords() {
 
       e.preventDefault();
       checkValidation();
-      // debouncedCheckValidation();
     }
   };
 
@@ -115,20 +89,13 @@ export default function MultiModeWords() {
 
     setDisabled(true);
     if (word.trim() !== '') {
-      console.log('이동합니당');
+      // console.log('이동합니당');
       saveWords(true);
     } else setInvalid(true);
 
     setTimeout(() => setDisabled(false), 500);
   };
   // }, [word, saveWords]);
-
-  // const debouncedCheckValidation = useCallback(
-  //   debounce(() => {
-  //     checkValidation();
-  //   }, 500),
-  //   [checkValidation]
-  // );
 
   // const isZero = async () => {
   //   if (!game) return;
@@ -156,9 +123,6 @@ export default function MultiModeWords() {
   const moveToNextTurn = async () => {
     if (!game) return;
 
-    // if (!isComplete) saveWords(false);
-    // 여기 안 됨
-
     const { data: dataGame, error: errorGame } = await supabase
       .from('games')
       .update({
@@ -169,12 +133,12 @@ export default function MultiModeWords() {
       .select();
 
     if (dataGame) {
-      console.log('complete players, timeout_players 초기화 완료:', dataGame);
+      // console.log('complete players, timeout_players 초기화 완료:', dataGame);
       useGameRoomStore.getState().updateGame({
         complete_players: dataGame[0].complete_players,
         timeout_players: dataGame[0].timeout_players,
       });
-      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+      // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }
     if (errorGame) {
       console.log('complete players, timeout_players 초기화 실패');
@@ -182,7 +146,7 @@ export default function MultiModeWords() {
     }
 
     useGameRoomStore.getState().changeTurn(turn + 1);
-    console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
+    // console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
 
     navigate('/game/multi/drawing');
   };
@@ -191,7 +155,6 @@ export default function MultiModeWords() {
     useGameRoomStore.getState().loadGameFromSession();
     useGameRoomStore.getState().loadPlayerFromSession();
     useGameRoomStore.getState().loadTurnFromSession();
-    // useGameRoomStore.getState().loadCompleteFromSession();
 
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
@@ -210,10 +173,10 @@ export default function MultiModeWords() {
             complete_players: newStatus.complete_players,
             timeout_players: newStatus.timeout_players,
           });
-          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+          // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
           if (newStatus.complete_players === newStatus.current_players) {
-            console.log('전원 제출해서 넘어감');
+            // console.log('전원 제출해서 넘어감');
             moveToNextTurn();
             return;
             // } else if (newStatus.timeout_players >= newStatus.current_players) {
@@ -238,9 +201,6 @@ export default function MultiModeWords() {
   }, [game?.id]);
 
   useEffect(() => {
-    // useGameRoomStore.getState().loadGameFromSession();
-    // useGameRoomStore.getState().loadPlayerFromSession();
-    // useGameRoomStore.getState().loadTurnFromSession();
     toast.success('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
 
     setTime(60);
@@ -254,10 +214,6 @@ export default function MultiModeWords() {
   useEffect(() => {
     if (timeLeft <= 0) {
       // isZero();
-
-      // console.log('시간 다 돼서 넘어감');
-      // if (!isComplete) saveWords(false);
-      // moveToNextTurn();
 
       (async () => {
         if (!isComplete) await saveWords(false);
@@ -284,18 +240,6 @@ export default function MultiModeWords() {
             <div className="font-semibold text-[22px]">
               다른 플레이어가 그릴 제시어를 설정해주세요.
             </div>
-            {/* <LabeledInput
-              value={word}
-              onChange={(e) => {
-                setWord(e.target.value);
-                setInvalid(false);
-              }}
-              title=""
-              invalidMessage="한 단어로 설정해주세요."
-              isInvalid={invalid}
-              placeholder="제시어 입력"
-              className="w-[500px] h-[50px] pr-[50px]"
-            /> */}
             <LabeledInput
               ref={inputRef}
               value={word}
@@ -311,14 +255,6 @@ export default function MultiModeWords() {
               placeholder="제시어 입력"
               className="w-[500px] h-[50px] pr-[50px]"
             />
-            {/* <Button
-              onClick={checkValidation}
-              className={`w-30 h-11 px-0 py-0 ${
-                isComplete && 'cursor-not-allowed'
-              }`}
-            >
-              {isComplete ? '제출 완료' : '제출'}
-            </Button> */}
             {isComplete ? (
               <Button
                 disabled

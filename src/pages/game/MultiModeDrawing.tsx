@@ -472,7 +472,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}
-              isTimeout={isTimeout}
+              // isTimeout={isTimeout}
               trigger={trigger}
               // isZero={isZero}
               onSubmitDrawing={sendDrawingHandler}
@@ -483,7 +483,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}
-              isTimeout={isTimeout}
+              // isTimeout={isTimeout}
               trigger={trigger}
               // isZero={isZero}
               drawingUrl={drawingUrl}
