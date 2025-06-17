@@ -78,7 +78,12 @@ export default function Comments({
       </div>
 
       {/* 댓글 입력 */}
-      <div className="w-[840px] flex justify-between">
+      <form
+        className="w-[840px] flex justify-between"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddComment();
+        }}>
         <BaseInput
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -86,11 +91,11 @@ export default function Comments({
           placeholder="댓글을 입력해주세요."
         />
         <Button
-          onClick={handleAddComment}
+          // onClick={handleAddComment}
           className="w-[100px] h-[38px] text-[13px] font-bold px-[25px] py-[12px] leading-0">
           댓글달기
         </Button>
-      </div>
+      </form>
     </div>
   );
 }
