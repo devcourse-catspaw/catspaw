@@ -19,7 +19,8 @@ export const fetchPosts = async (offset: number, limit: number) => {
      likes(*)
   `
       )
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit - 1)
+      .order("created_at", { ascending: false });
 
     return posts;
   } catch (e) {

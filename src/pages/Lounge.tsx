@@ -54,7 +54,11 @@ export default function Lounge() {
     const offset = page * limit;
     const newPosts = await fetchPosts(offset, limit);
     if (!newPosts || newPosts.length < limit) setHasMore(false);
-    setPosts((prev) => [...prev, ...(newPosts ?? [])]);
+    setPosts((prev) => {
+      const prevPostsId = new Set(prev.map((p) => p.id));
+      const uniquePosts = newPosts?.filter((p) => !prevPostsId.has(p.id));
+      return [...prev, ...uniquePosts!];
+    });
     setPage((prev) => prev + 1);
     setIsLoading(false);
   };

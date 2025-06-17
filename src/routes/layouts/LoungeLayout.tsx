@@ -33,7 +33,7 @@ export default function LoungeLayout() {
   //     }/storage/v1/object/public/avatar-image/${me.avatar}`
   //   : "kisu_.svg";
   return (
-    <div className="relative min-h-screen w-full flex flex-col">
+    <div className="relative min-h-screen w-full flex flex-col pb-[80px]">
       <Header
         pageTitle="라운지"
         avatar={avatarSrc}
