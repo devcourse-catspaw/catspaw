@@ -8,9 +8,11 @@ import kisu from "../../assets/images/kisu_.svg";
 // import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../lounge/TimeAgo";
+import { useAuthStore } from "../../stores/authStore";
 
 type PostCardProps = {
   postId: number;
+  userId: string;
   postTitle: string;
   date: string;
   contents: string;
@@ -34,6 +36,7 @@ const likeCountStyle =
 
 export default function PostCard({
   postId,
+  userId,
   postTitle,
   date,
   contents,
@@ -46,9 +49,17 @@ export default function PostCard({
   onLike,
 }: PostCardProps) {
   const navigate = useNavigate();
+  const loginUser = useAuthStore((state) => state.user);
 
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
+  };
+  console.log(userId);
+  console.log(loginUser?.id);
+
+  const goToUserPage = () => {
+    if (userId === loginUser?.id) return navigate("/mypage");
+    navigate(`/user/${userId}`);
   };
 
   return (
@@ -94,7 +105,9 @@ export default function PostCard({
             </div>
             {/* 프로필 사진 + 유저 이름 */}
             <div className="flex justify-between">
-              <div className="flex justify-between items-center gap-1">
+              <div
+                onClick={goToUserPage}
+                className="flex justify-between items-center gap-1 cursor-pointer">
                 <img className="w-[28px]" src={avatar} alt="프로필사진" />
                 <span className={contentStyle}>{userName}</span>
               </div>

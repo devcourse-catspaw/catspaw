@@ -50,6 +50,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
   const post = useLoaderData<PostDetail>();
   const navigate = useNavigate();
 
+  console.log(user);
   const isAuthor = user?.id === post.user_id;
   const [showMenu, setShowMenu] = useState(false);
 
@@ -72,10 +73,17 @@ export default function Writer({ avatar, userName, date }: WriterType) {
     setShowMenu(false);
     navigate("/lounge");
   };
+  const goToUserPage = () => {
+    if (post.user_id === user?.id) return navigate("/mypage");
+    navigate(`/user/${post.user_id}`);
+  };
+
   return (
     <div className="flex flex-col w-[840px]">
       <div className="flex justify-between items-center pr-6">
-        <div className="flex justify-start items-center p-0">
+        <div
+          onClick={goToUserPage}
+          className="flex justify-start items-center p-0 cursor-pointer">
           <img
             className="w-[41px] mr-[5px] color-[var(--black)]"
             src={avatar}
