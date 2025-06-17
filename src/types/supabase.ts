@@ -115,12 +115,14 @@ export type Database = {
             columns: ["user_id_1"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "friends_user_id_2_fkey"
             columns: ["user_id_2"]
             isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -151,12 +153,14 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
       games: {
         Row: {
+          complete_players: number
           complete_players: number
           created_at: string
           current_players: number
@@ -165,13 +169,24 @@ export type Database = {
           ready_players: number
           room_name: string
           room_password: string | null
+          leader_id: string
+          ready_players: number
+          room_name: string
+          room_password: string | null
           status: string
         }
         Insert: {
           complete_players?: number
+          complete_players?: number
           created_at?: string
           current_players?: number
+          current_players?: number
           id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name: string
+          room_password?: string | null
+          status?: string
           leader_id?: string
           ready_players?: number
           room_name: string
@@ -180,9 +195,14 @@ export type Database = {
         }
         Update: {
           complete_players?: number
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name?: string
+          room_password?: string | null
           leader_id?: string
           ready_players?: number
           room_name?: string
@@ -215,12 +235,15 @@ export type Database = {
             foreignKeyName: "likes_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
+            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "likes_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -235,6 +258,8 @@ export type Database = {
           id: number
           nickname: string | null
           player_id: string
+          nickname: string | null
+          player_id: string
         }
         Insert: {
           content: string
@@ -243,12 +268,16 @@ export type Database = {
           id?: number
           nickname?: string | null
           player_id: string
+          nickname?: string | null
+          player_id: string
         }
         Update: {
           content?: string
           created_at?: string
           game_id?: number
           id?: number
+          nickname?: string | null
+          player_id?: string
           nickname?: string | null
           player_id?: string
         }
@@ -268,6 +297,8 @@ export type Database = {
           id: number
           is_leader: boolean | null
           is_ready: boolean | null
+          is_leader: boolean | null
+          is_ready: boolean | null
           joined_at: string
           user_id: string
         }
@@ -276,12 +307,16 @@ export type Database = {
           id?: number
           is_leader?: boolean | null
           is_ready?: boolean | null
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           joined_at?: string
           user_id: string
         }
         Update: {
           game_id?: number
           id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           is_leader?: boolean | null
           is_ready?: boolean | null
           joined_at?: string
@@ -299,6 +334,7 @@ export type Database = {
             foreignKeyName: "players_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -338,6 +374,7 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -349,6 +386,7 @@ export type Database = {
           game_id: number
           id: number
           origin_player_id: string
+          origin_player_id: string
         }
         Insert: {
           contents: Json
@@ -356,12 +394,14 @@ export type Database = {
           game_id: number
           id?: number
           origin_player_id: string
+          origin_player_id: string
         }
         Update: {
           contents?: Json
           created_at?: string
           game_id?: number
           id?: number
+          origin_player_id?: string
           origin_player_id?: string
         }
         Relationships: [
@@ -377,9 +417,12 @@ export type Database = {
       turns: {
         Row: {
           content: string | null
+          content: string | null
           created_at: string
           game_id: number
           id: number
+          receiver_id: string
+          sender_id: string
           receiver_id: string
           sender_id: string
           turn_number: number
@@ -387,9 +430,13 @@ export type Database = {
         }
         Insert: {
           content?: string | null
+          content?: string | null
           created_at?: string
           game_id: number
           id?: number
+          receiver_id: string
+          sender_id: string
+          turn_number?: number
           receiver_id: string
           sender_id: string
           turn_number?: number
@@ -397,9 +444,12 @@ export type Database = {
         }
         Update: {
           content?: string | null
+          content?: string | null
           created_at?: string
           game_id?: number
           id?: number
+          receiver_id?: string
+          sender_id?: string
           receiver_id?: string
           sender_id?: string
           turn_number?: number
@@ -462,12 +512,16 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "players_user_id_fkey"
             columns: ["user_id"]
+            foreignKeyName: "players_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

@@ -69,3 +69,12 @@
 body {
   font-family: 'Pretendard';
 }
+
+/* 스크롤 */
+.scroll-custom::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.scroll-custom::-webkit-scrollbar-thumb {
+  background: #939393;
+}
