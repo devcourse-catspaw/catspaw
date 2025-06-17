@@ -56,6 +56,18 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
   }
 };
 
+export const fetchExactPost = async ({ params }: LoaderFunctionArgs) => {
+  const id = Number(params.postId);
+  if (isNaN(id)) throw new Error("Invalid postId");
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*, users(id, nickname, avatar)")
+    .eq("id", id)
+    .single();
+  if (error) throw console.error("포스트 수정 에러:", error);
+  return data;
+};
+
 // 좋아요 불러오기
 export const fetchLikes = async (): Promise<LikeRow[]> => {
   const { data, error } = await supabase.from("likes").select("*");

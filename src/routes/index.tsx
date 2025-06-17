@@ -17,8 +17,13 @@ import useAuthInit from "./../utils/useAuthInit";
 import LoungeDetail from "../pages/lounge/LoungeDetail";
 import Lounge from "../pages/Lounge";
 import LoungeLayout from "./layouts/LoungeLayout";
-import { fetchPostDetail, fetchPosts } from "./loader/post.loader";
-
+import {
+  fetchPostDetail,
+  fetchPosts,
+  fetchExactPost,
+} from "./loader/post.loader";
+import EditPost from "../pages/lounge/EditPost";
+import AddPost from "../pages/lounge/AddPost";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -79,7 +84,11 @@ const router = createBrowserRouter([
       { index: true, element: <Lounge />, loader: fetchPosts },
       { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },
       { path: "add-post", element: <AddPost /> },
-      { path: "edit-post", element: <EditPost /> },
+      {
+        path: "edit-post/:postId",
+        element: <EditPost />,
+        loader: fetchExactPost,
+      },
     ],
   },
 ]);
