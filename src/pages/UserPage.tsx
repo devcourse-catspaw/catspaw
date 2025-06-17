@@ -213,7 +213,7 @@ export default function UserPage() {
     } = await supabase.auth.getUser()
 
     if (authError || !user || !userIdFromParams) {
-      toast('요청 실패')
+      toast.error('요청 실패')
       return
     }
 
@@ -242,7 +242,7 @@ export default function UserPage() {
 
     if (error) {
       console.error(error)
-      toast('친구 요청 실패')
+      toast.error('친구 요청 실패')
     } else {
       setFriendRequestStatus('pending')
       toast('친구 요청을 보냈습니다!')
