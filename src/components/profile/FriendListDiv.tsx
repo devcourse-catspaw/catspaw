@@ -74,30 +74,47 @@ export default function FriendListDiv({ userIdProp }: { userIdProp?: string }) {
   useEffect(() => {
     fetchFriends()
 
-    const channel = supabase
-      .channel('friends-realtime')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'friends',
-        },
-        (payload) => {
-          const newRow = payload.new as FriendRow | null
-          const oldRow = payload.old as FriendRow | null
-          if (
-            newRow?.user_id_1 === userId ||
-            newRow?.user_id_2 === userId ||
-            oldRow?.user_id_1 === userId ||
-            oldRow?.user_id_2 === userId
-          ) {
-            console.log('실시간 반영됨:', payload)
-            fetchFriends()
-          }
+    const channel = supabase.channel('friends-realtime')
+
+    channel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'friends',
+      },
+      (payload) => {
+        const newRow = payload.new as FriendRow | null
+        const oldRow = payload.old as FriendRow | null
+        if (
+          newRow?.user_id_1 === userId ||
+          newRow?.user_id_2 === userId ||
+          oldRow?.user_id_1 === userId ||
+          oldRow?.user_id_2 === userId
+        ) {
+          console.log('실시간 반영됨:', payload)
+          fetchFriends()
         }
-      )
-      .subscribe()
+      }
+    )
+
+    channel.on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'friends',
+      },
+      (payload) => {
+        const oldRow = payload.old as FriendRow | null
+        if (oldRow?.user_id_1 === userId || oldRow?.user_id_2 === userId) {
+          console.log('Delete 감지됨:', payload)
+          fetchFriends()
+        }
+      }
+    )
+
+    channel.subscribe()
 
     return () => {
       supabase.removeChannel(channel)

@@ -68,6 +68,78 @@ export default function UserPage() {
     if (userIdFromParams) {
       fetchUserInfo()
     }
+
+    let channel: any
+
+    const subscribeToRealtime = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user || !userIdFromParams) return
+
+      channel = supabase
+        .channel('user-page-friend-status')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'friends',
+          },
+          (payload) => {
+            if (
+              [
+                payload.new?.user_id_1,
+                payload.new?.user_id_2,
+                payload.old?.user_id_1,
+                payload.old?.user_id_2,
+              ].includes(user.id) &&
+              [
+                payload.new?.user_id_1,
+                payload.new?.user_id_2,
+                payload.old?.user_id_1,
+                payload.old?.user_id_2,
+              ].includes(userIdFromParams)
+            ) {
+              checkFriendStatus(user.id)
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'friend_requests',
+          },
+          (payload) => {
+            if (
+              [
+                payload.new?.sender_id,
+                payload.new?.receiver_id,
+                payload.old?.sender_id,
+                payload.old?.receiver_id,
+              ].includes(user.id) &&
+              [
+                payload.new?.sender_id,
+                payload.new?.receiver_id,
+                payload.old?.sender_id,
+                payload.old?.receiver_id,
+              ].includes(userIdFromParams)
+            ) {
+              checkFriendStatus(user.id)
+            }
+          }
+        )
+        .subscribe()
+    }
+
+    subscribeToRealtime()
+
+    return () => {
+      if (channel) supabase.removeChannel(channel)
+    }
   }, [userIdFromParams])
 
   const loadMorePosts = useCallback(async () => {
