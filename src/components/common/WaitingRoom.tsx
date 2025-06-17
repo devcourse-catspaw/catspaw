@@ -1,4 +1,4 @@
-import kisu from '../../assets/images/kisu_.svg';
+// import kisu from '../../assets/images/kisu_.svg';
 import Crown from '../..//assets/images/crown.svg?react';
 import type { Database } from '../../types/supabase';
 
@@ -10,13 +10,20 @@ export default function WaitingRoom({
   is_leader,
   users,
 }: PlayerUserProps) {
+  const avatarUrl = users?.avatar
+    ? `${
+        import.meta.env.VITE_SUPABASE_URL
+      }/storage/v1/object/public/avatar-image/${users.avatar}`
+    : '';
+
   return (
     <>
       <div className="w-full h-[77px] px-7 bg-[var(--white)] flex justify-between items-center text-[16px] font-bold rounded-md border-2 border-[var(--black)]">
         <div className="flex items-center gap-[7px]">
           <img
             // src={avatar ? avatar : kisu}
-            src={kisu}
+            // src={kisu}
+            src={avatarUrl}
             alt="캐릭터"
             className="w-[49px] h-[49px]"
           />

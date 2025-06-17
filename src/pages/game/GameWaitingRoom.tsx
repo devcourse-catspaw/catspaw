@@ -5,13 +5,14 @@ import WaitingRoom, {
 import NavWithExit from '../../components/common/NavWithExit';
 import type { Database } from '../../types/supabase';
 import supabase from '../../utils/supabase';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WaitingRoomSkeleton from '../../components/game/WaitingRoomSkeleton';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
 import Chat from '../../components/game/Chat';
 import toast from 'react-hot-toast';
+import { debounce } from 'lodash';
 
 export type UserProps = Database['public']['Tables']['users']['Row'];
 export type PlayerProps = Database['public']['Tables']['players']['Row'];
@@ -29,6 +30,13 @@ export default function GameWaitingRoom() {
   const [isLeader, setIsLeader] = useState(false);
   const [isAllReady, setIsAllReady] = useState(false);
   const [players, setPlayers] = useState<PlayerUserProps[]>([]);
+  // const [userInfo, setUserInfo] = useState<UserProps>();
+
+  // const avatarUrl = userInfo?.avatar
+  //   ? `${
+  //       import.meta.env.VITE_SUPABASE_URL
+  //     }/storage/v1/object/public/avatar-image/${userInfo.avatar}`
+  //   : '';
 
   const checkLeader = () => {
     const leader = players.find(
@@ -48,135 +56,156 @@ export default function GameWaitingRoom() {
     setIsAllReady(allReady);
   };
 
-  const clickStartHandler = async () => {
-    if (!game) return;
+  const clickStartHandler = useCallback(
+    debounce(async () => {
+      if (!game) return;
 
-    await supabase
-      .from('games')
-      .update({ status: 'PLAYING' })
-      .eq('id', game.id);
-
-    console.log('게임을 시작합니다!');
-    useGameRoomStore.getState().updateGame({ status: 'PLAYING' });
-    console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-  };
-
-  const clickReadyHandler = async () => {
-    if (!user || !game) return;
-    const { data: dataP, error } = await supabase
-      .from('players')
-      .update({
-        is_ready: true,
-      })
-      .eq('user_id', user?.id)
-      .select();
-
-    if (dataP) {
-      console.log('READY 성공!');
-      useGameRoomStore.getState().updatePlayer({ is_ready: true });
-      console.log(
-        'useGameRoomStore Player:',
-        useGameRoomStore.getState().player
-      );
-
-      const { data, error } = await supabase
+      await supabase
         .from('games')
+        .update({ status: 'PLAYING' })
+        .eq('id', game.id);
+
+      console.log('게임을 시작합니다!');
+      useGameRoomStore.getState().updateGame({ status: 'PLAYING' });
+      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    }, 1000),
+    [game]
+  );
+
+  const clickReadyHandler = useCallback(
+    debounce(async () => {
+      if (!user || !game) return;
+      const { data: dataP, error } = await supabase
+        .from('players')
         .update({
-          ready_players: game.ready_players + 1,
+          is_ready: true,
         })
-        .eq('id', game.id)
+        .eq('user_id', user?.id)
         .select();
 
-      if (data) {
-        console.log('레디 카운트 성공!');
-        useGameRoomStore.getState().setGame(data[0]);
-        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-      }
-      if (error) {
-        console.log('레디 카운트 에러');
-        console.error('Ready Count error:', error.message);
-      }
-    }
-
-    if (error) {
-      console.log('READY 에러');
-      console.error('Ready error:', error.message);
-    }
-  };
-
-  const clickExitHandler = async () => {
-    if (!user || !game || !player) return;
-
-    console.log('방 나가고 삭제 전 리더 여부:', player);
-    if (player.is_leader) {
-      const { error } = await supabase.from('games').delete().eq('id', game.id);
-
-      if (error) {
-        console.error('삭제 실패:', error.message);
-      } else {
-        console.log('삭제 성공');
-        useGameRoomStore.getState().resetGame();
-        console.log('useGameRoomStore Game:', useGameRoomStore.getState().game);
-        useGameRoomStore.getState().resetPlayer();
-        console.log(
-          'useGameRoomStore Player:',
-          useGameRoomStore.getState().player
-        );
-        navigate('/game/list');
-      }
-    } else {
-      const { error } = await supabase
-        .from('players')
-        .delete()
-        .eq('user_id', user?.id);
-
-      if (error) {
-        console.error('삭제 실패:', error.message);
-      } else {
-        console.log('삭제 성공');
-        useGameRoomStore.getState().resetPlayer();
+      if (dataP) {
+        console.log('READY 성공!');
+        useGameRoomStore.getState().updatePlayer({ is_ready: true });
         console.log(
           'useGameRoomStore Player:',
           useGameRoomStore.getState().player
         );
 
-        if (player?.is_ready) {
-          const { data, error } = await supabase
-            .from('games')
-            .update({
-              current_players: game.current_players - 1,
-              ready_players: game.ready_players - 1,
-            })
-            .eq('id', game.id)
-            .select();
+        const { data, error } = await supabase
+          .from('games')
+          .update({
+            ready_players: game.ready_players + 1,
+          })
+          .eq('id', game.id)
+          .select();
 
-          if (error) {
-            console.error('카운트 실패:', error.message);
-          } else {
-            console.log('카운트 성공');
-            useGameRoomStore.getState().setGame(data[0]);
-            console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-            navigate('/game/list');
-          }
+        if (data) {
+          console.log('레디 카운트 성공!');
+          useGameRoomStore.getState().setGame(data[0]);
+          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+        }
+        if (error) {
+          console.log('레디 카운트 에러');
+          console.error('Ready Count error:', error.message);
+        }
+      }
+
+      if (error) {
+        console.log('READY 에러');
+        console.error('Ready error:', error.message);
+      }
+    }, 1000),
+    [user, game]
+  );
+
+  const clickExitHandler = useCallback(
+    debounce(async () => {
+      if (!user || !game || !player) return;
+
+      console.log('방 나가고 삭제 전 리더 여부:', player);
+      if (player.is_leader) {
+        const { error } = await supabase
+          .from('games')
+          .delete()
+          .eq('id', game.id);
+
+        if (error) {
+          console.error('삭제 실패:', error.message);
         } else {
-          const { data, error } = await supabase
-            .from('games')
-            .update({ current_players: game.current_players - 1 })
-            .eq('id', game.id)
-            .select();
+          console.log('삭제 성공');
+          useGameRoomStore.getState().resetGame();
+          console.log(
+            'useGameRoomStore Game:',
+            useGameRoomStore.getState().game
+          );
+          useGameRoomStore.getState().resetPlayer();
+          console.log(
+            'useGameRoomStore Player:',
+            useGameRoomStore.getState().player
+          );
+          navigate('/game/list');
+        }
+      } else {
+        const { error } = await supabase
+          .from('players')
+          .delete()
+          .eq('user_id', user?.id);
 
-          if (error) {
-            console.error('카운트 실패:', error.message);
+        if (error) {
+          console.error('삭제 실패:', error.message);
+        } else {
+          console.log('삭제 성공');
+          useGameRoomStore.getState().resetPlayer();
+          console.log(
+            'useGameRoomStore Player:',
+            useGameRoomStore.getState().player
+          );
+
+          if (player?.is_ready) {
+            const { data, error } = await supabase
+              .from('games')
+              .update({
+                current_players: game.current_players - 1,
+                ready_players: game.ready_players - 1,
+              })
+              .eq('id', game.id)
+              .select();
+
+            if (error) {
+              console.error('카운트 실패:', error.message);
+            } else {
+              console.log('카운트 성공');
+              useGameRoomStore.getState().setGame(data[0]);
+              console.log(
+                'useGameRoomStore:',
+                useGameRoomStore.getState().game
+              );
+              navigate('/game/list');
+            }
           } else {
-            console.log('카운트 성공');
-            useGameRoomStore.getState().setGame(data[0]);
-            console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-            navigate('/game/list');
+            const { data, error } = await supabase
+              .from('games')
+              .update({ current_players: game.current_players - 1 })
+              .eq('id', game.id)
+              .select();
+
+            if (error) {
+              console.error('카운트 실패:', error.message);
+            } else {
+              console.log('카운트 성공');
+              useGameRoomStore.getState().setGame(data[0]);
+              console.log(
+                'useGameRoomStore:',
+                useGameRoomStore.getState().game
+              );
+              navigate('/game/list');
+            }
           }
         }
       }
-    }
-  };
+    }, 500),
+    [user, game, player]
+  );
 
   const getPlayerList = async () => {
     if (!game) {
@@ -209,6 +238,28 @@ export default function GameWaitingRoom() {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+
+  //     if (!user) return;
+
+  //     const { data, error } = await supabase
+  //       .from('users')
+  //       .select('*')
+  //       .eq('id', user.id)
+  //       .single();
+
+  //     if (!error) {
+  //       setUserInfo(data);
+  //     }
+  //   };
+
+  //   fetchUser();
+  // }, []);
+
   useEffect(() => {
     if (count === null) return;
     if (count === 0) {
@@ -230,8 +281,8 @@ export default function GameWaitingRoom() {
     checkAllReady();
 
     if (!game?.id) return;
-    const channel = supabase
-      .channel('change_players')
+    const playersChannel = supabase
+      .channel(`change_players_${game?.id}`)
       .on(
         'postgres_changes',
         {
@@ -378,13 +429,7 @@ export default function GameWaitingRoom() {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [game?.id]);
-
-  useEffect(() => {
-    const channel = supabase
+    const gamesChannel = supabase
       .channel(`room-${game?.id}`)
       .on(
         'postgres_changes',
@@ -423,15 +468,34 @@ export default function GameWaitingRoom() {
               );
               const data = await res.json();
               console.log('성공:', data);
+
+              useGameRoomStore.getState().changeTurn(1);
+              console.log(
+                'useGameRoomStore Turn:',
+                useGameRoomStore.getState().turn
+              );
+
+              setCount(3);
+            } else {
+              useGameRoomStore.getState().changeTurn(1);
+              console.log(
+                'useGameRoomStore Turn:',
+                useGameRoomStore.getState().turn
+              );
+
+              console.log('방장 제외 1초 늦게 시작');
+              setTimeout(() => {
+                setCount(3);
+              }, 1000);
             }
 
-            useGameRoomStore.getState().changeTurn(1);
-            console.log(
-              'useGameRoomStore Turn:',
-              useGameRoomStore.getState().turn
-            );
+            // useGameRoomStore.getState().changeTurn(1);
+            // console.log(
+            //   'useGameRoomStore Turn:',
+            //   useGameRoomStore.getState().turn
+            // );
 
-            setCount(3);
+            // setCount(3);
             // navigate('/game/multi');
           }
         }
@@ -462,9 +526,93 @@ export default function GameWaitingRoom() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(playersChannel);
+      supabase.removeChannel(gamesChannel);
     };
   }, [game?.id]);
+
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel(`room-${game?.id}`)
+  //     .on(
+  //       'postgres_changes',
+  //       {
+  //         event: 'UPDATE',
+  //         schema: 'public',
+  //         table: 'games',
+  //         filter: `id=eq.${game?.id}`,
+  //       },
+  //       async (payload) => {
+  //         const newStatus = payload.new;
+  //         if (newStatus.status === 'PLAYING') {
+  //           useGameRoomStore
+  //             .getState()
+  //             .updateGame({ status: newStatus.status });
+  //           console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+
+  //           console.log('리더 아이디:', newStatus.leader_id);
+  //           console.log('내 user?.id 아이디:', user?.id);
+  //           console.log('내 player?.user_id 아이디:', player?.user_id);
+
+  //           // if (newStatus.leader_id === user?.id) {
+  //           if (
+  //             newStatus.leader_id === user?.id ||
+  //             newStatus.leader_id === player?.user_id
+  //           ) {
+  //             const res = await fetch(
+  //               'https://neddelxefvltdmbkyymh.supabase.co/functions/v1/createTurns',
+  //               {
+  //                 method: 'POST',
+  //                 headers: { 'Content-Type': 'application/json' },
+  //                 body: JSON.stringify({
+  //                   game_id: game?.id,
+  //                 }),
+  //               }
+  //             );
+  //             const data = await res.json();
+  //             console.log('성공:', data);
+  //           }
+
+  //           useGameRoomStore.getState().changeTurn(1);
+  //           console.log(
+  //             'useGameRoomStore Turn:',
+  //             useGameRoomStore.getState().turn
+  //           );
+
+  //           setCount(3);
+  //           // navigate('/game/multi');
+  //         }
+  //       }
+  //     )
+  //     .on(
+  //       'postgres_changes',
+  //       {
+  //         event: 'DELETE',
+  //         schema: 'public',
+  //         table: 'games',
+  //         filter: `id=eq.${game?.id}`,
+  //       },
+  //       () => {
+  //         useGameRoomStore.getState().resetGame();
+  //         console.log(
+  //           'useGameRoomStore Game:',
+  //           useGameRoomStore.getState().game
+  //         );
+  //         useGameRoomStore.getState().resetPlayer();
+  //         console.log(
+  //           'useGameRoomStore Player:',
+  //           useGameRoomStore.getState().player
+  //         );
+  //         navigate('/game/list');
+  //         toast.success('방장이 방을 폭파시켰습니다!');
+  //       }
+  //     )
+  //     .subscribe();
+
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, [game?.id]);
 
   useEffect(() => {
     checkLeader();
@@ -502,20 +650,28 @@ export default function GameWaitingRoom() {
                 }}
               ></div>
               {isLeader ? (
-                <Button
-                  className={`text-[28px] w-[320px] h-[82px] bg-[var(--blue)] ${
-                    !isAllReady && 'bg-[var(--grey-100)] cursor-not-allowed'
-                  }`}
-                  onClick={clickStartHandler}
-                >
-                  Start
+                isAllReady ? (
+                  <Button
+                    className="text-[28px] w-[320px] h-[82px] bg-[var(--blue)]"
+                    onClick={clickStartHandler}
+                  >
+                    Start
+                  </Button>
+                ) : (
+                  <Button
+                    disabled
+                    className="text-[28px] w-[320px] h-[82px] bg-[var(--grey-100)] cursor-not-allowed"
+                  >
+                    Start
+                  </Button>
+                )
+              ) : player?.is_ready ? (
+                <Button className="text-[28px] w-[320px] h-[82px] bg-[var(--grey-100)] cursor-not-allowed">
+                  Ready
                 </Button>
               ) : (
                 <Button
-                  className={`text-[28px] w-[320px] h-[82px] bg-[var(--blue)] ${
-                    player?.is_ready &&
-                    'bg-[var(--grey-100)] cursor-not-allowed'
-                  }`}
+                  className="text-[28px] w-[320px] h-[82px] bg-[var(--blue)]"
                   onClick={clickReadyHandler}
                 >
                   Ready

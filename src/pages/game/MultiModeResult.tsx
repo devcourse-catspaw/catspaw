@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import sketchBook from '../../assets/images/sketchbook_big.svg';
 import loading from '../../assets/images/doodle_loading.svg';
 import pawPencil from '../../assets/images/paw_pencil.svg';
-import Kisu from '../../assets/images/kisu_.svg?react';
+// import Kisu from '../../assets/images/kisu_.svg?react';
 import NavWithExit from '../../components/common/NavWithExit';
 import { useNavigate } from 'react-router';
 import Button from '../../components/common/Button';
@@ -16,6 +16,7 @@ import { useGameRoomStore } from '../../stores/gameRoomStore';
 import type { PlayerUserProps } from '../../components/common/WaitingRoom';
 import type { Database } from '../../types/supabase';
 import Chat from '../../components/game/Chat';
+// import toast from 'react-hot-toast';
 
 type TurnType = Database['public']['Tables']['turns']['Row'];
 
@@ -80,6 +81,8 @@ export default function MultiModeResult() {
 
     setPlayers(players);
     setPlayerResults(players.map((p) => chainsByUserId[p.user_id] ?? []));
+
+    console.log('결과 불러오기');
   };
 
   const makeChains = (
@@ -239,6 +242,19 @@ export default function MultiModeResult() {
     useGameRoomStore.getState().loadTurnFromSession();
 
     getResults();
+
+    const interval = setInterval(() => {
+      getResults();
+    }, 2000);
+
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   }, [game?.id]); // []
 
   useEffect(() => {
@@ -348,9 +364,16 @@ export default function MultiModeResult() {
                 {/* flex flex-col justify-end items-end */}
                 <div className="absolute top-0 -left-[58px] flex flex-col items-end w-[64px] mt-5 -z-10">
                   {players.map((player, index) => (
+                    // <ResultPlayerIndex
+                    //   key={player.user_id}
+                    //   avatar={Kisu}
+                    //   name={player.users!.nickname}
+                    //   isActive={isActive === index}
+                    //   onClick={() => clickPlayerIndexHandler(index)}
+                    // />
                     <ResultPlayerIndex
                       key={player.user_id}
-                      avatar={Kisu}
+                      avatar={player.users!.avatar!}
                       name={player.users!.nickname}
                       isActive={isActive === index}
                       onClick={() => clickPlayerIndexHandler(index)}
@@ -416,6 +439,12 @@ export default function MultiModeResult() {
           closeResultShareModalHandler={closeResultShareModalHandler}
         />
       )}
+      {/* <div className={`${!isResultShareModalOpen && 'hidden'}`}>
+        <ResultShareModal
+          imageUrl={imageUrl}
+          closeResultShareModalHandler={closeResultShareModalHandler}
+        />
+      </div> */}
     </div>
   );
 }

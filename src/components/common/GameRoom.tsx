@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import iconLock from '../../assets/images/icon_lock.svg';
 import FullPlayersModal from '../game/FullPlayersModal';
 import PlayingModal from '../game/PlayingModal';
@@ -8,6 +8,7 @@ import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import type { Database } from '../../types/supabase';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
+import { debounce } from 'lodash';
 
 export type GameRoomProps = Database['public']['Tables']['games']['Row'];
 
@@ -22,31 +23,52 @@ export default function GameRoom({
 
   const { user } = useAuthStore();
 
-  const [disabled, setDisabled] = useState(false);
+  // const [disabled, setDisabled] = useState(false);
   const [isFullPlayersModalOpen, setIsFullPlayersModalOpen] = useState(false);
   const [isPlayingModalOpen, setIsPlayingModalOpen] = useState(false);
   const [isRoomPasswordModalOpen, setIsRoomPasswordModalOpen] = useState(false);
 
-  const clickHandler = async () => {
-    if (disabled) return;
+  // // const clickHandler = async () => {
+  // const clickHandler = () => {
+  //   // if (disabled) return;
 
-    setDisabled(true);
-    if (status === 'PLAYING') {
-      setIsPlayingModalOpen(true);
-      return;
-    }
-    if (current_players >= 4) {
-      setIsFullPlayersModalOpen(true);
-      return;
-    }
-    if (room_password) {
-      setIsRoomPasswordModalOpen(true);
-      return;
-    }
+  //   // setDisabled(true);
+  //   if (status === 'PLAYING') {
+  //     setIsPlayingModalOpen(true);
+  //     return;
+  //   }
+  //   if (current_players >= 4) {
+  //     setIsFullPlayersModalOpen(true);
+  //     return;
+  //   }
+  //   if (room_password) {
+  //     setIsRoomPasswordModalOpen(true);
+  //     return;
+  //   }
 
-    dataHandler();
-    setTimeout(() => setDisabled(false), 500);
-  };
+  //   dataHandler();
+  //   // setTimeout(() => setDisabled(false), 500);
+  // };
+
+  const clickHandler = useCallback(
+    debounce(() => {
+      if (status === 'PLAYING') {
+        setIsPlayingModalOpen(true);
+        return;
+      }
+      if (current_players >= 4) {
+        setIsFullPlayersModalOpen(true);
+        return;
+      }
+      if (room_password) {
+        setIsRoomPasswordModalOpen(true);
+        return;
+      }
+
+      dataHandler();
+    }, 500),
+    [status, current_players, room_password, user]
+  );
 
   const dataHandler = async () => {
     if (!user) {

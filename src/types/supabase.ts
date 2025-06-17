@@ -76,33 +76,75 @@ export type Database = {
           },
         ]
       }
-      follows: {
+      friend_requests: {
         Row: {
-          created_at: string
-          follower_id: string
-          following_id: string
+          created_at: string | null
+          id: string
+          receiver_id: string | null
+          sender_id: string | null
+          status: string | null
         }
         Insert: {
-          created_at?: string
-          follower_id: string
-          following_id: string
+          created_at?: string | null
+          id?: string
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: string | null
         }
         Update: {
-          created_at?: string
-          follower_id?: string
-          following_id?: string
+          created_at?: string | null
+          id?: string
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "follows_follower_id_fkey"
-            columns: ["follower_id"]
+            foreignKeyName: "friend_requests_receiver_id_fkey"
+            columns: ["receiver_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "follows_following_id_fkey"
-            columns: ["following_id"]
+            foreignKeyName: "friend_requests_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      friends: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id_1: string | null
+          user_id_2: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friends_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_user_id_2_fkey"
+            columns: ["user_id_2"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -149,6 +191,7 @@ export type Database = {
           room_name: string
           room_password: string | null
           status: string
+          timeout_players: number
         }
         Insert: {
           complete_players?: number
@@ -160,6 +203,7 @@ export type Database = {
           room_name: string
           room_password?: string | null
           status?: string
+          timeout_players?: number
         }
         Update: {
           complete_players?: number
@@ -171,6 +215,7 @@ export type Database = {
           room_name?: string
           room_password?: string | null
           status?: string
+          timeout_players?: number
         }
         Relationships: []
       }

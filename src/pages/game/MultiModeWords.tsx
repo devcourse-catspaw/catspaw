@@ -11,6 +11,7 @@ import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
 import toast from 'react-hot-toast';
+// import { debounce } from 'lodash';
 
 export default function MultiModeWords() {
   const { user } = useAuthStore();
@@ -19,6 +20,7 @@ export default function MultiModeWords() {
 
   const navigate = useNavigate();
 
+  const [disabled, setDisabled] = useState(false);
   const [word, setWord] = useState('');
   const [invalid, setInvalid] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -27,6 +29,8 @@ export default function MultiModeWords() {
   // );
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  // const saveWords = useCallback(
+  //   async (isClick: boolean) => {
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
     const { data, error } = await supabase
@@ -87,6 +91,9 @@ export default function MultiModeWords() {
       console.error(error);
     }
   };
+  //   },
+  //   [game, user, turn, word]
+  // );
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -98,36 +105,79 @@ export default function MultiModeWords() {
 
       e.preventDefault();
       checkValidation();
-      // saveWords(true);
+      // debouncedCheckValidation();
     }
   };
 
+  // const checkValidation = useCallback(() => {
   const checkValidation = () => {
+    if (disabled) return;
+
+    setDisabled(true);
     if (word.trim() !== '') {
       console.log('이동합니당');
       saveWords(true);
     } else setInvalid(true);
+
+    setTimeout(() => setDisabled(false), 500);
   };
+  // }, [word, saveWords]);
+
+  // const debouncedCheckValidation = useCallback(
+  //   debounce(() => {
+  //     checkValidation();
+  //   }, 500),
+  //   [checkValidation]
+  // );
+
+  // const isZero = async () => {
+  //   if (!game) return;
+
+  //   if (!isComplete) await saveWords(false);
+  //   //
+
+  //   const { data: dataGame, error: errorGame } = await supabase
+  //     .from('games')
+  //     .update({
+  //       timeout_players: game.timeout_players + 1,
+  //     })
+  //     .eq('id', game?.id)
+  //     .select();
+
+  //   if (dataGame) {
+  //     console.log('timeout players 업데이트 완료:', dataGame);
+  //   }
+  //   if (errorGame) {
+  //     console.log('timeout players 업데이트 실패');
+  //     console.error(errorGame);
+  //   }
+  // };
 
   const moveToNextTurn = async () => {
     if (!game) return;
+
+    // if (!isComplete) saveWords(false);
+    // 여기 안 됨
+
     const { data: dataGame, error: errorGame } = await supabase
       .from('games')
       .update({
         complete_players: 0,
+        timeout_players: 0,
       })
       .eq('id', game?.id)
       .select();
 
     if (dataGame) {
-      console.log('complete players 초기화 완료:', dataGame);
-      useGameRoomStore
-        .getState()
-        .updateGame({ complete_players: dataGame[0].complete_players });
+      console.log('complete players, timeout_players 초기화 완료:', dataGame);
+      useGameRoomStore.getState().updateGame({
+        complete_players: dataGame[0].complete_players,
+        timeout_players: dataGame[0].timeout_players,
+      });
       console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }
     if (errorGame) {
-      console.log('complete players 초기화 실패');
+      console.log('complete players, timeout_players 초기화 실패');
       console.error(errorGame);
     }
 
@@ -156,15 +206,27 @@ export default function MultiModeWords() {
         (payload) => {
           const newStatus = payload.new;
 
-          useGameRoomStore
-            .getState()
-            .updateGame({ complete_players: newStatus.complete_players });
+          useGameRoomStore.getState().updateGame({
+            complete_players: newStatus.complete_players,
+            timeout_players: newStatus.timeout_players,
+          });
           console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
           if (newStatus.complete_players === newStatus.current_players) {
             console.log('전원 제출해서 넘어감');
             moveToNextTurn();
             return;
+            // } else if (newStatus.timeout_players >= newStatus.current_players) {
+            //   console.log('전원 타이머 끝나서 넘어감');
+            //   if (!isComplete) saveWords(false);
+            //   moveToNextTurn();
+
+            // (async () => {
+            //   if (!isComplete) await saveWords(false);
+            //   await moveToNextTurn();
+            // })();
+
+            // return;
           }
         }
       )
@@ -191,10 +253,17 @@ export default function MultiModeWords() {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      console.log('시간 다 돼서 넘어감');
-      saveWords(false);
-      // reset();
-      moveToNextTurn();
+      // isZero();
+
+      // console.log('시간 다 돼서 넘어감');
+      // if (!isComplete) saveWords(false);
+      // moveToNextTurn();
+
+      (async () => {
+        if (!isComplete) await saveWords(false);
+
+        await moveToNextTurn();
+      })();
       reset();
     }
   }, [timeLeft]);
@@ -230,6 +299,7 @@ export default function MultiModeWords() {
             <LabeledInput
               ref={inputRef}
               value={word}
+              readOnly={isComplete}
               onChange={(e) => {
                 setWord(e.target.value);
                 setInvalid(false);
@@ -241,14 +311,26 @@ export default function MultiModeWords() {
               placeholder="제시어 입력"
               className="w-[500px] h-[50px] pr-[50px]"
             />
-            <Button
+            {/* <Button
               onClick={checkValidation}
               className={`w-30 h-11 px-0 py-0 ${
                 isComplete && 'cursor-not-allowed'
               }`}
             >
               {isComplete ? '제출 완료' : '제출'}
-            </Button>
+            </Button> */}
+            {isComplete ? (
+              <Button
+                disabled
+                className="w-30 h-11 px-0 py-0 cursor-not-allowed"
+              >
+                제출 완료
+              </Button>
+            ) : (
+              <Button onClick={checkValidation} className="w-30 h-11 px-0 py-0">
+                제출
+              </Button>
+            )}
           </div>
           <GameTimer totalTime={60} />
         </div>

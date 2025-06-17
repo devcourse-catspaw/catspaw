@@ -8,8 +8,11 @@ import eraser from '../../assets/images/icon_eraser.svg';
 import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
+// import { useGameTimerStore } from '../../stores/gameTimerStore';
 import LabeledInput from '../common/LabeledInput';
+// import { debounce } from 'lodash';
+// import supabase from '../../utils/supabase';
+import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 type LineData = {
   tool: string;
@@ -26,16 +29,24 @@ type HistoryState = {
 const DrawingCanvas = ({
   step,
   isComplete,
+  timeLeft,
+  isTimeout,
+  trigger,
   drawingUrl,
+  // isZero,
   onSubmitDrawing,
   onSubmitWords,
   moveToNextTurn,
 }: {
   step: string;
   isComplete: boolean;
+  timeLeft: number;
+  isTimeout: boolean;
+  trigger?: boolean;
   drawingUrl?: string;
-  onSubmitDrawing?: (imageData: string) => Promise<void>;
-  onSubmitWords?: (answer: string) => Promise<void>;
+  // isZero?: () => Promise<void>;
+  onSubmitDrawing?: (imageData: string, isOver: boolean) => Promise<void>;
+  onSubmitWords?: (answer: string, isOver: boolean) => Promise<void>;
   moveToNextTurn: () => Promise<void>;
 }) => {
   const [tool, setTool] = useState<string>('pen');
@@ -50,11 +61,14 @@ const DrawingCanvas = ({
   const [hasImage, setHasImage] = useState<boolean>(false);
   const stageRef = useRef<Konva.Stage>(null);
 
+  const [disabled, setDisabled] = useState(false);
+  const [isSent, setIsSent] = useState(false);
   const [answer, setAnswer] = useState('');
   const [invalid, setInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+  const { game } = useGameRoomStore();
+  // const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,16 +80,29 @@ const DrawingCanvas = ({
 
       e.preventDefault();
       checkValidation();
-      // handleSubmit();
+      // debouncedcheckValidation();
     }
   };
 
   const checkValidation = () => {
+    if (disabled) return;
+
+    setDisabled(true);
     if (answer.trim() !== '') {
       console.log('제출합니당');
-      handleSubmit();
+      // handleSubmit();
+      handleSubmitAuto(false);
     } else setInvalid(true);
+
+    setTimeout(() => setDisabled(false), 500);
   };
+
+  // const debouncedcheckValidation = useCallback(
+  //   debounce(() => {
+  //     checkValidation();
+  //   }, 500),
+  //   [answer]
+  // );
 
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
     const rgbaStr = hexToRgba(color);
@@ -346,7 +373,36 @@ const DrawingCanvas = ({
     }
   };
 
+  // const handleSubmit = async () => {
+  //   // if (disabled) return;
+
+  //   // setDisabled(true);
+  //   if (step === 'DRAWING') {
+  //     const stage = stageRef.current;
+  //     if (!stage) return;
+
+  //     const imageDataURL = stage.toDataURL({
+  //       mimeType: 'image/png',
+  //       quality: 1.0,
+  //       pixelRatio: 1,
+  //     });
+  //     await onSubmitDrawing!(imageDataURL);
+  //   } else if (step === 'WORDS') {
+  //     await onSubmitWords!(answer);
+  //   }
+  //   // setTimeout(() => setDisabled(false), 500);
+  // };
+
   const handleSubmit = async () => {
+    if (disabled) return;
+
+    setDisabled(true);
+    handleSubmitAuto(false);
+
+    setTimeout(() => setDisabled(false), 500);
+  };
+
+  const handleSubmitAuto = async (nowOver: boolean) => {
     if (step === 'DRAWING') {
       const stage = stageRef.current;
       if (!stage) return;
@@ -356,40 +412,96 @@ const DrawingCanvas = ({
         quality: 1.0,
         pixelRatio: 1,
       });
-      await onSubmitDrawing!(imageDataURL);
+      await onSubmitDrawing!(imageDataURL, nowOver);
     } else if (step === 'WORDS') {
-      await onSubmitWords!(answer);
+      await onSubmitWords!(answer, nowOver);
     }
   };
 
-  useEffect(() => {
-    if (step === 'DRAWING') {
-      setTime(180);
-    } else if (step === 'WORDS') {
-      setTime(120);
-    }
-    // setTime(180);
-    const timer = setInterval(() => {
-      decrease();
-    }, 1000);
+  // const isZeros = async () => {
+  //   if (!game) return;
 
-    return () => clearInterval(timer);
-  }, []);
+  //   if (isSent) {
+  //     console.log('isTimeout:', isTimeout);
+  //     if (isTimeout) moveToNextTurn();
+  //   } else {
+  //     // if (!isComplete || isTimeout) await handleSubmitAuto();
+  //     if (!isComplete) await handleSubmitAuto(true);
+  //     // if (!isComplete && isTimeout) await handleSubmitAuto();
+
+  //     const { data: dataGame, error: errorGame } = await supabase
+  //       .from('games')
+  //       .update({
+  //         timeout_players: game.timeout_players + 1,
+  //       })
+  //       .eq('id', game?.id)
+  //       .select();
+
+  //     if (dataGame) {
+  //       console.log('timeout players 업데이트 완료:', dataGame);
+  //       setIsSent(true);
+
+  //       // console.log('isTimeout:', isTimeout);
+  //       // if (isTimeout) moveToNextTurn();
+  //     }
+  //     if (errorGame) {
+  //       console.log('timeout players 업데이트 실패');
+  //       console.error(errorGame);
+  //       // setIsSent(true);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (step === 'DRAWING') {
+  //     setTime(180);
+  //   } else if (step === 'WORDS') {
+  //     setTime(120);
+  //   }
+  //   // setTime(180);
+  //   const timer = setInterval(() => {
+  //     decrease();
+  //   }, 1000);
+
+  //   return () => clearInterval(timer);
+  // }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
+      // isZero();
       console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
       (async () => {
-        await handleSubmit();
+        // await isZero();
+        // await isZeros();
+        if (!isComplete || trigger) await handleSubmitAuto(false);
+
+        // if (!isComplete || isTimeout) await handleSubmitAuto();
+
         await moveToNextTurn();
       })();
-      reset();
+
+      // isZeros();
+      // moveToNextTurn();
+
+      // reset();
     }
   }, [timeLeft]);
+
+  // useEffect(() => {
+  //   if (isTimeout) {
+  //     console.log('자식에서 isTimeout true 감지');
+  //     // isZeros();
+  //     moveToNextTurn();
+  //   }
+  // }, [isTimeout]);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  // useEffect(() => {
+  //   handleSubmitAuto(false);
+  // }, [trigger]);
 
   return (
     <div className="flex flex-col items-end gap-2">
@@ -580,7 +692,7 @@ const DrawingCanvas = ({
               />
             </div>
           </div>
-          <Button
+          {/* <Button
             onClick={handleSubmit}
             // 113 49
             className={`w-[113px] h-[49px] px-0 py-0 ${
@@ -588,7 +700,22 @@ const DrawingCanvas = ({
             }`}
           >
             {isComplete ? '제출 완료' : '제출'}
-          </Button>
+          </Button> */}
+          {isComplete ? (
+            <Button
+              disabled
+              className="w-[113px] h-[49px] px-0 py-0 cursor-not-allowed"
+            >
+              제출 완료
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              className="w-[113px] h-[49px] px-0 py-0"
+            >
+              제출
+            </Button>
+          )}
         </div>
       ) : (
         <div className="flex justify-between gap-7 w-[595px] mr-2">
@@ -603,6 +730,7 @@ const DrawingCanvas = ({
           <LabeledInput
             ref={inputRef}
             value={answer}
+            readOnly={isComplete}
             onChange={(e) => {
               setAnswer(e.target.value);
               setInvalid(false);
@@ -614,7 +742,7 @@ const DrawingCanvas = ({
             placeholder="정답 입력"
             className="w-[464px] text-[18px] mt-[-8px]"
           />
-          <Button
+          {/* <Button
             // onClick={handleSubmit}
             onClick={checkValidation}
             className={`w-[113px] h-[49px] px-8 ${
@@ -622,7 +750,23 @@ const DrawingCanvas = ({
             }`}
           >
             {isComplete ? '제출 완료' : '제출'}
-          </Button>
+          </Button> */}
+          {isComplete ? (
+            <Button
+              disabled
+              className="w-[125px] h-[49px] px-3 cursor-not-allowed"
+            >
+              제출 완료
+            </Button>
+          ) : (
+            <Button
+              onClick={checkValidation}
+              // onClick={debouncedcheckValidation}
+              className="w-[113px] h-[49px] px-8"
+            >
+              제출
+            </Button>
+          )}
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
+import toast from 'react-hot-toast';
 
 export default function ResultShareModal({
   imageUrl,
@@ -27,7 +28,7 @@ export default function ResultShareModal({
       setInvalid((prev) => [prev[0], true]);
     }
     if (title.trim() !== '' && content.trim() !== '') {
-      alert('게시합니당');
+      console.log('게시합니당');
       clickCreateButtonHandler();
       closeResultShareModalHandler();
     }
@@ -70,7 +71,7 @@ export default function ResultShareModal({
 
   const clickCreateButtonHandler = async () => {
     if (!user) {
-      alert('로그인이 필요합니다!');
+      toast.error('로그인이 필요합니다!');
       return;
     }
 
@@ -90,12 +91,12 @@ export default function ResultShareModal({
       .select();
 
     if (data) {
-      alert('등록되었습니다.');
+      toast.success('게시물이 등록되었습니다!');
       closeResultShareModalHandler();
     }
 
     if (error) {
-      alert('에러가 발생했습니다.');
+      console.log('에러가 발생했습니다.');
       console.error('Post insert error:', error.message);
     }
   };
@@ -173,8 +174,8 @@ export default function ResultShareModal({
                   </div>
                 </div>
                 <div className="flex gap-8">
-                  <Button onClick={closeResultShareModalHandler}>취소</Button>
                   <Button onClick={checkValidation}>저장</Button>
+                  <Button onClick={closeResultShareModalHandler}>취소</Button>
                 </div>
               </div>
             </div>
