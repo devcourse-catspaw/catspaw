@@ -59,6 +59,8 @@ export default function SingleModeResultPage() {
   }, []);
 
   const saveScoreToDatabase = async () => {
+    if (!user?.id) return;
+
     await supabase
       .from("game_scores")
       .insert([{ user_id: user?.id, score: correctCount }]);
