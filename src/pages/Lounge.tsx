@@ -11,7 +11,6 @@ import {
   removeLike,
   type fetchPosts,
 } from "../routes/loader/post.loader";
-import { format } from "date-fns";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 
@@ -25,6 +24,8 @@ export default function Lounge() {
 
   const [likeCounts, setLikeCounts] = useState<Record<number, number>>({});
   const [allLikes, setAllLikes] = useState<Likes>([]);
+
+  const [input, setInput] = useState("");
 
   const [isActive, setIsActive] = useState(false);
   const activeHandler = () => {
@@ -53,20 +54,30 @@ export default function Lounge() {
     loadLikes();
   }, []);
 
-  //인기순, 최신순 나열
-  const diplayed = useMemo(() => {
-    if (isActive) {
-      return posts
-        .slice()
-        .sort((a, b) => (likeCounts[b.id] || 0) - likeCounts[a.id || 0]);
-    }
-    return posts
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-  }, [posts, likeCounts, isActive]);
+  //검색필터, 인기순, 최신순
+  const filteredAndSorted = useMemo(() => {
+    const keyword = input.trim().toLowerCase();
+    const filtered =
+      keyword === ""
+        ? posts
+        : posts.filter(
+            (p) =>
+              p.title.toLowerCase().includes(keyword) ||
+              p.content.toLowerCase().includes(keyword) ||
+              p.users.nickname.toLowerCase().includes(keyword)
+          );
+    return isActive
+      ? filtered
+          .slice()
+          .sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0))
+      : filtered
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          );
+  }, [posts, likeCounts, isActive, input]);
 
   const handleLikeClick = async (postId: number) => {
     if (!user) return;
@@ -91,12 +102,13 @@ export default function Lounge() {
     setLikeCounts(counts);
   };
 
-  const notify = (e: React.MouseEvent) => {
+  const handleAddPostClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      navigate("/login");
+      toast("로그인 후 이용해주세요.");
+      return;
     }
-    toast("로그인 후 이용해주세요.");
+    navigate("/lounge/add-post");
   };
 
   return (
@@ -114,7 +126,11 @@ export default function Lounge() {
               </SubnavItem>
             </div>
             <div className="flex justify-between items-start gap-2 h-[40px]">
-              <BaseInput className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]" />
+              <BaseInput
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]"
+              />
               <Button
                 className="w-[64px] h-[35px] font-medium text-base px-[16px] bg-[var(--white)]"
                 onClick={() => console.log("click")}>
@@ -126,7 +142,7 @@ export default function Lounge() {
           {/* (포스트) data 받아와서 렌더링, 서브탭, 검색 결과에 따라 필터링*/}
 
           <div className="w-[960px] py-[14px] gap-[102px] grid grid-cols-3 ">
-            {diplayed.map((p) => {
+            {filteredAndSorted.map((p) => {
               const isLiked = allLikes.some(
                 (l) => l.post_id === p.id && l.user_id === user?.id
               );
@@ -136,7 +152,7 @@ export default function Lounge() {
                   key={p.id}
                   postId={p.id}
                   postTitle={p.title}
-                  date={format(new Date(p.created_at), "yyyy.MM.dd")}
+                  date={p.created_at}
                   contents={p.content}
                   userName={p.users.nickname}
                   likeCount={likeCounts[p.id] ?? 0}
@@ -154,8 +170,8 @@ export default function Lounge() {
         </div>
 
         <Link
-          onClick={notify}
           to="/lounge/add-post"
+          onClick={handleAddPostClick}
           className="fixed bottom-10 right-10 w-[80px] h-[80px] border-2 rounded-full shadow-[0px_5px_0px_var(--black)] bg-[var(--white)] flex items-center justify-center z-50">
           <Pen className="text-[var(--black)] w-[40px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
         </Link>

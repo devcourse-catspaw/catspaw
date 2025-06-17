@@ -5,7 +5,6 @@ import likeFilled from "../../assets/images/icon_like_filled.svg";
 import Paw from "../../assets/images/logo_catpaw.svg?react";
 import Typo from "../../assets/images/logo_typo.svg?react";
 import kisu from "../../assets/images/kisu_.svg";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TimeAgo from "../lounge/TimeAgo";
 
@@ -30,8 +29,8 @@ const titleStyle =
 const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 // const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
-const likeCountStyle = "text-[var(--black)] text-sm font-bold";
-
+const likeCountStyle =
+  "text-[var(--black)] text-sm font-bold min-w-[27px] text-center";
 export default function PostCard({
   postId,
   postTitle,
@@ -43,20 +42,20 @@ export default function PostCard({
   isLiked,
   avatar,
   springImg,
-}: // onLike,
-PostCardProps) {
-  const [liked, setLiked] = useState(isLiked);
-  const [count, setCount] = useState(likeCount);
+  onLike,
+}: PostCardProps) {
+  // const [liked, setLiked] = useState(isLiked);
+  // const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
 
   const goToDetail = () => {
     navigate(`/lounge/${postId}`);
   };
 
-  const handleLikeClick = () => {
-    setLiked((prev) => !prev);
-    setCount((prev) => prev + (liked ? -1 : +1));
-  };
+  // const handleLikeClick = () => {
+  //   setLiked((prev) => !prev);
+  //   setCount((prev) => prev + (liked ? -1 : +1));
+  // };
 
   return (
     <>
@@ -114,11 +113,11 @@ PostCardProps) {
               <div className="flex gap-1 items-center">
                 <img
                   className="w-6 h-6 cursor-pointer"
-                  src={liked ? likeFilled : like}
-                  alt={liked ? "좋아요 취소" : "좋아요"}
-                  onClick={handleLikeClick}
+                  src={isLiked ? likeFilled : like}
+                  alt={isLiked ? "좋아요 취소" : "좋아요"}
+                  onClick={onLike}
                 />
-                <span className={likeCountStyle}>{count}</span>
+                <span className={likeCountStyle}>{likeCount}</span>
               </div>
             </div>
           </div>
