@@ -244,7 +244,10 @@ export default function UserPage() {
             </div>
             <div className="flex flex-col gap-[27px] items-center px-[15px] py-[26px] w-[287px] h-[565px] border-2 rounded-[6px] overflow-y-auto overflow-x-hidden">
               {activeTab == 'tab1' && (
-                <FriendListDiv userIdProp={userIdFromParams} />
+                <FriendListDiv
+                  key={`${friendRequestStatus}-${userIdFromParams}`}
+                  userIdProp={userIdFromParams}
+                />
               )}
               {activeTab == 'tab2' && <UserListDiv />}
             </div>

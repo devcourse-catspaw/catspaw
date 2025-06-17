@@ -12,6 +12,7 @@ type FriendListProps = {
   userName: string | undefined
   type?: 'sent' | 'received'
   status?: 'pending' | 'accepted' | 'rejected'
+  onStatusChange?: () => void
 }
 
 export default function FriendList({
@@ -20,6 +21,7 @@ export default function FriendList({
   userName,
   type,
   status,
+  onStatusChange,
 }: FriendListProps) {
   const characterUrl = `${
     import.meta.env.VITE_SUPABASE_URL
@@ -79,6 +81,7 @@ export default function FriendList({
       toast('친구 요청 수락 중 에러 발생')
     } else {
       toast('친구 요청을 수락했어요!')
+      onStatusChange?.()
     }
   }
 
@@ -104,6 +107,7 @@ export default function FriendList({
       toast('친구 요청 거절 중 에러 발생')
     } else {
       toast('친구 요청을 거절했어요!')
+      onStatusChange?.()
     }
   }
   return (

@@ -72,12 +72,6 @@ export default function FriendListDiv({ userIdProp }: { userIdProp?: string }) {
   }
 
   useEffect(() => {
-    console.log('friends 업데이트됨:', friends)
-  }, [friends])
-
-  useEffect(() => {
-    if (!userId) return
-
     fetchFriends()
 
     const channel = supabase
@@ -98,7 +92,7 @@ export default function FriendListDiv({ userIdProp }: { userIdProp?: string }) {
             oldRow?.user_id_1 === userId ||
             oldRow?.user_id_2 === userId
           ) {
-            console.log('✅ 실시간 반영됨:', payload)
+            console.log('실시간 반영됨:', payload)
             fetchFriends()
           }
         }

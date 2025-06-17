@@ -152,6 +152,7 @@ export default function FriendRequsetDiv() {
                 userCharacter={req.sender?.avatar}
                 userName={req.sender?.nickname}
                 type="received"
+                onStatusChange={fetchFriendRequests}
               />
             ))}
         </div>
