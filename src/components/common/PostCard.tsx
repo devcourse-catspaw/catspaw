@@ -3,7 +3,7 @@ import Spring from "../../assets/images/spring_small.svg?react";
 import like from "../../assets/images/icon_like.svg";
 import likeFilled from "../../assets/images/icon_like_filled.svg";
 import Paw from "../../assets/images/logo_catpaw.svg?react";
-import Typo from "../../assets/images/logo_typo.svg?react";
+import Typo from "../../assets/images/logo_typo_sm.svg?react";
 import kisu from "../../assets/images/kisu_.svg";
 // import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -80,7 +80,7 @@ export default function PostCard({
             ) : (
               <div className="flex flex-col w-[208px] h-[140px] justify-center items-center">
                 <Paw className="w-[84px] text-[var(--black)]" />
-                <Typo className="w-[140px] text-[var(--black)]" />
+                {/* <Typo className="w-[60px] text-[var(--black)]" /> */}
               </div>
             )}
           </div>

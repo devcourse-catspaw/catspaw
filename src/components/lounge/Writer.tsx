@@ -88,7 +88,7 @@ export default function Writer({ avatar, userName, date }: WriterType) {
             src={avatar}
             alt="프로필 사진"
           />
-          <div className="flex flex-col justify-center">
+          <div className="flex justify-center items-center">
             <span className="font-bold text-base mr-[16px]">{userName}</span>
             <TimeAgo timestamp={date} />
           </div>
