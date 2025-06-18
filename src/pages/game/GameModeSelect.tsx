@@ -4,10 +4,17 @@ import GameModeSelectCard from "../../components/game/game_mode/GameModeSelectCa
 import NavWithExit from "../../components/common/NavWithExit";
 import pawPencil from "../../assets/images/paw_pencil_big.svg";
 import doodle from "../../assets/images/doodle_loading.svg";
+import supabase from "../../utils/supabase";
+import { useAuthStore } from "../../stores/authStore";
+import { useDrawingStore } from "../../stores/drawingStore";
+import { useGameTimerStore } from "../../stores/gameTimerStore";
 
 export default function GameModeSelect() {
   const navigate = useNavigate();
   const [count, setCount] = useState<number | null>(null);
+  const user = useAuthStore((state) => state.user);
+  const { resetTopicList } = useDrawingStore();
+  const reset = useGameTimerStore((state) => state.reset);
 
   useEffect(() => {
     if (count === null) return;
@@ -20,6 +27,45 @@ export default function GameModeSelect() {
     }, 1000);
     return () => clearTimeout(timer);
   }, [count, navigate]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const clearData = async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from("singlemode-images")
+          .list(`private/${user.id}`);
+
+        if (error) {
+          console.error("파일 목록 조회 실패:", error);
+          return;
+        }
+
+        const fileNames = data.map((file) => `private/${user.id}/${file.name}`);
+
+        if (fileNames.length > 0) {
+          const { error: removeError } = await supabase.storage
+            .from("singlemode-images")
+            .remove(fileNames);
+
+          if (removeError) {
+            console.error("파일 삭제 실패:", removeError);
+          }
+        }
+
+        resetTopicList();
+      } catch (error) {
+        console.error("clearData 에러:", error);
+      }
+    };
+
+    clearData();
+  }, [user?.id]);
+
+  useEffect(() => {
+    reset();
+  }, []);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
