@@ -8,5 +8,6 @@
     "types": ["vite-plugin-svgr/client"],
     "composite": true
   },
+
   "include": ["svg.d.ts"]
 }
