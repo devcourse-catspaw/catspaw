@@ -8,6 +8,7 @@ import supabase from "../../utils/supabase";
 import { useAuthStore } from "../../stores/authStore";
 import { useDrawingStore } from "../../stores/drawingStore";
 import { useGameTimerStore } from "../../stores/gameTimerStore";
+import toast from "react-hot-toast";
 
 export default function GameModeSelect() {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ export default function GameModeSelect() {
   }, [user?.id]);
 
   useEffect(() => {
+    toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
     reset();
   }, []);
 

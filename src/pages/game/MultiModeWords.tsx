@@ -1,16 +1,15 @@
-import Button from '../../components/common/Button';
-import pawPencil from '../../assets/images/paw_pencil_big.svg';
-import doodle from '../../assets/images/background_doodle4.svg';
-import NavWithExit from '../../components/common/NavWithExit';
-import LabeledInput from '../../components/common/LabeledInput';
-import { useEffect, useRef, useState } from 'react';
-import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
-import { useNavigate } from 'react-router-dom';
-import GameMultiTimer from '../../components/game/GameMultiTimer';
-import supabase from '../../utils/supabase';
-import { useAuthStore } from '../../stores/authStore';
-import { useGameRoomStore } from '../../stores/gameRoomStore';
-import toast from 'react-hot-toast';
+import Button from "../../components/common/Button";
+import pawPencil from "../../assets/images/paw_pencil_big.svg";
+import doodle from "../../assets/images/background_doodle4.svg";
+import NavWithExit from "../../components/common/NavWithExit";
+import LabeledInput from "../../components/common/LabeledInput";
+import { useEffect, useRef, useState } from "react";
+import { useGameMultiTimerStore } from "../../stores/gameMultiTimerStore";
+import { useNavigate } from "react-router-dom";
+import GameMultiTimer from "../../components/game/GameMultiTimer";
+import supabase from "../../utils/supabase";
+import { useAuthStore } from "../../stores/authStore";
+import { useGameRoomStore } from "../../stores/gameRoomStore";
 
 export default function MultiModeWords() {
   const { user } = useAuthStore();
@@ -20,7 +19,7 @@ export default function MultiModeWords() {
   const navigate = useNavigate();
 
   const [disabled, setDisabled] = useState(false);
-  const [word, setWord] = useState('');
+  const [word, setWord] = useState("");
   const [invalid, setInvalid] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -30,13 +29,13 @@ export default function MultiModeWords() {
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
     const { data, error } = await supabase
-      .from('turns')
+      .from("turns")
       .update({
         content: word,
       })
-      .eq('game_id', game.id)
-      .eq('turn_number', turn)
-      .eq('sender_id', user.id)
+      .eq("game_id", game.id)
+      .eq("turn_number", turn)
+      .eq("sender_id", user.id)
       .select();
 
     if (data) {
@@ -44,11 +43,11 @@ export default function MultiModeWords() {
 
       if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
-          .from('games')
+          .from("games")
           .update({
             complete_players: game.complete_players + 1,
           })
-          .eq('id', game.id)
+          .eq("id", game.id)
           .select();
 
         if (dataGame) {
@@ -56,13 +55,13 @@ export default function MultiModeWords() {
           setIsComplete(true);
         }
         if (errorGame) {
-          console.log('complete players 업데이트 실패');
+          console.log("complete players 업데이트 실패");
           console.error(errorGame);
         }
       }
     }
     if (error) {
-      console.log('저장 실패');
+      console.log("저장 실패");
       console.error(error);
     }
   };
@@ -72,7 +71,7 @@ export default function MultiModeWords() {
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const now = Date.now();
       if (now - lastEnterTime < 500) return;
 
@@ -88,7 +87,7 @@ export default function MultiModeWords() {
     if (disabled) return;
 
     setDisabled(true);
-    if (word.trim() !== '') {
+    if (word.trim() !== "") {
       // console.log('이동합니당');
       saveWords(true);
     } else setInvalid(true);
@@ -124,12 +123,12 @@ export default function MultiModeWords() {
     if (!game) return;
 
     const { data: dataGame, error: errorGame } = await supabase
-      .from('games')
+      .from("games")
       .update({
         complete_players: 0,
         timeout_players: 0,
       })
-      .eq('id', game?.id)
+      .eq("id", game?.id)
       .select();
 
     if (dataGame) {
@@ -141,14 +140,14 @@ export default function MultiModeWords() {
       // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }
     if (errorGame) {
-      console.log('complete players, timeout_players 초기화 실패');
+      console.log("complete players, timeout_players 초기화 실패");
       console.error(errorGame);
     }
 
     useGameRoomStore.getState().changeTurn(turn + 1);
     // console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
 
-    navigate('/game/multi/drawing');
+    navigate("/game/multi/drawing");
   };
 
   useEffect(() => {
@@ -159,11 +158,11 @@ export default function MultiModeWords() {
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'games',
+          event: "UPDATE",
+          schema: "public",
+          table: "games",
           filter: `id=eq.${game?.id}`,
         },
         (payload) => {
@@ -201,8 +200,6 @@ export default function MultiModeWords() {
   }, [game?.id]);
 
   useEffect(() => {
-    toast('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
-
     setTime(60);
     const timer = setInterval(() => {
       decrease();
