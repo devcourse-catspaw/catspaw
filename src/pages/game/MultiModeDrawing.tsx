@@ -215,7 +215,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     if (turn >= game.current_players) {
       console.log('결과화면으로 이동합니당');
       // await new Promise((resolve) => setTimeout(resolve, 500));
-      navigate('/game/multi/result');
+      navigate('/game/result');
       return;
     }
 
@@ -247,7 +247,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     // if (turn === game.current_players) {
     //   // if (turn > game.current_players) {
     //   console.log('결과화면으로 이동합니당');
-    //   navigate('/game/multi/result');
+    //   navigate('/game/result');
     //   return;
     // }
 
