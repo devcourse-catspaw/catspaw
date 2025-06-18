@@ -3,33 +3,26 @@ import FriendList from '../common/FriendList'
 import SubnavItem from '../common/SubnavItem'
 import { useEffect } from 'react'
 import supabase from '../../utils/supabase'
+import type { Database } from '../../types/supabase'
+
+type UserTable = Database['public']['Tables']['users']['Row']
+type FriendRequestsTable =
+  Database['public']['Tables']['friend_requests']['Row']
 
 type FriendRequest = {
+  created_at: string | null
   id: string
-  sender_id: string
   receiver_id: string
-  status: 'pending' | 'accepted' | 'rejected'
-  sender?: {
-    id: string
-    nickname: string
-    avatar: string
-  }
-  receiver?: {
-    id: string
-    nickname: string
-    avatar: string
-  }
+  sender_id: string
+  status: string
+} & {
+  sender: Pick<UserTable, 'id' | 'nickname' | 'avatar'>
+  receiver: Pick<UserTable, 'id' | 'nickname' | 'avatar'>
 }
 
-type FriendRequestRow = {
-  sender_id: string
-  receiver_id: string
-  [key: string]: any
-}
-
-export default function FriendRequsetDiv() {
+export default function FriendRequestDiv() {
   const [activeTab, setActiveTab] = useState('tab1')
-  const [userId, setUserId] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string>()
   const [requests, setRequests] = useState<FriendRequest[]>([])
 
   useEffect(() => {
@@ -46,7 +39,7 @@ export default function FriendRequsetDiv() {
 
   const fetchFriendRequests = async () => {
     if (!userId) return
-    const { data, error } = await supabase
+    const { data } = (await supabase
       .from('friend_requests')
       .select(
         `
@@ -66,8 +59,14 @@ export default function FriendRequsetDiv() {
         )
       `
       )
-      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-    if (!error) {
+      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)) as unknown as {
+      data:
+        | (FriendRequestsTable & {
+            sender: Pick<UserTable, 'id' | 'nickname' | 'avatar'>
+            receiver: Pick<UserTable, 'id' | 'nickname' | 'avatar'>
+          })[]
+    }
+    if (data) {
       setRequests(data)
     }
   }
@@ -89,13 +88,13 @@ export default function FriendRequsetDiv() {
           table: 'friend_requests',
         },
         (payload) => {
-          const newRow = payload.new as FriendRequestRow | null
-          const oldRow = payload.old as FriendRequestRow | null
+          const newRow = payload.new as FriendRequest
+          const oldRow = payload.old as FriendRequest
           if (
-            newRow?.sender_id === userId ||
-            newRow?.receiver_id === userId ||
-            oldRow?.sender_id === userId ||
-            oldRow?.receiver_id === userId
+            newRow.sender.id === userId ||
+            newRow.receiver.id === userId ||
+            oldRow.sender.id === userId ||
+            oldRow.receiver.id === userId
           ) {
             console.log('요청 변경 감지됨:', payload)
             fetchFriendRequests()
@@ -130,11 +129,11 @@ export default function FriendRequsetDiv() {
       {activeTab == 'tab1' && (
         <div className="w-full flex flex-col divide-y-1 divide-[var(--grey-100)]">
           {requests
-            .filter((r) => r.sender_id === userId)
+            .filter((r) => r.sender.id === userId)
             .map((req) => (
               <FriendList
                 key={req.id}
-                userId={req.receiver_id}
+                userId={req.receiver?.id}
                 userCharacter={req.receiver?.avatar}
                 userName={req.receiver?.nickname}
                 status={req.status}
@@ -146,13 +145,13 @@ export default function FriendRequsetDiv() {
       {activeTab == 'tab2' && (
         <div className="w-full flex flex-col divide-y-1 divide-[var(--grey-100)]">
           {requests
-            .filter((r) => r.receiver_id === userId)
+            .filter((r) => r.receiver.id === userId)
             .map((req) => (
               <FriendList
                 key={req.id}
-                userId={req.sender_id}
-                userCharacter={req.sender?.avatar}
-                userName={req.sender?.nickname}
+                userId={req.sender.id}
+                userCharacter={req.sender.avatar}
+                userName={req.sender.nickname}
                 type="received"
                 onStatusChange={fetchFriendRequests}
               />

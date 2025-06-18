@@ -1,16 +1,15 @@
-import Comments from "../../components/lounge/Comments";
-import Contents from "../../components/lounge/Contents";
-import Writer from "../../components/lounge/Writer";
-import kisu from "../../assets/images/kisu_.svg";
-import Spring from "../../assets/images/spring_big.svg?react";
-import Back from "../../assets/images/icon_back_page.svg?react";
-import { useLoaderData, useNavigate } from "react-router";
-import { twMerge } from "tailwind-merge";
-import { useAuthStore } from "../../stores/authStore";
-import { useState } from "react";
+import Comments from '../../components/lounge/Comments';
+import Contents from '../../components/lounge/Contents';
+import Writer from '../../components/lounge/Writer';
+import Spring from '../../assets/images/spring_big.svg?react';
+import Back from '../../assets/images/icon_back_page.svg?react';
+import { useLoaderData, useNavigate } from 'react-router';
+import { twMerge } from 'tailwind-merge';
+import { useAuthStore } from '../../stores/authStore';
+import { useState } from 'react';
 
 const cardLayout =
-  "w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ";
+  'w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ';
 // export type PostDetail = NonNullable<
 //   Awaited<ReturnType<typeof fetchPostDetail>>
 // >;
@@ -54,17 +53,17 @@ export default function LoungeDetail() {
   const [commentsCount, setCommentsCount] = useState(post.comments.length);
 
   const allowedAvatars = [
-    "kisu_.svg",
-    "kisu_ribbon.svg",
-    "kisu_sunglasses.svg",
-    "kisu_cap.svg",
-    "kisu_pippi.svg",
-    "kisu_tie.svg",
+    'kisu_.svg',
+    'kisu_ribbon.svg',
+    'kisu_sunglasses.svg',
+    'kisu_cap.svg',
+    'kisu_pippi.svg',
+    'kisu_tie.svg',
   ];
   const rawAvatar = post.users!.avatar!;
   const avatarFile = allowedAvatars.includes(rawAvatar)
     ? rawAvatar
-    : "kisu_.svg";
+    : 'kisu_.svg';
   const avatarSrc = `${
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/avatar-image/${avatarFile}`;
@@ -80,8 +79,9 @@ export default function LoungeDetail() {
         <div
           className={twMerge(
             cardLayout,
-            "px-[100px] py-[94px] gap-8 bg-[var(--white)]"
-          )}>
+            'px-[100px] py-[94px] gap-8 bg-[var(--white)]'
+          )}
+        >
           <div className="w-[840px] flex items-start pb-[32px]">
             <Back
               className="w-[65px] h-[23px]  text-[var(--black)] cursor-pointer"

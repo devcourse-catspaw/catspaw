@@ -8,6 +8,13 @@ import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
 import UserListDiv from '../components/profile/UserListDiv'
 import NavBar from '../components/common/NavBar'
+import type { Database } from '../types/supabase'
+import Doodle1 from '../assets/images/doodle_small1.svg?react'
+import Doodle2 from '../assets/images/doodle_small2.svg?react'
+import Doodle3 from '../assets/images/doodle_small7.svg?react'
+import Doodle4 from '../assets/images/doodle_small4.svg?react'
+import Doodle5 from '../assets/images/doodle_small5.svg?react'
+import Doodle6 from '../assets/images/doodle_small6.svg?react'
 
 type UserInfo = {
   id: string
@@ -22,6 +29,9 @@ type PostInfo = {
   comments: { count: number }[]
 }
 
+type FriendRow = Database['public']['Tables']['friends']['Row']
+type FriendRequestRow = Database['public']['Tables']['friend_requests']['Row']
+type FriendOrRequestRow = Partial<FriendRow & FriendRequestRow>
 type FriendRequestStatus = 'none' | 'pending' | 'accepted' | 'rejected'
 
 export default function UserPage() {
@@ -86,7 +96,7 @@ export default function UserPage() {
 
       if (!user || !userIdFromParams) return
 
-      const isRelated = (row: any) =>
+      const isRelated = (row: FriendOrRequestRow) =>
         row &&
         [row.user_id_1, row.user_id_2, row.sender_id, row.receiver_id].includes(
           user.id
@@ -306,9 +316,15 @@ export default function UserPage() {
     <>
       <div className="w-screen h-screen flex flex-col">
         <NavBar />
-        <div className="flex-1 flex justify-center items-center">
+        <div className="relative flex-1 flex justify-center items-center">
+          <Doodle1 className="absolute left-[24px] bottom-[20px] w-[152px] text-gray-300" />
+          <Doodle2 className="absolute left-[80px] top-[10px] w-[152px] rotate-[-34deg]  text-gray-300" />
+          <Doodle3 className="absolute bottom-[50px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg] -z-10 text-gray-300" />
+          <Doodle4 className="absolute top-[-30px] right-[115px] w-[152px]  text-gray-300" />
+          <Doodle5 className="absolute right-1 bottom-[68px] w-[152px] text-gray-300 " />
+          <Doodle6 className="absolute top-[-90px] left-1/2 -translate-x-[100px] w-[152px] rotate-[55deg] -z-10 text-gray-300" />
           <div className="flex items-end gap-[37px] mx-auto">
-            <div className="flex flex-col gap-0 items-end">
+            <div className="flex flex-col gap-0 items-end bg-white">
               <div className="flex gap-0 items-end pr-[4px]">
                 <TabButton
                   isActive={activeTab === 'tab1'}
@@ -333,7 +349,7 @@ export default function UserPage() {
                 {activeTab == 'tab2' && <UserListDiv />}
               </div>
             </div>
-            <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px]">
+            <div className=" flex flex-col gap-[29px] px-[30px] py-[39px] w-[728px] h-[570px] border-2 rounded-[6px] bg-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <img

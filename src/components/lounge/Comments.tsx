@@ -1,20 +1,19 @@
-import CommentCard from "./CommentCard";
-import kisu from "../../assets/images/kisu_.svg";
-import BaseInput from "../common/BaseInput";
-import Button from "../common/Button";
-import { useState } from "react";
-import supabase from "../../utils/supabase";
-import { useAuthStore } from "../../stores/authStore";
-import type { fetchPostDetail } from "../../routes/loader/post.loader";
-import { useLoaderData } from "react-router-dom";
-import toast from "react-hot-toast";
+import CommentCard from './CommentCard';
+import BaseInput from '../common/BaseInput';
+import Button from '../common/Button';
+import { useState } from 'react';
+import supabase from '../../utils/supabase';
+import { useAuthStore } from '../../stores/authStore';
+import type { fetchPostDetail } from '../../routes/loader/post.loader';
+import { useLoaderData } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export type PostDetail = NonNullable<
   Awaited<ReturnType<typeof fetchPostDetail>>
 >;
 
 // 댓글 하나 타입은 PostDetail.comments 요소 타입
-type CommentRow = PostDetail["comments"][number];
+type CommentRow = PostDetail['comments'][number];
 
 export default function Comments({
   onAddComment,
@@ -30,24 +29,26 @@ export default function Comments({
   const { comments: initialComments = [], id: postId } = post;
 
   const [comments, setComments] = useState<CommentRow[]>(initialComments);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('');
 
   const allowedAvatars = [
-    "kisu_.svg",
-    "kisu_ribbon.svg",
-    "kisu_sunglasses.svg",
-    "kisu_cap.svg",
-    "kisu_pippi.svg",
-    "kisu_tie.svg",
+    'kisu_.svg',
+    'kisu_ribbon.svg',
+    'kisu_sunglasses.svg',
+    'kisu_cap.svg',
+    'kisu_pippi.svg',
+    'kisu_tie.svg',
   ];
 
   const handleAddComment = async () => {
-    if (!user) return toast.error("로그인 후 이용해주세요!");
-    if (!newComment.trim()) return toast("글 작성 후 등록해주세요!");
+
+    if (!user) return toast.error('로그인 후 이용해주세요!');
+    if (!newComment.trim()) return toast.error('글 작성 후 등록해주세요!');
+
 
     // insert 후 users relation까지 함께 select
     const { data, error } = await supabase
-      .from("comments")
+      .from('comments')
       .insert([
         {
           post_id: postId,
@@ -55,18 +56,18 @@ export default function Comments({
           user_id: user.id,
         },
       ])
-      .select("*, users(id, nickname, avatar)")
+      .select('*, users(id, nickname, avatar)')
       .single();
 
     if (error || !data) {
-      console.error("댓글 추가 실패", error);
+      console.error('댓글 추가 실패', error);
       return;
     }
 
     // data 타입이 CommentRow 이므로 바로 추가 가능
     setComments((prev) => [...prev, data]);
     onAddComment();
-    setNewComment("");
+    setNewComment('');
   };
 
   return (
@@ -78,7 +79,7 @@ export default function Comments({
           const avatarFile =
             rawAvatar && allowedAvatars.includes(rawAvatar)
               ? rawAvatar
-              : "kisu_.svg";
+              : 'kisu_.svg';
 
           const avatarSrc = `${
             import.meta.env.VITE_SUPABASE_URL
@@ -108,7 +109,8 @@ export default function Comments({
         onSubmit={(e) => {
           e.preventDefault();
           handleAddComment();
-        }}>
+        }}
+      >
         <BaseInput
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -117,7 +119,8 @@ export default function Comments({
         />
         <Button
           // onClick={handleAddComment}
-          className="w-[100px] h-[38px] text-[13px] font-bold px-[25px] py-[12px] leading-0">
+          className="w-[100px] h-[38px] text-[13px] font-bold px-[25px] py-[12px] leading-0"
+        >
           댓글달기
         </Button>
       </form>

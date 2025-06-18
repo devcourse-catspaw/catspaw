@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import iconLock from '../../assets/images/icon_lock.svg';
 import FullPlayersModal from '../game/FullPlayersModal';
 import PlayingModal from '../game/PlayingModal';
@@ -8,6 +8,7 @@ import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import type { Database } from '../../types/supabase';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
+import { debounce } from 'lodash';
 
 export type GameRoomProps = Database['public']['Tables']['games']['Row'];
 
@@ -22,26 +23,52 @@ export default function GameRoom({
 
   const { user } = useAuthStore();
 
+  // const [disabled, setDisabled] = useState(false);
   const [isFullPlayersModalOpen, setIsFullPlayersModalOpen] = useState(false);
   const [isPlayingModalOpen, setIsPlayingModalOpen] = useState(false);
   const [isRoomPasswordModalOpen, setIsRoomPasswordModalOpen] = useState(false);
 
-  const clickHandler = async () => {
-    if (status === 'PLAYING') {
-      setIsPlayingModalOpen(true);
-      return;
-    }
-    if (current_players >= 4) {
-      setIsFullPlayersModalOpen(true);
-      return;
-    }
-    if (room_password) {
-      setIsRoomPasswordModalOpen(true);
-      return;
-    }
+  // // const clickHandler = async () => {
+  // const clickHandler = () => {
+  //   // if (disabled) return;
 
-    dataHandler();
-  };
+  //   // setDisabled(true);
+  //   if (status === 'PLAYING') {
+  //     setIsPlayingModalOpen(true);
+  //     return;
+  //   }
+  //   if (current_players >= 4) {
+  //     setIsFullPlayersModalOpen(true);
+  //     return;
+  //   }
+  //   if (room_password) {
+  //     setIsRoomPasswordModalOpen(true);
+  //     return;
+  //   }
+
+  //   dataHandler();
+  //   // setTimeout(() => setDisabled(false), 500);
+  // };
+
+  const clickHandler = useCallback(
+    debounce(() => {
+      if (status === 'PLAYING') {
+        setIsPlayingModalOpen(true);
+        return;
+      }
+      if (current_players >= 4) {
+        setIsFullPlayersModalOpen(true);
+        return;
+      }
+      if (room_password) {
+        setIsRoomPasswordModalOpen(true);
+        return;
+      }
+
+      dataHandler();
+    }, 500),
+    [status, current_players, room_password, user]
+  );
 
   const dataHandler = async () => {
     if (!user) {
@@ -62,10 +89,10 @@ export default function GameRoom({
 
     if (dataP) {
       useGameRoomStore.getState().setPlayer(dataP[0]);
-      console.log(
-        'useGameRoomStore Player:',
-        useGameRoomStore.getState().player
-      );
+      // console.log(
+      //   'useGameRoomStore Player:',
+      //   useGameRoomStore.getState().player
+      // );
 
       const { data: dataG, error } = await supabase
         .from('games')
@@ -76,11 +103,20 @@ export default function GameRoom({
         .select();
 
       if (dataG) {
-        console.log('인원 수 증가 성공! :', dataG);
-        console.log('입장합니다.');
+        // console.log('인원 수 증가 성공! :', dataG);
+        // console.log('입장합니다.');
 
         useGameRoomStore.getState().setGame(dataG[0]);
-        console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+        // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+
+        useGameRoomStore.getState().resetTurn();
+        useGameRoomStore.getState().resetComplete();
+        console.log('대기방 입장하기 직전');
+        console.log('전역 game:', useGameRoomStore.getState().game);
+        console.log('전역 player:', useGameRoomStore.getState().player);
+        console.log('전역 turn:', useGameRoomStore.getState().turn);
+        console.log('전역 complete:', useGameRoomStore.getState().complete);
+
         navigate('/game/room');
       }
 

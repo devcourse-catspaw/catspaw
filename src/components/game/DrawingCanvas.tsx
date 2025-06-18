@@ -8,8 +8,6 @@ import eraser from '../../assets/images/icon_eraser.svg';
 import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
-import BaseInput from '../common/BaseInput';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
 
 type LineData = {
   tool: string;
@@ -24,19 +22,9 @@ type HistoryState = {
 };
 
 const DrawingCanvas = ({
-  step,
-  isComplete,
-  drawingUrl,
-  onSubmitDrawing,
-  onSubmitWords,
-  moveToNextTurn,
+  onSubmit,
 }: {
-  step: string;
-  isComplete: boolean;
-  drawingUrl?: string;
-  onSubmitDrawing?: (imageData: string) => Promise<void>;
-  onSubmitWords?: (answer: string) => Promise<void>;
-  moveToNextTurn: () => Promise<void>;
+  onSubmit: (imageData: string) => void;
 }) => {
   const [tool, setTool] = useState<string>('pen');
   const [lines, setLines] = useState<LineData[]>([]);
@@ -50,23 +38,33 @@ const DrawingCanvas = ({
   const [hasImage, setHasImage] = useState<boolean>(false);
   const stageRef = useRef<Konva.Stage>(null);
 
-  const [answer, setAnswer] = useState('');
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const addToHistory = useCallback(
+    (newState: HistoryState) => {
+      setHistory((currentHistory) => {
+        const newHistory = currentHistory.slice(0, historyStep + 1);
+        newHistory.push(newState);
 
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+        if (newHistory.length > 30) {
+          newHistory.shift();
+          setHistoryStep(newHistory.length - 1);
+        } else {
+          setHistoryStep(historyStep + 1);
+        }
 
-  let lastEnterTime = 0;
-  const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      const now = Date.now();
-      if (now - lastEnterTime < 500) return;
+        return newHistory;
+      });
+    },
+    [historyStep]
+  );
 
-      lastEnterTime = now;
+  const saveCurrentState = useCallback(() => {
+    const currentState: HistoryState =
+      hasImage && stageRef.current
+        ? { type: 'image', data: stageRef.current.toCanvas().toDataURL() }
+        : { type: 'lines', data: [...lines] };
 
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
+    addToHistory(currentState);
+  }, [lines, hasImage, addToHistory]);
 
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
     const rgbaStr = hexToRgba(color);
@@ -121,17 +119,6 @@ const DrawingCanvas = ({
       try {
         const stage = stageRef.current;
         if (!stage) return;
-
-        const currentState: HistoryState = hasImage
-          ? { type: 'image', data: stage.toCanvas().toDataURL() }
-          : { type: 'lines', data: [...lines] };
-
-        setHistory((currentHistory) => {
-          const newHistory = currentHistory.slice(0, historyStep + 1);
-          newHistory.push(currentState);
-          return newHistory;
-        });
-        setHistoryStep((prev) => prev + 1);
 
         const canvas = stage.toCanvas();
         const ctx = canvas.getContext('2d');
@@ -193,17 +180,8 @@ const DrawingCanvas = ({
             setLines([]);
             setHasImage(true);
 
-            const newState: HistoryState = {
-              type: 'image',
-              data: imageObj.src,
-            };
-
-            setHistory((currentHistory) => {
-              const newHistory = [...currentHistory];
-              newHistory.push(newState);
-              return newHistory;
-            });
-            setHistoryStep((prev) => prev + 1);
+            const finalImageData = stage.toCanvas().toDataURL();
+            addToHistory({ type: 'image', data: finalImageData });
           };
           imageObj.src = canvas.toDataURL();
         }
@@ -211,7 +189,7 @@ const DrawingCanvas = ({
         console.error('Flood fill error:', error);
       }
     },
-    [lines, historyStep, hasImage]
+    [saveCurrentState]
   );
 
   const handleMouseDown = (
@@ -266,22 +244,18 @@ const DrawingCanvas = ({
     if (!isDrawing.current || tool === 'paint') return;
     isDrawing.current = false;
 
-    const newState: HistoryState = {
-      type: 'lines',
-      data: [...lines],
-    };
-
-    setHistory((currentHistory) => {
-      const newHistory = currentHistory.slice(0, historyStep + 1);
-      newHistory.push(newState);
-      return newHistory;
-    });
-    setHistoryStep(historyStep + 1);
+    const stage = stageRef.current;
+    if (stage) {
+      const currentImageData = stage.toCanvas().toDataURL();
+      addToHistory({ type: 'image', data: currentImageData });
+    }
   };
 
   useEffect(() => {
     const handleMouseUpOutside = () => {
-      isDrawing.current = false;
+      if (isDrawing.current && tool !== 'paint') {
+        isDrawing.current = false;
+      }
     };
 
     window.addEventListener('mouseup', handleMouseUpOutside);
@@ -291,7 +265,7 @@ const DrawingCanvas = ({
       window.removeEventListener('mouseup', handleMouseUpOutside);
       window.removeEventListener('touchend', handleMouseUpOutside);
     };
-  }, []);
+  }, [tool]);
 
   const handleUndo = (): void => {
     if (historyStep <= 0) return;
@@ -337,170 +311,126 @@ const DrawingCanvas = ({
     }
   };
 
-  const handleSubmit = async () => {
-    if (step === 'DRAWING') {
-      const stage = stageRef.current;
-      if (!stage) return;
+  const handleSubmit = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
 
-      const imageDataURL = stage.toDataURL({
-        mimeType: 'image/png',
-        quality: 1.0,
-        pixelRatio: 1,
-      });
-      await onSubmitDrawing!(imageDataURL);
-    } else if (step === 'WORDS') {
-      await onSubmitWords!(answer);
-    }
+    const imageDataURL = stage.toDataURL();
+    onSubmit(imageDataURL);
   };
 
-  useEffect(() => {
-    setTime(180);
-    const timer = setInterval(() => {
-      decrease();
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
-      (async () => {
-        await handleSubmit();
-        await moveToNextTurn();
-      })();
-      reset();
-    }
-  }, [timeLeft]);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div>
       <div className="flex gap-[21px]">
-        {step === 'DRAWING' && (
-          <div className="flex gap-[10px]">
-            <div className="flex flex-col gap-[10px] mt-5">
-              <div
-                className={`w-6 h-6 bg-[#FF0000] rounded-full ${
-                  color === '#FF0000' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#FF0000')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#FF64B9] rounded-full  ${
-                  color === '#FF64B9' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#FF64B9')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#9500FF] rounded-full  ${
-                  color === '#9500FF' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#9500FF')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#A85134] rounded-full  ${
-                  color === '#A85134' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#A85134')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#34A853] rounded-full  ${
-                  color === '#34A853' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#34A853')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#3299FF] rounded-full  ${
-                  color === '#3299FF' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#3299FF')}
-              ></div>
-            </div>
-            <div className="flex flex-col gap-[10px] mt-5">
-              <div
-                className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
-                  color === '#1D1D1F' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#1D1D1F')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#ffffff] rounded-full border border-[#22222266]  ${
-                  color === '#ffffff' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#ffffff')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#8C8C8C] rounded-full  ${
-                  color === '#8C8C8C' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#8C8C8C')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#FEC5A7] rounded-full  ${
-                  color === '#FEC5A7' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#FEC5A7')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#F4EC5A] rounded-full  ${
-                  color === '#F4EC5A' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#F4EC5A')}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#FF6D12] rounded-full  ${
-                  color === '#FF6D12' && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setColor('#FF6D12')}
-              ></div>
-            </div>
+        <div className="flex gap-[10px]">
+          <div className="flex flex-col gap-[10px] mt-5">
+            <div
+              className={`w-6 h-6 bg-[#FF0000] rounded-full ${
+                color === '#FF0000' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#FF0000')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FF64B9] rounded-full  ${
+                color === '#FF64B9' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#FF64B9')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#9500FF] rounded-full  ${
+                color === '#9500FF' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#9500FF')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#A85134] rounded-full  ${
+                color === '#A85134' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#A85134')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#34A853] rounded-full  ${
+                color === '#34A853' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#34A853')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#3299FF] rounded-full  ${
+                color === '#3299FF' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#3299FF')}
+            ></div>
           </div>
-        )}
+          <div className="flex flex-col gap-[10px] mt-5">
+            <div
+              className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
+                color === '#1D1D1F' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#1D1D1F')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#ffffff] rounded-full border border-[#22222266]  ${
+                color === '#ffffff' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#ffffff')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#8C8C8C] rounded-full  ${
+                color === '#8C8C8C' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#8C8C8C')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FEC5A7] rounded-full  ${
+                color === '#FEC5A7' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#FEC5A7')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#F4EC5A] rounded-full  ${
+                color === '#F4EC5A' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#F4EC5A')}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#FF6D12] rounded-full  ${
+                color === '#FF6D12' && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setColor('#FF6D12')}
+            ></div>
+          </div>
+        </div>
 
         <div className="flex relative w-[610px] h-[410px] justify-center items-center pt-9">
           <div className="rounded-[6px] overflow-hidden border border-transparent">
-            {step === 'DRAWING' ? (
-              <Stage
-                ref={stageRef}
-                width={584}
-                height={350}
-                onMouseDown={handleMouseDown}
-                onMousemove={handleMouseMove}
-                onMouseup={handleMouseUp}
-                onTouchStart={handleMouseDown}
-                onTouchMove={handleMouseMove}
-                onTouchEnd={handleMouseUp}
-              >
-                <Layer>
-                  {lines.map((line: LineData, i: number) => (
-                    <Line
-                      key={i}
-                      points={line.points}
-                      stroke={line.color}
-                      strokeWidth={line.stroke}
-                      tension={0.5}
-                      lineCap="round"
-                      lineJoin="round"
-                      globalCompositeOperation={
-                        line.tool === 'eraser'
-                          ? 'destination-out'
-                          : 'source-over'
-                      }
-                    />
-                  ))}
-                </Layer>
-              </Stage>
-            ) : (
-              <img
-                src={drawingUrl}
-                alt="문제 그림"
-                className="w-[584px] h-[350px]"
-              />
-            )}
+            <Stage
+              ref={stageRef}
+              width={580}
+              height={350}
+              onMouseDown={handleMouseDown}
+              onMousemove={handleMouseMove}
+              onMouseup={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchMove={handleMouseMove}
+              onTouchEnd={handleMouseUp}
+            >
+              <Layer>
+                {lines.map((line: LineData, i: number) => (
+                  <Line
+                    key={i}
+                    points={line.points}
+                    stroke={line.color}
+                    strokeWidth={line.stroke}
+                    tension={0.5}
+                    lineCap="round"
+                    lineJoin="round"
+                    globalCompositeOperation={
+                      line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                    }
+                  />
+                ))}
+              </Layer>
+            </Stage>
             <img
               src={sketchBook}
               alt="스케치북"
@@ -509,85 +439,65 @@ const DrawingCanvas = ({
           </div>
         </div>
       </div>
-      {step === 'DRAWING' ? (
-        <div className="flex justify-between w-[609px] ml-10 mr-1">
-          <div className="flex gap-7 justify-center">
-            <div className="flex items-center px-[17px] w-[126px] justify-between">
-              <div
-                className={`w-3 h-3 bg-[#1D1D1F] rounded-full ${
-                  stroke === 2 && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setStroke(2)}
-              ></div>
-              <div
-                className={`w-4.5 h-4.5 bg-[#1D1D1F] rounded-full ${
-                  stroke === 8 && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setStroke(8)}
-              ></div>
-              <div
-                className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
-                  stroke === 15 && 'outline-[5px] outline-[#C9C9C9]'
-                } cursor-pointer`}
-                onClick={() => setStroke(15)}
-              ></div>
-            </div>
 
-            <div className="flex gap-7 items-center ">
-              <img
-                src={pencil}
-                alt="연필 도구"
-                className={`w-[30px] cursor-pointer opacity-50 ${
-                  tool === 'pen' && 'opacity-100'
-                }`}
-                onClick={() => setTool('pen')}
-              />
-              <img
-                src={eraser}
-                alt="지우개 도구"
-                className={`w-[30px] cursor-pointer opacity-50 ${
-                  tool === 'eraser' && 'opacity-100'
-                }`}
-                onClick={() => setTool('eraser')}
-              />
-              <img
-                src={paint}
-                alt="페인트 도구"
-                className={`w-[30px]  cursor-pointer opacity-50 ${
-                  tool === 'paint' && 'opacity-100'
-                }`}
-                onClick={() => setTool('paint')}
-              />
-              <img
-                src={back}
-                alt="되돌리기"
-                className="w-7 cursor-pointer opacity-50 hover:opacity-100"
-                onClick={handleUndo}
-              />
-            </div>
+      <div className="flex justify-between w-[609px] ml-[18px]">
+        <div className="flex gap-7 justify-center">
+          <div className="flex items-center px-[17px] w-[126px] justify-between">
+            <div
+              className={`w-3 h-3 bg-[#1D1D1F] rounded-full ${
+                stroke === 2 && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setStroke(2)}
+            ></div>
+            <div
+              className={`w-4.5 h-4.5 bg-[#1D1D1F] rounded-full ${
+                stroke === 8 && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setStroke(8)}
+            ></div>
+            <div
+              className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
+                stroke === 15 && 'outline-[5px] outline-[#C9C9C9]'
+              } cursor-pointer`}
+              onClick={() => setStroke(15)}
+            ></div>
           </div>
-          <Button onClick={handleSubmit}>제출</Button>
+
+          <div className="flex gap-7 items-center ">
+            <img
+              src={pencil}
+              alt="연필 도구"
+              className={`w-[30px] cursor-pointer opacity-50 ${
+                tool === 'pen' && 'opacity-100'
+              }`}
+              onClick={() => setTool('pen')}
+            />
+            <img
+              src={eraser}
+              alt="지우개 도구"
+              className={`w-[30px] cursor-pointer opacity-50 ${
+                tool === 'eraser' && 'opacity-100'
+              }`}
+              onClick={() => setTool('eraser')}
+            />
+            <img
+              src={paint}
+              alt="페인트 도구"
+              className={`w-[30px]  cursor-pointer opacity-50 ${
+                tool === 'paint' && 'opacity-100'
+              }`}
+              onClick={() => setTool('paint')}
+            />
+            <img
+              src={back}
+              alt="되돌리기"
+              className="w-7 cursor-pointer opacity-50 hover:opacity-100"
+              onClick={handleUndo}
+            />
+          </div>
         </div>
-      ) : (
-        <div className="flex justify-between gap-7 w-[595px] mr-2">
-          <BaseInput
-            ref={inputRef}
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            onKeyDown={keyDownHandler}
-            placeholder="정답 입력"
-            className="text-[18px]"
-          />
-          <Button
-            onClick={handleSubmit}
-            className={`w-[113px] h-[49px] px-8 ${
-              isComplete && 'w-[125px] px-3 cursor-not-allowed'
-            }`}
-          >
-            {isComplete ? '제출 완료' : '제출'}
-          </Button>
-        </div>
-      )}
+        <Button onClick={handleSubmit}>제출</Button>
+      </div>
     </div>
   );
 };

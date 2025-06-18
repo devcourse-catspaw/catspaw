@@ -6,8 +6,25 @@ import supabase from '../../utils/supabase'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
+type HotPostType = {
+  id: number
+  title: string
+  content: string
+  created_at: string
+  updated_at: string
+  user_id: string
+  images: string[] | null
+  likeCount: number
+  commentCount: number
+  users: {
+    nickname: string
+    avatar: string | null
+  }
+}
+
 export default function HotPost() {
-  const [hotPosts, setHotPosts] = useState([])
+  const [hotPosts, setHotPosts] = useState<HotPostType[]>([])
+
   useEffect(() => {
     const fetchHotPosts = async () => {
       const { data, error } = await supabase.from('posts').select(`
@@ -62,7 +79,7 @@ export default function HotPost() {
         modules={[Autoplay, Pagination, Navigation]}
         className="w-full flex justify-center"
       >
-        {hotPosts.map((post) => {
+        {hotPosts?.map((post) => {
           return (
             <SwiperSlide>
               <PostCard
@@ -70,9 +87,13 @@ export default function HotPost() {
                 postTitle={post.title}
                 date={post.created_at.slice(0, 10)}
                 contents={post.content}
+                userId={post.user_id}
                 userName={post.users?.nickname}
-                image={post.images}
+                image={
+                  post.images && post.images.length > 0 ? post.images?.[0] : ''
+                }
                 likeCount={post.likeCount}
+                isLiked={false}
                 avatar={`${
                   import.meta.env.VITE_SUPABASE_URL
                 }/storage/v1/object/public/avatar-image/${post.users?.avatar}`}

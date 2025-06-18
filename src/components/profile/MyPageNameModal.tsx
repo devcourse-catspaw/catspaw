@@ -10,11 +10,13 @@ export default function MyPageNameModal({
   onClose: () => void
   onSubmit: (changedName: string) => void
 }) {
-  const [changedName, setChangedName] = useState<string>(null)
+  const [changedName, setChangedName] = useState<string>('')
 
   const handleChange = () => {
     console.log('바뀐 이름:', changedName)
+
     onSubmit(changedName)
+
     onClose()
   }
 

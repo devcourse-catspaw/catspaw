@@ -25,7 +25,6 @@ export default function ScrollItem({ children, delay = 0 }: Props) {
           y: 0,
           duration: 0.6,
           delay,
-          // ease: 'power2.out',
           ease: 'back.out(1.7)',
           scrollTrigger: {
             trigger: elRef.current,
