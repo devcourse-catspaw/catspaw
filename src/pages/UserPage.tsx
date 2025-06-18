@@ -274,17 +274,14 @@ export default function UserPage() {
       .maybeSingle()
 
     if (requestData) {
-      console.log('🟡 요청 상태:', requestData.status)
       if (requestData.status !== friendRequestStatus) {
         setFriendRequestStatus(requestData.status as FriendRequestStatus)
       }
     } else {
-      console.log('❌ 친구 아님 → 상태를 none으로 설정')
       if (friendRequestStatus !== 'none') {
         setFriendRequestStatus('none')
       } else {
-        // 이 경우 상태가 같아서 React가 리렌더링 안 함
-        console.log('ℹ️ 이미 상태는 none → 리렌더링 없음')
+        setFriendRequestStatus('none')
       }
     }
   }
