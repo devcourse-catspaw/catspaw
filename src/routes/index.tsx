@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         element: <AiAnswering />,
       },
       {
-        path: "single-result",
+        path: "score-result",
         element: <SingleModeResultPage />,
       },
       { path: "list", element: <GameRoomList /> },
@@ -88,7 +88,7 @@ const router = createBrowserRouter([
         element: <MultiModeDrawing key="WORDS" step="WORDS" />,
       },
       {
-        path: "multi/result",
+        path: "result",
         element: <MultiModeResult />,
       },
     ],

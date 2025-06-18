@@ -42,7 +42,6 @@ export default function AiAnswering() {
         if (retryCount < 5) {
           setRetryCount((prev) => prev + 1);
           setTimeout(fetchImage, 500);
-          console.log("잡았다");
         } else {
           setIsError(true);
         }
@@ -97,7 +96,7 @@ export default function AiAnswering() {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      navigate("/game/single-result");
+      navigate("/game/score-result");
     }
   }, [timeLeft]);
 

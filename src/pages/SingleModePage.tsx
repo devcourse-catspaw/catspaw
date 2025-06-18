@@ -8,7 +8,6 @@ import { useNavigate } from "react-router";
 import supabase from "../utils/supabase";
 import { useGameTimerStore } from "../stores/gameTimerStore";
 import { useAuthStore } from "../stores/authStore.ts";
-import toast from "react-hot-toast";
 
 export default function SingleModePage() {
   const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
@@ -17,12 +16,6 @@ export default function SingleModePage() {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    const hasShownBgmToast = sessionStorage.getItem("bgm-toast-shown");
-    if (!hasShownBgmToast) {
-      toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
-      sessionStorage.setItem("bgm-toast-shown", "true");
-    }
-
     getRandomTopic();
   }, []);
 
@@ -57,7 +50,7 @@ export default function SingleModePage() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (timeLeft <= 0) {
-        navigate("/game/single-result");
+        navigate("/game/score-result");
       }
     }, 100);
 
