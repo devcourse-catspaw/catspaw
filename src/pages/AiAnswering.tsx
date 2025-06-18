@@ -14,6 +14,11 @@ import { useGameTimerStore } from "../stores/gameTimerStore";
 import { useAuthStore } from "../stores/authStore";
 import SneakyCat from "../components/game/SneakyCat";
 
+type Prediction = {
+  className: string;
+  probability: number;
+};
+
 export default function AiAnswering() {
   const { currentTopic, setAiAnswer, filename } = useDrawingStore();
   const { timeLeft } = useGameTimerStore();
@@ -25,23 +30,31 @@ export default function AiAnswering() {
   const user = useAuthStore((state) => state.user);
   const [isError, setIsError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [predictionCount, setPredictionCount] = useState(0);
 
   useEffect(() => {
     const fetchImage = async () => {
-      if (!filename) return;
+      if (!filename) {
+        return;
+      }
+
+      if (!user?.id) {
+        return;
+      }
 
       const { data } = supabase.storage
         .from("singlemode-images")
-        .getPublicUrl(`private/${user?.id}/${filename}`);
+        .getPublicUrl(`private/${user.id}/${filename}`);
 
       const img = new Image();
       img.onload = () => {
         setImageUrl(data.publicUrl);
+        setRetryCount(0);
       };
       img.onerror = () => {
         if (retryCount < 5) {
           setRetryCount((prev) => prev + 1);
-          setTimeout(fetchImage, 500);
+          setTimeout(fetchImage, 1000);
         } else {
           setIsError(true);
         }
@@ -51,67 +64,101 @@ export default function AiAnswering() {
 
     const timer = setTimeout(fetchImage, 300);
     return () => clearTimeout(timer);
-  }, [filename, retryCount]);
+  }, [filename, retryCount, user?.id]);
 
   useEffect(() => {
-    if (!imageUrl || !imageReady) return;
+    if (!imageUrl || !imageReady) {
+      return;
+    }
 
     const predict = async () => {
+      const tryNumber = predictionCount + 1;
+      setPredictionCount(tryNumber);
+
       try {
         const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
         const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
 
-        const model = await tmImage.load(modelURL, metadataURL);
+        const modelPromise = tmImage.load(modelURL, metadataURL);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 15000)
+        );
 
-        if (imgRef.current) {
-          const predictions = await model.predict(imgRef.current);
-          const sorted = predictions.sort(
-            (a, b) => b.probability - a.probability
-          );
-          const best = sorted[0];
+        const model = (await Promise.race([
+          modelPromise,
+          timeoutPromise,
+        ])) as tmImage.CustomMobileNet;
 
-          setPrediction(best.className);
-          setAiAnswer(best.className);
+        if (!imgRef.current) {
+          throw new Error("이미지 참조가 없음");
         }
+
+        const predictionPromise = model.predict(imgRef.current);
+        const predictionTimeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("예측 타임아웃")), 10000)
+        );
+
+        const predictions = (await Promise.race([
+          predictionPromise,
+          predictionTimeoutPromise,
+        ])) as Prediction[];
+
+        if (!predictions || predictions.length === 0) {
+          throw new Error("예측 결과가 없음");
+        }
+
+        const sorted = predictions.sort(
+          (a, b) => b.probability - a.probability
+        );
+        const best = sorted[0];
+
+        setPrediction(best.className);
+        setAiAnswer(best.className);
       } catch (error) {
-        console.error("예측 실패:", error);
-        setIsError(true);
+        const errorMessage =
+          error instanceof Error ? error.message : "알 수 없는 오류";
+        console.log(errorMessage);
+
+        if (tryNumber < 3) {
+          setTimeout(() => {
+            predict();
+          }, 3000);
+        } else {
+          setIsError(true);
+        }
       }
     };
 
     predict();
-  }, [imageUrl, imageReady]);
+  }, [imageUrl, imageReady, currentTopic, setAiAnswer]);
 
   useEffect(() => {
     if (prediction) {
       const timer = setTimeout(() => {
         navigate("/game/single");
       }, 1000);
-      return () => {
-        clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
-  }, [prediction]);
+  }, [prediction, navigate]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
       navigate("/game/score-result");
     }
-  }, [timeLeft]);
+  }, [timeLeft, navigate]);
 
   useEffect(() => {
     const errorHadleTimer = setTimeout(() => {
       setIsError(true);
-    }, 30000);
-    return () => {
-      clearTimeout(errorHadleTimer);
-    };
+    }, 20000);
+    return () => clearTimeout(errorHadleTimer);
   }, []);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
       <SingleModeHeader disable={true} />
+
       {isError && (
         <div className="w-[700px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <SneakyCat setIsError={setIsError} />
@@ -134,7 +181,9 @@ export default function AiAnswering() {
                   src={imageUrl}
                   alt="사용자 그림"
                   crossOrigin="anonymous"
-                  onLoad={() => setImageReady(true)}
+                  onLoad={() => {
+                    setImageReady(true);
+                  }}
                   className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[420px]"
                 />
               )}
