@@ -121,7 +121,7 @@ export default function Lounge() {
     }
   }, [posts, likeCounts, isActive, input]);
   const handleLikeClick = async (postId: number) => {
-    if (!user) return;
+    if (!user) return toast("로그인 후 이용해주세요.");
 
     const liked = allLikes.some(
       (l) => l.post_id === postId && l.user_id === user.id
@@ -169,6 +169,7 @@ export default function Lounge() {
             <div className="flex justify-between items-start gap-2 h-[40px]">
               <BaseInput
                 value={input}
+                placeholder="검색어를 입력해주세요."
                 onChange={(e) => setInput(e.target.value)}
                 className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]"
               />

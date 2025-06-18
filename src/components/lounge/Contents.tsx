@@ -4,6 +4,7 @@ import likeFilled from "../../assets/images/icon_like_filled.svg";
 import { twMerge } from "tailwind-merge";
 import { useAuthStore } from "../../stores/authStore";
 import { addLike, removeLike } from "../../routes/loader/post.loader";
+import toast from "react-hot-toast";
 
 type ContentsType = {
   title: string;
@@ -31,7 +32,7 @@ export default function Contents({
 
   // 좋아요 핸들러
   const handleLikeClick = async (postId: number) => {
-    if (!user) return;
+    if (!user) return toast("로그인 후 이용해주세요.");
 
     if (liked) {
       await removeLike(postId, user.id);

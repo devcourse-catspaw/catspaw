@@ -41,8 +41,10 @@ export default function Comments({
   ];
 
   const handleAddComment = async () => {
+
     if (!user) return toast.error('로그인 후 이용해주세요!');
     if (!newComment.trim()) return toast.error('글 작성 후 등록해주세요!');
+
 
     // insert 후 users relation까지 함께 select
     const { data, error } = await supabase
