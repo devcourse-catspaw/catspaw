@@ -7,12 +7,14 @@ import Home from "../pages/Home";
 import GameModeSelect from "../pages/game/GameModeSelect";
 import GameLayout from "./layouts/GameLayout";
 import SingleModePage from "../pages/SingleModePage";
+import Login from "../pages/Login";
+import AiAnswering from "../pages/AiAnswering";
+import SingleModeResultPage from "../pages/SingleModeResultPage";
 import GameRoomList from "../pages/game/GameRoomList";
 import GameWaitingRoom from "../pages/game/GameWaitingRoom";
 import MultiModeWords from "../pages/game/MultiModeWords";
 import MultiModeDrawing from "../pages/game/MultiModeDrawing";
 import MultiModeResult from "../pages/game/MultiModeResult";
-import Login from "../pages/Login";
 import Lounge from "../pages/Lounge";
 import LoungeLayout from "./layouts/LoungeLayout";
 import {
@@ -23,9 +25,11 @@ import {
 import LoungeDetail from "../pages/lounge/LoungDetail";
 import AddPost from "../pages/lounge/AddPost";
 import EditPost from "../pages/lounge/EditPost";
-import useAuthInit from "./../hooks/useAuthInit";
 import MyPage from "../pages/MyPage";
 import UserPage from "../pages/UserPage";
+import NotFound from "../pages/NotFound";
+import useAuthInit from "../hooks/useAuthInit";
+import ProtectedRoute from "../components/common/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +44,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/game",
-    element: <GameLayout />,
+    element: (
+      <ProtectedRoute>
+        <GameLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -55,9 +63,14 @@ const router = createBrowserRouter([
         element: <SingleModePage />,
       },
       {
-        path: "list",
-        element: <GameRoomList />,
+        path: "ai-answering",
+        element: <AiAnswering />,
       },
+      {
+        path: "single-result",
+        element: <SingleModeResultPage />,
+      },
+      { path: "list", element: <GameRoomList /> },
       {
         path: "room",
         element: <GameWaitingRoom />,
@@ -98,13 +111,25 @@ const router = createBrowserRouter([
 
   {
     path: "/mypage",
-    element: <MyPage />,
+    element: (
+      <ProtectedRoute>
+        <MyPage />
+      </ProtectedRoute>
+    ),
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
     path: "/user/:id",
-    element: <UserPage />,
+    element: (
+      <ProtectedRoute>
+        <UserPage />
+      </ProtectedRoute>
+    ),
     hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

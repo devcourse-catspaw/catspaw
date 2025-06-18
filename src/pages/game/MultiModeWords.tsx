@@ -6,7 +6,7 @@ import LabeledInput from '../../components/common/LabeledInput';
 import { useEffect, useRef, useState } from 'react';
 import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
 import { useNavigate } from 'react-router-dom';
-import GameTimer from '../../components/game/GameTimer';
+import GameMultiTimer from '../../components/game/GameMultiTimer';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
@@ -268,7 +268,7 @@ export default function MultiModeWords() {
               </Button>
             )}
           </div>
-          <GameTimer totalTime={60} />
+          <GameMultiTimer totalTime={60} />
         </div>
       </div>
       <img

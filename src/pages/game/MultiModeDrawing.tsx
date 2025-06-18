@@ -3,7 +3,7 @@ import NavWithExit from '../../components/common/NavWithExit';
 import DrawingCanvasMulti from '../../components/game/DrawingCanvasMulti';
 import { useNavigate } from 'react-router';
 import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
-import GameTimer from '../../components/game/GameTimer';
+import GameMultiTimer from '../../components/game/GameMultiTimer';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
@@ -494,9 +494,9 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         </div>
         <div className="flex items-center mt-3">
           {step === 'DRAWING' ? (
-            <GameTimer totalTime={90} />
+            <GameMultiTimer totalTime={90} />
           ) : (
-            <GameTimer totalTime={60} />
+            <GameMultiTimer totalTime={60} />
           )}
         </div>
         {/* h-[480px]  */}
