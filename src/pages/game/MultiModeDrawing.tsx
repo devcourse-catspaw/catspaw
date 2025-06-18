@@ -205,8 +205,11 @@ export default function MultiModeDrawing({ step }: { step: string }) {
       setTrigger(true);
     }
 
-    console.log('turn:', turn);
-    console.log('game.current_players:', game.current_players);
+    console.log('moveToNextTurn에서 turn:', turn);
+    console.log(
+      'moveToNextTurn에서 game.current_players:',
+      game.current_players
+    );
 
     // if (
     //   turn === game.current_players &&
@@ -234,7 +237,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         complete_players: dataGame[0].complete_players,
         timeout_players: dataGame[0].timeout_players,
       });
-      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+      console.log(
+        'complete players 초기화한 후 game:',
+        useGameRoomStore.getState().game
+      );
     }
     if (errorGame) {
       console.log('complete players, timeout_players 초기화 실패');
@@ -252,12 +258,14 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     // }
 
     useGameRoomStore.getState().changeTurn(turn + 1);
-    console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
+    console.log('1 더한 후 Turn:', useGameRoomStore.getState().turn);
 
     if (step === 'DRAWING') {
+      console.log('그림 그리는 단계에서 다음 턴으로 이동합니당');
       navigate('/game/multi/words');
       return;
     } else if (step === 'WORDS') {
+      console.log('제시어 맞히는 단계에서 다음 턴으로 이동합니당');
       navigate('/game/multi/drawing');
       return;
     }
@@ -268,6 +276,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     useGameRoomStore.getState().loadPlayerFromSession();
     useGameRoomStore.getState().loadTurnFromSession();
 
+    if (!game) return; // 추가
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
       .on(
@@ -285,7 +294,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
             complete_players: newStatus.complete_players,
             timeout_players: newStatus.timeout_players,
           });
-          console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+          console.log(
+            '(누군가 제출 누르거나 초기화한 후) 업데이트 된 game:',
+            useGameRoomStore.getState().game
+          );
 
           if (newStatus.complete_players === newStatus.current_players) {
             console.log('전원 제출해서 넘어감');
@@ -317,6 +329,8 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     // useGameRoomStore.getState().loadPlayerFromSession();
     // useGameRoomStore.getState().loadTurnFromSession();
 
+    console.log('이번 턴은 ?', turn);
+
     if (step === 'DRAWING') {
       getWords();
       // setTime(180);
@@ -336,9 +350,13 @@ export default function MultiModeDrawing({ step }: { step: string }) {
   }, []);
 
   useEffect(() => {
-    if (timeLeft <= 0) {
+    // if (timeLeft <= 0) {
+    if (timeLeft === 0) {
+      // 수정
       // console.log('시간 다 돼서 넘어감');
-      reset();
+      console.log('MultiModeDrawing에서 타이머 reset(60)하기 직전!');
+
+      reset(); // reset을 캔버스 컴포넌트의 props로 전달해서 거기서 호출 ?
       // moveToNextTurn();
     }
   }, [timeLeft]);
@@ -409,7 +427,8 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     if (!game || !user) return;
     let pollingInterval: NodeJS.Timeout;
     let pollingCount = 0;
-    // toast.success('다른 플레이어의 결과를 잠시 기다려봅시다!');
+    let pollingCountWords = 0; // 추가
+    // toast('다른 플레이어의 결과를 잠시 기다려봅시다!');
 
     const poll = async () => {
       const { data, error } = await supabase
@@ -427,15 +446,22 @@ export default function MultiModeDrawing({ step }: { step: string }) {
           setWords(data[0].content);
         }
 
-        if (pollingCount >= 5) {
+        if (pollingCount >= 7) {
           clearInterval(pollingInterval);
         }
       }
 
       if (step === 'WORDS') {
+        pollingCountWords += 1; // 추가
+
         if (data && data[0]?.content) {
           console.log('그림 polling 성공:', data);
           setDrawingUrl(data[0].content);
+          // clearInterval(pollingInterval); // 주석
+        }
+
+        // 추가
+        if (pollingCountWords >= 7) {
           clearInterval(pollingInterval);
         }
       }
