@@ -121,7 +121,7 @@ export default function Lounge() {
     }
   }, [posts, likeCounts, isActive, input]);
   const handleLikeClick = async (postId: number) => {
-    if (!user) return;
+    if (!user) return toast("로그인 후 이용해주세요.");
 
     const liked = allLikes.some(
       (l) => l.post_id === postId && l.user_id === user.id
