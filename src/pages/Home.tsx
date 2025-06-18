@@ -69,7 +69,7 @@ export default function Home() {
             <MainLank />
             <MainBGDoodle2 />
             <div className=" w-full aspect-[1156/613] px-[80px] my-[100px]">
-              <div className=" flex flex-col gap-[10vh] w-full h-[80%] px-[40px] py-[20px] bg-[var(--grey-200)] rounded-[24px]">
+              <div className=" flex flex-col gap-[5vh] w-full h-[80%] px-[40px] py-[20px] bg-[var(--grey-200)] rounded-[24px]">
                 <div className="flex justify-center items-end gap-[54px] -translate-y-[50px]">
                   <Fire />
                   <span className="text-[var(--white)] text-[5vw] font-bold pb-[27px]">
@@ -77,7 +77,7 @@ export default function Home() {
                   </span>
                   <Fire />
                 </div>
-                <div className="relative ">
+                <div className="relative">
                   <HotPost />
                 </div>
               </div>

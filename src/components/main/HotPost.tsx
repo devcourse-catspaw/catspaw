@@ -42,7 +42,6 @@ export default function HotPost() {
         .slice(0, 8)
 
       setHotPosts(sorted)
-      console.log(sorted)
     }
 
     fetchHotPosts()
