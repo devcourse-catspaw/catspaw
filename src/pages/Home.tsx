@@ -17,6 +17,7 @@ import HotPost from '../components/main/HotPost'
 import Button from '../components/common/Button'
 import Fire from '../components/main/animation/Fire'
 import { useNavigate } from 'react-router-dom'
+import ThanksTo from '../components/main/animation/ThanksTo'
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 
@@ -85,6 +86,7 @@ export default function Home() {
             <MainBGDoodle3 />
             <AboutUs />
             <MainBGDoodle4 />
+            <ThanksTo />
           </div>
         </div>
       </div>
