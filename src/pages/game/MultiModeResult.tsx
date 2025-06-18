@@ -1,25 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
-import send from '../../assets/images/icon_send.svg';
-import sketchBook from '../../assets/images/sketchbook_big.svg';
-import loading from '../../assets/images/doodle_loading.svg';
-import pawPencil from '../../assets/images/paw_pencil.svg';
-import Kisu from '../../assets/images/kisu_.svg?react';
-import NavWithExit from '../../components/common/NavWithExit';
-import { useNavigate } from 'react-router';
-import ChatMessage from '../../components/common/ChatMessage';
-import BaseInput from '../../components/common/BaseInput';
-import Button from '../../components/common/Button';
-import ResultChat from '../../components/game/ResultChat';
-import ResultPlayerIndex from '../../components/game/ResultPlayerIndex';
-import ResultShareModal from '../../components/game/ResultShareModal';
-import html2canvas from 'html2canvas';
-import ScrollItem from '../../components/common/ScrollItem';
-import supabase from '../../utils/supabase';
-import { useGameRoomStore } from '../../stores/gameRoomStore';
-import type { PlayerUserProps } from '../../components/common/WaitingRoom';
-import type { Database } from '../../types/supabase';
+import { useEffect, useRef, useState } from "react";
+import send from "../../assets/images/icon_send.svg";
+import sketchBook from "../../assets/images/sketchbook_big.svg";
+import loading from "../../assets/images/doodle_loading.svg";
+import pawPencil from "../../assets/images/paw_pencil.svg";
+import Kisu from "../../assets/images/kisu_.svg?react";
+import NavWithExit from "../../components/common/NavWithExit";
+import { useNavigate } from "react-router";
+import ChatMessage from "../../components/common/ChatMessage";
+import BaseInput from "../../components/common/BaseInput";
+import Button from "../../components/common/Button";
+import ResultChat from "../../components/game/ResultChat";
+import ResultPlayerIndex from "../../components/game/ResultPlayerIndex";
+import ResultShareModal from "../../components/game/ResultShareModal";
+import html2canvas from "html2canvas";
+import ScrollItem from "../../components/common/ScrollItem";
+import supabase from "../../utils/supabase";
+import { useGameRoomStore } from "../../stores/gameRoomStore";
+import type { PlayerUserProps } from "../../components/common/WaitingRoom";
+import type { Database } from "../../types/supabase";
+import Chat from "../../components/game/Chat";
 
-type TurnType = Database['public']['Tables']['turns']['Row'];
+type TurnType = Database["public"]["Tables"]["turns"]["Row"];
 
 type ChainItem = {
   turn: number;
@@ -35,11 +36,11 @@ export default function MultiModeResult() {
   const [players, setPlayers] = useState<PlayerUserProps[]>([]);
   const [playerResults, setPlayerResults] = useState<ChainItem[][]>([]);
   const [isActive, setIsActive] = useState(0);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState("");
   const [isCapturing, setIsCapturing] = useState(false);
   const [isResultShareModalOpen, setIsResultShareModalOpen] = useState(false);
 
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState("");
   const [messages, setMessages] = useState([]);
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
@@ -55,7 +56,7 @@ export default function MultiModeResult() {
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const now = Date.now();
       if (now - lastEnterTime < 500) return;
 
@@ -71,7 +72,7 @@ export default function MultiModeResult() {
   };
 
   const sendMessageHandler = () => {
-    if (msg.trim() === '') return;
+    if (msg.trim() === "") return;
     setReloadTrigger((reloadTrigger) => reloadTrigger + 1);
     setShouldScrollToBottom(true);
     inputRef.current?.focus();
@@ -81,22 +82,22 @@ export default function MultiModeResult() {
     if (!game) return;
 
     const { data: turns } = await supabase
-      .from('turns')
-      .select('*')
-      .eq('game_id', game.id)
-      .order('turn_number');
+      .from("turns")
+      .select("*")
+      .eq("game_id", game.id)
+      .order("turn_number");
 
     const { data: players } = await supabase
-      .from('players')
-      .select('*, users(*)')
-      .eq('game_id', game.id)
-      .order('joined_at', { ascending: true });
+      .from("players")
+      .select("*, users(*)")
+      .eq("game_id", game.id)
+      .order("joined_at", { ascending: true });
 
     if (!players) return;
 
     const nicknameMap: Record<string, string> = {};
     players?.forEach((player) => {
-      nicknameMap[player.user_id] = player.users?.nickname || 'Unknown';
+      nicknameMap[player.user_id] = player.users?.nickname || "Unknown";
     });
 
     const chainsByUserId = makeChains(turns!, nicknameMap);
@@ -112,14 +113,14 @@ export default function MultiModeResult() {
     const chains: Record<string, ChainItem[]> = {};
 
     const firstTurns = turns.filter(
-      (t) => t.turn_number === 1 && t.type === 'WORD'
+      (t) => t.turn_number === 1 && t.type === "WORD"
     );
 
     for (const first of firstTurns) {
       const chain: ChainItem[] = [
         {
           turn: first.turn_number,
-          by: nicknameMap[first.sender_id] || 'Unknown',
+          by: nicknameMap[first.sender_id] || "Unknown",
           content: first.content,
         },
       ];
@@ -134,7 +135,7 @@ export default function MultiModeResult() {
         if (next) {
           chain.push({
             turn: next.turn_number,
-            by: nicknameMap[next.sender_id] || 'Unknown',
+            by: nicknameMap[next.sender_id] || "Unknown",
             content: next.content,
           });
           currentReceiver = next.receiver_id;
@@ -149,7 +150,7 @@ export default function MultiModeResult() {
 
   const clickExitHandler = async () => {
     const { data, error } = await supabase.storage
-      .from('multimode-images')
+      .from("multimode-images")
       .list(`${game?.id}`);
 
     if (error) {
@@ -162,7 +163,7 @@ export default function MultiModeResult() {
 
       if (fileNames.length > 0) {
         const { error } = await supabase.storage
-          .from('multimode-images')
+          .from("multimode-images")
           .remove(fileNames);
         if (error) {
           console.error(error);
@@ -171,20 +172,20 @@ export default function MultiModeResult() {
 
       if (game) {
         const { error } = await supabase
-          .from('games')
+          .from("games")
           .delete()
-          .eq('id', game?.id);
+          .eq("id", game?.id);
 
         if (error) {
-          console.error('삭제 실패:', error.message);
+          console.error("삭제 실패:", error.message);
         } else {
-          console.log('삭제 성공');
+          console.log("삭제 성공");
 
           resetGame();
           resetPlayer();
           resetTurn();
 
-          navigate('/');
+          navigate("/");
         }
       }
     }
@@ -195,10 +196,10 @@ export default function MultiModeResult() {
     const divModify = divModifyRef.current;
     if (!div || !divModify) return;
 
-    div.classList.remove('overflow-hidden');
-    div.classList.add('h-full');
-    divModify.classList.remove('overflow-y-auto');
-    divModify.classList.add('h-full');
+    div.classList.remove("overflow-hidden");
+    div.classList.add("h-full");
+    divModify.classList.remove("overflow-y-auto");
+    divModify.classList.add("h-full");
 
     // const originalHeight = divModify.style.height;
     // divModify.style.height = divModify.scrollHeight + 'px';
@@ -211,16 +212,16 @@ export default function MultiModeResult() {
         scale: 2,
       });
 
-      const dataUrl = canvas.toDataURL('image/png');
+      const dataUrl = canvas.toDataURL("image/png");
       setImageUrl(dataUrl);
       setIsResultShareModalOpen(true);
     } catch (e) {
-      console.error('캡처 실패:', e);
+      console.error("캡처 실패:", e);
     } finally {
-      div.classList.add('overflow-hidden');
-      div.classList.remove('h-full');
-      divModify.classList.add('overflow-y-auto');
-      divModify.classList.remove('h-full');
+      div.classList.add("overflow-hidden");
+      div.classList.remove("h-full");
+      divModify.classList.add("overflow-y-auto");
+      divModify.classList.remove("h-full");
       setIsCapturing(false);
 
       // divModify.style.height = originalHeight;
@@ -245,7 +246,7 @@ export default function MultiModeResult() {
 
   useEffect(() => {
     if (bottomRef && shouldScrollToBottom) {
-      bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+      bottomRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
       setShouldScrollToBottom(false);
     }
   }, [reloadTrigger, bottomRef, messages, shouldScrollToBottom]);
@@ -322,72 +323,7 @@ export default function MultiModeResult() {
               </div>
             </div>
             {/* h-[480px]  */}
-            <div className="flex flex-col w-[287px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
-              <div className="h-15 font-bold text-[18px] flex justify-center items-center">
-                채팅
-              </div>
-              <div className="h-[440px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto">
-                <div className="py-2 space-y-2">
-                  <ChatMessage
-                    userName="유코딩"
-                    message="안녕하세욥!"
-                    isMine={false}
-                    size="small"
-                  />
-                  <ChatMessage
-                    userName="유코딩"
-                    message="그림 잘 그리세요? 사실 전 그림 못 그리는 사람과는 하고 싶지 않거든요"
-                    isMine={false}
-                    size="small"
-                  />
-                  <ChatMessage
-                    userName="Yubin"
-                    message="네"
-                    isMine={true}
-                    size="small"
-                  />
-                  <ChatMessage
-                    userName="유코딩"
-                    message="ㅎㅎ"
-                    isMine={false}
-                    size="small"
-                  />
-                  <ChatMessage
-                    userName="Yubin"
-                    message="네네네네네네네네ㅔㄴ네네네ㅔㄴ네ㅔㅔ네네ㅔ네네네네네ㅔ네"
-                    isMine={true}
-                    size="small"
-                  />
-                  <ChatMessage
-                    userName="Yubin"
-                    message="네네네ㅔㄴ네네ㅔㅔ네ㅔ네네ㅔ네ㅔ"
-                    isMine={true}
-                    size="small"
-                  />
-                </div>
-                <div ref={bottomRef}></div>
-              </div>
-              <div className="flex justify-between gap-[10px] px-4 py-4">
-                <BaseInput
-                  ref={inputRef}
-                  value={msg}
-                  onChange={(e) => setMsg(e.target.value)}
-                  onKeyDown={keyDownHandler}
-                  placeholder="메시지 입력"
-                  className="text-[14px] h-10"
-                />
-                <Button
-                  onClick={sendMessageHandler}
-                  className="w-[46px] h-[35px] px-2 py-0"
-                >
-                  <img
-                    src={send}
-                    alt="전송"
-                    className="w-[20px] h-[20px]"
-                  ></img>
-                </Button>
-              </div>
-            </div>
+            <Chat size="medium" />
           </div>
           <div className="flex justify-center items-center gap-[39px]">
             <Button
