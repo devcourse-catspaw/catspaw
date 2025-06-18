@@ -10,7 +10,6 @@ import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
 import AiAnswering from "../pages/AiAnswering";
 import SingleModeResultPage from "../pages/SingleModeResultPage";
-import useAuthInit from "./../utils/useAuthInit";
 import GameRoomList from "../pages/game/GameRoomList";
 import GameWaitingRoom from "../pages/game/GameWaitingRoom";
 import MultiModeWords from "../pages/game/MultiModeWords";
@@ -28,6 +27,8 @@ import AddPost from "../pages/lounge/AddPost";
 import EditPost from "../pages/lounge/EditPost";
 import MyPage from "../pages/MyPage";
 import UserPage from "../pages/UserPage";
+import NotFound from "../pages/NotFound";
+import useAuthInit from "../hooks/useAuthInit";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
     path: "/user/:id",
     element: <UserPage />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
