@@ -29,6 +29,7 @@ import MyPage from "../pages/MyPage";
 import UserPage from "../pages/UserPage";
 import NotFound from "../pages/NotFound";
 import useAuthInit from "../hooks/useAuthInit";
+import ProtectedRoute from "../components/common/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +44,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/game",
-    element: <GameLayout />,
+    element: (
+      <ProtectedRoute>
+        <GameLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -106,12 +111,20 @@ const router = createBrowserRouter([
 
   {
     path: "/mypage",
-    element: <MyPage />,
+    element: (
+      <ProtectedRoute>
+        <MyPage />
+      </ProtectedRoute>
+    ),
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
     path: "/user/:id",
-    element: <UserPage />,
+    element: (
+      <ProtectedRoute>
+        <UserPage />
+      </ProtectedRoute>
+    ),
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
