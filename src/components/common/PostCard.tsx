@@ -1,34 +1,34 @@
-import { twMerge } from "tailwind-merge";
-import Spring from "../../assets/images/spring_small.svg?react";
-import like from "../../assets/images/icon_like.svg";
-import likeFilled from "../../assets/images/icon_like_filled.svg";
-import Paw from "../../assets/images/logo_catpaw.svg?react";
-import Typo from "../../assets/images/logo_typo.svg?react";
-import kisu from "../../assets/images/kisu_.svg";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { twMerge } from 'tailwind-merge'
+import Spring from '../../assets/images/spring_small.svg?react'
+import like from '../../assets/images/icon_like.svg'
+import likeFilled from '../../assets/images/icon_like_filled.svg'
+import Paw from '../../assets/images/logo_catpaw.svg?react'
+import Typo from '../../assets/images/logo_typo.svg?react'
+import kisu from '../../assets/images/kisu_.svg'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type PostCardProps = {
-  postId: number;
-  postTitle: string;
-  date: string;
-  contents: string;
-  userName: string;
-  image?: string;
-  likeCount: number;
-  isLiked: boolean;
-  avatar?: string;
-  springImg: "yes" | "no";
-};
+  postId: number
+  postTitle: string
+  date: string
+  contents: string
+  userName: string
+  image?: string
+  likeCount: number
+  isLiked: boolean
+  avatar?: string
+  springImg: 'yes' | 'no'
+}
 
 const cardLayout =
-  "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex";
+  'w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex'
 const titleStyle =
-  "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+  'text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap'
 const contentStyle =
-  "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
-const dateStyle = "text-[var(--grey-100)] text-xs  font-medium";
-const likeCountStyle = "text-[var(--black)] text-sm font-bold";
+  'text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap'
+const dateStyle = 'text-[var(--grey-100)] text-xs  font-medium'
+const likeCountStyle = 'text-[var(--black)] text-sm font-bold'
 
 export default function PostCard({
   postId,
@@ -42,30 +42,31 @@ export default function PostCard({
   avatar,
   springImg,
 }: PostCardProps) {
-  const [liked, setLiked] = useState(isLiked);
-  const [count, setCount] = useState(likeCount);
-  const navigate = useNavigate();
+  const [liked, setLiked] = useState(isLiked)
+  const [count, setCount] = useState(likeCount)
+  const navigate = useNavigate()
 
   const goToDetail = () => {
-    navigate(`/lounge/${postId}`);
-  };
+    navigate(`/lounge/${postId}`)
+  }
 
   const handleLikeClick = () => {
-    setLiked((prev) => !prev);
-    setCount((prev) => prev + (liked ? -1 : +1));
-  };
+    setLiked((prev) => !prev)
+    setCount((prev) => prev + (liked ? -1 : +1))
+  }
 
   return (
     <>
       <div className="relative leading-[24px] overflow-visible">
-        {springImg === "yes" && (
+        {springImg === 'yes' && (
           <Spring className="absolute -top-3  z-10 text-[var(--black)]" />
         )}
         <div className={twMerge(cardLayout)}>
           {/* 카드 이미지 */}
           <div
             className="w-[240px] h-[200px] justify-center items-center flex pt-4 cursor-pointer"
-            onClick={goToDetail}>
+            onClick={goToDetail}
+          >
             {image ? (
               <img
                 className="w-[208px] h-[150px] object-cover"
@@ -85,15 +86,17 @@ export default function PostCard({
             {/* 제목, 날짜 */}
             <div
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
-              onClick={goToDetail}>
+              onClick={goToDetail}
+            >
               <span className={twMerge(titleStyle)}>{postTitle}</span>
               <span className={dateStyle}>{date}</span>
             </div>
             {/* 내용 */}
             <div className="flex">
               <div
-                className={twMerge(contentStyle, "cursor-pointer")}
-                onClick={goToDetail}>
+                className={twMerge(contentStyle, 'cursor-pointer')}
+                onClick={goToDetail}
+              >
                 {contents}
               </div>
             </div>
@@ -112,7 +115,7 @@ export default function PostCard({
                 <img
                   className="w-6 h-6 cursor-pointer"
                   src={liked ? likeFilled : like}
-                  alt={liked ? "좋아요 취소" : "좋아요"}
+                  alt={liked ? '좋아요 취소' : '좋아요'}
                   onClick={handleLikeClick}
                 />
                 <span className={likeCountStyle}>{count}</span>
@@ -122,5 +125,5 @@ export default function PostCard({
         </div>
       </div>
     </>
-  );
+  )
 }

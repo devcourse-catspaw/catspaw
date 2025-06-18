@@ -8,6 +8,13 @@ import Crown from '../../../assets/images/crown.svg?react'
 
 gsap.registerPlugin(ScrollTrigger)
 
+type rankingInfo = {
+  user_id: string
+  score: number
+  nickname: string
+  avatar: string
+}[]
+
 export default function MainLank() {
   const divRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -16,7 +23,7 @@ export default function MainLank() {
   const rankerNameRef = useRef<HTMLDivElement>(null)
   const rankerAvatarRef = useRef<HTMLDivElement>(null)
   const crownRef = useRef<HTMLDivElement>(null)
-  const [ranking, setRanking] = useState([])
+  const [ranking, setRanking] = useState<rankingInfo>([])
   const customOrder = [1, 0, 2]
 
   useEffect(() => {

@@ -55,7 +55,10 @@ export default function NavBar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropBoxRef.current && !dropBoxRef.current.contains(event.target)) {
+      if (
+        dropBoxRef.current &&
+        !dropBoxRef.current.contains(event.target as Node)
+      ) {
         setIsDropBox(false)
       }
     }

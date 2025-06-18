@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import icon_accept from '../../assets/images/icon_accept.svg'
 import icon_cancel from '../../assets/images/icon_cancel.svg'
-import kisu from '../../assets/images/kisu_.svg'
 import supabase from '../../utils/supabase'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -9,9 +8,9 @@ import toast from 'react-hot-toast'
 type FriendListProps = {
   userId: string
   userCharacter: string
-  userName: string | undefined
+  userName: string
   type?: 'sent' | 'received'
-  status?: 'pending' | 'accepted' | 'rejected'
+  status?: string
   onStatusChange?: () => void
 }
 
@@ -27,7 +26,7 @@ export default function FriendList({
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/avatar-image/${userCharacter}`
 
-  const [isLoggedUser, setIsLoggedUser] = useState<string>(null)
+  const [isLoggedUser, setIsLoggedUser] = useState<string>()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -117,11 +116,7 @@ export default function FriendList({
           onClick={handleNavigate}
           className="flex gap-[10px] items-center cursor-pointer"
         >
-          <img
-            src={characterUrl ?? kisu}
-            alt="userCharacter"
-            className="size-[35px]"
-          />
+          <img src={characterUrl} alt="userCharacter" className="size-[35px]" />
           <span className="font-semibold text-[16px]">{userName}</span>
         </div>
         {type === 'received' && (
