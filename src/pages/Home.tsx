@@ -32,11 +32,21 @@ export default function Home() {
       }
     })
 
+    const smoother = ScrollSmoother.get()
+    if (smoother) {
+      smoother.kill() // 기존 인스턴스 제거
+    }
+
     ScrollSmoother.create({
       wrapper: '#smooth-wrapper',
       content: '#smooth-content',
       smooth: 1.5,
     })
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill()) // 트리거 정리
+      ScrollSmoother.get()?.kill()
+    }
   }, [])
 
   return (
