@@ -6,23 +6,27 @@ import TextBox from "../../components/lounge/TextBox";
 import Button from "../../components/common/Button";
 import ImageBox from "../../components/lounge/ImageBox";
 import { useId, useState, type ChangeEvent } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import supabase from "../../utils/supabase";
-
-import { useAuthStore } from "../../stores/authStore";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import type { fetchExactPost } from "../../routes/loader/post.loader";
+import { useAuthStore } from "../../stores/authStore";
 
 const cardLayout =
   "w-[1080px]  flex flex-col items-center overflow-visible border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] rounded-[11px] ";
 
-export default function AddPost() {
-  const user = useAuthStore((state) => state.user);
+type PostDetail = Awaited<ReturnType<typeof fetchExactPost>>;
+
+export default function EditPost() {
+  const post = useLoaderData<PostDetail>();
+  const user = useAuthStore((s) => s.user)!;
   const inputId = useId();
-  const [imgPath, setImgPath] = useState<string[]>([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
   const navigate = useNavigate();
+
+  const [title, setTitle] = useState(post?.title);
+  const [content, setContent] = useState(post?.content);
+  const [imgPath, setImgPath] = useState<string[]>(post?.images ?? []);
+  const [files, setFiles] = useState<File[]>([]);
 
   const addImage = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -48,7 +52,8 @@ export default function AddPost() {
       const { error: uploadError } = await supabase.storage
         .from("post-images")
         .upload(filePath, file);
-      if (uploadError) throw uploadError;
+
+      if (uploadError) console.error("에러", uploadError);
 
       // 공개 URL 가져오기
       const { data: urlData } = supabase.storage
@@ -61,41 +66,62 @@ export default function AddPost() {
     return Promise.all(uploadPromises);
   };
 
-  const deleteImage = (idx: number) => {
-    setImgPath((p) => p.filter((_, i) => i !== idx));
-    setFiles((f) => f.filter((_, i) => i !== idx));
+  const deleteImage = async (idx: number) => {
+    const postImg = post.images![idx];
+
+    const updatedImgPath = imgPath.filter((_, i) => i !== idx);
+    const updatedFiles = files.filter((_, i) => i !== idx);
+
+    setImgPath(updatedImgPath);
+    setFiles(updatedFiles);
+
+    const deleteImgPath = postImg.split("/").slice(-1);
+    const { data, error } = await supabase.storage
+      .from("post-images")
+      .remove([`posts/${user.id}/${deleteImgPath}`]);
+
+    const updatedPostImg = post.images!.filter((_, i) => i !== idx);
+
+    const { error: updatedError } = await supabase
+      .from("posts")
+      .update({ images: updatedPostImg })
+      .eq("id", post!.id);
+
+    if (updatedError) {
+      console.error(updatedError);
+      toast.error("수정에 실패했습니다.");
+      return;
+    }
+
+    post.images = updatedPostImg;
+
+    if (error) console.error(error);
+    if (data) console.log(data);
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim())
-      return toast("게시물 작성 후 등록해주세요.");
+    const prevImageUrls = [...post.images!];
+    const newImageUrls = await uploadAll();
+    const AllImageUrls = [...prevImageUrls, ...newImageUrls];
 
-    try {
-      const imageUrls = await uploadAll();
-      const { data, error } = await supabase
-        .from("posts")
-        .insert([
-          {
-            title,
-            content,
-            images: imageUrls,
-            user_id: user!.id,
-          },
-        ])
-        .select();
+    const { error } = await supabase
+      .from("posts")
+      .update({ title, content, images: AllImageUrls })
+      .eq("id", post!.id);
 
-      if (error) throw error;
-      console.log("게시물 저장 성공:", data);
-      // TODO: 성공 시 뒤처리 (리다이렉트, 토스트 등)
-      setTitle(title);
-      setContent(content);
-      setImgPath(imgPath);
-      toast("게시물 등록이 완료되었습니다!");
-      navigate("/lounge");
-    } catch (err) {
-      console.error("업로드 또는 DB 저장 중 에러:", err);
+    if (error) {
+      console.error(error);
+      toast.error("수정에 실패했습니다.");
+      return;
     }
+
+    setTitle(title);
+    setContent(content);
+    setImgPath(imgPath);
+    toast("수정이 완료되었습니다!");
+    navigate("/lounge");
   };
+
   const handleCancel = () => {
     navigate("/lounge");
   };
@@ -110,21 +136,20 @@ export default function AddPost() {
               "px-[100px] py-[94px] gap-[30px] bg-[var(--white)] "
             )}>
             <div className="w-[984px] h-[29px] text-[24px] font-bold text-center mb-[37px]">
-              게시물 작성하기
+              게시물 수정하기
             </div>
             <LabeledInput
               title="게시물 제목 *"
-              placeholder="제목 입력"
               value={title}
-              className="w-[915px] h-[44px]"
               onChange={(e) => setTitle(e.target.value)}
+              className="w-[915px] h-[44px]"
             />
 
             <TextBox
-              placeholder="내용 입력"
-              className="w-[915px] h-[200px] align-text-top"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              placeholder="내용 입력"
+              className="w-[915px] h-[200px] align-text-top"
             />
 
             <div className="w-[915px] flex justify-start">
@@ -167,7 +192,7 @@ export default function AddPost() {
               <Button
                 onClick={handleSubmit}
                 className="w-[125px] font-bold text-[var(--black)]">
-                저장
+                수정
               </Button>
             </div>
           </div>
