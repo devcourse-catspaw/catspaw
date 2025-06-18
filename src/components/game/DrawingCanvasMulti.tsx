@@ -420,12 +420,17 @@ const DrawingCanvasMulti = ({
   // };
 
   useEffect(() => {
-    if (timeLeft <= 0) {
+    // if (timeLeft <= 0) {
+    if (timeLeft === 0) {
+      // 수정
       // isZero();
       // console.log('DrawingCanvasMulti에서 시간 다 돼서 넘어감');
       (async () => {
         if (!isComplete || trigger) await handleSubmitAuto(false);
 
+        console.log(
+          '타이머 0 된 후, DrawingCanvasMulti에서 moveToNextTurn 호출되기 직전!'
+        );
         await moveToNextTurn();
       })();
     }
