@@ -201,7 +201,7 @@ export default function MultiModeWords() {
   }, [game?.id]);
 
   useEffect(() => {
-    toast.success('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
+    toast('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
 
     setTime(60);
     const timer = setInterval(() => {

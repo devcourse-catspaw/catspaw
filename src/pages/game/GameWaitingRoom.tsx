@@ -471,7 +471,7 @@ export default function GameWaitingRoom() {
           //   useGameRoomStore.getState().player
           // );
           navigate('/game/list');
-          toast.success('방장이 방을 폭파시켰습니다!');
+          toast('방장이 방을 폭파시켰습니다!');
         }
       )
       .subscribe();

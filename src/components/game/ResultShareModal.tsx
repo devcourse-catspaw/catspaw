@@ -91,7 +91,7 @@ export default function ResultShareModal({
       .select();
 
     if (data) {
-      toast.success('게시물이 등록되었습니다!');
+      toast('게시물이 등록되었습니다!');
       closeResultShareModalHandler();
     }
 
