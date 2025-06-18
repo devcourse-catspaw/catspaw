@@ -25,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
-        toast.success('로그인 성공')
+        toast('로그인 성공')
       } else {
         toast.error('유저 정보를 불러오기 실패')
       }
