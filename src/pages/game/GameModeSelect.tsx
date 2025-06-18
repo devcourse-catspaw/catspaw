@@ -29,31 +29,40 @@ export default function GameModeSelect() {
   }, [count, navigate]);
 
   useEffect(() => {
+    if (!user?.id) return;
+
     const clearData = async () => {
-      const { data, error } = await supabase.storage
-        .from("singlemode-images")
-        .list(`private/${user?.id}`);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      const fileNames = data.map((file) => `private/${user?.id}/${file.name}`);
-
-      if (fileNames.length > 0) {
-        const { error } = await supabase.storage
+      try {
+        const { data, error } = await supabase.storage
           .from("singlemode-images")
-          .remove(fileNames);
+          .list(`private/${user.id}`);
+
         if (error) {
-          console.error(error);
+          console.error("파일 목록 조회 실패:", error);
+          return;
         }
+
+        const fileNames = data.map((file) => `private/${user.id}/${file.name}`);
+
+        if (fileNames.length > 0) {
+          const { error: removeError } = await supabase.storage
+            .from("singlemode-images")
+            .remove(fileNames);
+
+          if (removeError) {
+            console.error("파일 삭제 실패:", removeError);
+          }
+        }
+
+        resetTopicList();
+        getRandomTopic();
+      } catch (error) {
+        console.error("clearData 에러:", error);
       }
-      resetTopicList();
-      getRandomTopic();
     };
+
     clearData();
-  });
+  }, [user?.id]);
 
   useEffect(() => {
     reset();

@@ -24,6 +24,7 @@ export default function AiAnswering() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const [isError, setIsError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -33,46 +34,54 @@ export default function AiAnswering() {
         .from("singlemode-images")
         .getPublicUrl(`private/${user?.id}/${filename}`);
 
-      setImageUrl(data.publicUrl);
+      const img = new Image();
+      img.onload = () => {
+        setImageUrl(data.publicUrl);
+      };
+      img.onerror = () => {
+        if (retryCount < 5) {
+          setRetryCount((prev) => prev + 1);
+          setTimeout(fetchImage, 500);
+          console.log("잡았다");
+        } else {
+          setIsError(true);
+        }
+      };
+      img.src = data.publicUrl;
     };
 
-    const timer = setTimeout(() => {
-      fetchImage();
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(fetchImage, 300);
+    return () => clearTimeout(timer);
   }, [filename]);
 
   useEffect(() => {
     if (!imageUrl || !imageReady) return;
 
     const predict = async () => {
-      const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
-      const modelURL = URL + "model.json";
-      const metadataURL = URL + "metadata.json";
+      try {
+        const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
 
-      const model = await tmImage.load(modelURL, metadataURL);
+        const model = await tmImage.load(modelURL, metadataURL);
 
-      if (imgRef.current) {
-        const predictions = await model.predict(imgRef.current);
-        const sorted = predictions.sort(
-          (a, b) => b.probability - a.probability
-        );
-        const best = sorted[0];
+        if (imgRef.current) {
+          const predictions = await model.predict(imgRef.current);
+          const sorted = predictions.sort(
+            (a, b) => b.probability - a.probability
+          );
+          const best = sorted[0];
 
-        setPrediction(best.className);
-        setAiAnswer(best.className);
+          setPrediction(best.className);
+          setAiAnswer(best.className);
+        }
+      } catch (error) {
+        console.error("예측 실패:", error);
+        setIsError(true);
       }
     };
 
-    const timer = setTimeout(() => {
-      predict();
-    }, 1000);
-    return () => {
-      clearTimeout(timer);
-    };
+    predict();
   }, [imageUrl, imageReady]);
 
   useEffect(() => {
@@ -95,7 +104,7 @@ export default function AiAnswering() {
   useEffect(() => {
     const errorHadleTimer = setTimeout(() => {
       setIsError(true);
-    }, 10000);
+    }, 30000);
     return () => {
       clearTimeout(errorHadleTimer);
     };

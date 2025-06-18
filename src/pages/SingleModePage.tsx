@@ -17,7 +17,12 @@ export default function SingleModePage() {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
+    const hasShownBgmToast = sessionStorage.getItem("bgm-toast-shown");
+    if (!hasShownBgmToast) {
+      toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
+      sessionStorage.setItem("bgm-toast-shown", "true");
+    }
+
     getRandomTopic();
   }, []);
 
@@ -29,8 +34,6 @@ export default function SingleModePage() {
     const file = new File([blob], filename, { type: "image/jpeg" });
     setFilename(filename);
 
-    navigate("/game/ai-answering");
-
     const { error } = await supabase.storage
       .from("singlemode-images")
       .upload(`private/${user?.id}/${filename}`, file);
@@ -39,6 +42,8 @@ export default function SingleModePage() {
       console.error(error);
       return;
     }
+
+    navigate("/game/ai-answering");
   };
 
   useEffect(() => {
