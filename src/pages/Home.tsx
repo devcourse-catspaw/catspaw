@@ -68,9 +68,9 @@ export default function Home() {
             <MainBGDoodle1 />
             <MainLank />
             <MainBGDoodle2 />
-            <div className=" w-full aspect-[1156/613] px-[80px] my-[100px]">
-              <div className=" flex flex-col gap-[5vh] w-full h-[80%] px-[40px] py-[20px] bg-[var(--grey-200)] rounded-[24px]">
-                <div className="flex justify-center items-end gap-[54px] -translate-y-[50px]">
+            <div className=" w-full  px-[80px] my-[100px]">
+              <div className=" flex flex-col gap-[5vh] w-full h-[80%] px-[40px] pt-[20px] pb-[40px] bg-[var(--grey-200)] rounded-[24px]">
+                <div className=" flex justify-center items-end gap-[54px] -translate-y-[50px]">
                   <Fire />
                   <span className="text-[var(--white)] text-[5vw] font-bold pb-[27px]">
                     What's Hot
