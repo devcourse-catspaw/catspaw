@@ -197,11 +197,12 @@ export default function MultiModeResult() {
 
     const interval = setInterval(() => {
       getResults();
+      console.log('결과 polling...');
     }, 2000);
 
     const timeout = setTimeout(() => {
       clearInterval(interval);
-    }, 10000);
+    }, 14000); // 7초로 수정
 
     return () => {
       clearInterval(interval);

@@ -446,7 +446,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
           setWords(data[0].content);
         }
 
-        if (pollingCount >= 5) {
+        if (pollingCount >= 7) {
           clearInterval(pollingInterval);
         }
       }
@@ -461,7 +461,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         }
 
         // 추가
-        if (pollingCountWords >= 5) {
+        if (pollingCountWords >= 7) {
           clearInterval(pollingInterval);
         }
       }
