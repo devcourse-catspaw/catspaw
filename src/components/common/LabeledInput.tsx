@@ -8,12 +8,14 @@ type LabeledInputProps = InputHTMLAttributes<HTMLInputElement> & {
   className?: string;
   invalidMessage?: string;
   isInvalid?: boolean;
+  ref?: React.Ref<HTMLInputElement>;
 };
 export default function LabeledInput({
   title = '게임방 입력',
   className,
   invalidMessage = '한 글자 이상 입력해주세요.',
   isInvalid = false,
+  ref,
   placeholder = '이름 입력',
   id,
   type,
@@ -37,6 +39,7 @@ export default function LabeledInput({
       <div className="flex flex-col gap-[4px] relative">
         <input
           type={type === 'password' ? (showPW ? 'text' : 'password') : 'text'}
+          ref={ref}
           value={value}
           onChange={onChange}
           id={inputId}

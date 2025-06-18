@@ -8,8 +8,7 @@ import eraser from '../../assets/images/icon_eraser.svg';
 import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
-import BaseInput from '../common/BaseInput';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
+import LabeledInput from '../common/LabeledInput';
 
 type LineData = {
   tool: string;
@@ -26,16 +25,24 @@ type HistoryState = {
 const DrawingCanvas = ({
   step,
   isComplete,
+  timeLeft,
+  // isTimeout,
+  trigger,
   drawingUrl,
+  // isZero,
   onSubmitDrawing,
   onSubmitWords,
   moveToNextTurn,
 }: {
   step: string;
   isComplete: boolean;
+  timeLeft: number;
+  // isTimeout: boolean;
+  trigger?: boolean;
   drawingUrl?: string;
-  onSubmitDrawing?: (imageData: string) => Promise<void>;
-  onSubmitWords?: (answer: string) => Promise<void>;
+  // isZero?: () => Promise<void>;
+  onSubmitDrawing?: (imageData: string, isOver: boolean) => Promise<void>;
+  onSubmitWords?: (answer: string, isOver: boolean) => Promise<void>;
   moveToNextTurn: () => Promise<void>;
 }) => {
   const [tool, setTool] = useState<string>('pen');
@@ -50,10 +57,10 @@ const DrawingCanvas = ({
   const [hasImage, setHasImage] = useState<boolean>(false);
   const stageRef = useRef<Konva.Stage>(null);
 
+  const [disabled, setDisabled] = useState(false);
   const [answer, setAnswer] = useState('');
+  const [invalid, setInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,8 +71,20 @@ const DrawingCanvas = ({
       lastEnterTime = now;
 
       e.preventDefault();
-      handleSubmit();
+      checkValidation();
     }
+  };
+
+  const checkValidation = () => {
+    if (disabled) return;
+
+    setDisabled(true);
+    if (answer.trim() !== '') {
+      // console.log('제출합니당');
+      handleSubmitAuto(false);
+    } else setInvalid(true);
+
+    setTimeout(() => setDisabled(false), 500);
   };
 
   const convertHexToRgba = (color: string): Uint8ClampedArray => {
@@ -338,6 +357,15 @@ const DrawingCanvas = ({
   };
 
   const handleSubmit = async () => {
+    if (disabled) return;
+
+    setDisabled(true);
+    handleSubmitAuto(false);
+
+    setTimeout(() => setDisabled(false), 500);
+  };
+
+  const handleSubmitAuto = async (nowOver: boolean) => {
     if (step === 'DRAWING') {
       const stage = stageRef.current;
       if (!stage) return;
@@ -347,29 +375,55 @@ const DrawingCanvas = ({
         quality: 1.0,
         pixelRatio: 1,
       });
-      await onSubmitDrawing!(imageDataURL);
+      await onSubmitDrawing!(imageDataURL, nowOver);
     } else if (step === 'WORDS') {
-      await onSubmitWords!(answer);
+      await onSubmitWords!(answer, nowOver);
     }
   };
 
-  useEffect(() => {
-    setTime(180);
-    const timer = setInterval(() => {
-      decrease();
-    }, 1000);
+  // const isZeros = async () => {
+  //   if (!game) return;
 
-    return () => clearInterval(timer);
-  }, []);
+  //   if (isSent) {
+  //     console.log('isTimeout:', isTimeout);
+  //     if (isTimeout) moveToNextTurn();
+  //   } else {
+  //     // if (!isComplete || isTimeout) await handleSubmitAuto();
+  //     if (!isComplete) await handleSubmitAuto(true);
+  //     // if (!isComplete && isTimeout) await handleSubmitAuto();
+
+  //     const { data: dataGame, error: errorGame } = await supabase
+  //       .from('games')
+  //       .update({
+  //         timeout_players: game.timeout_players + 1,
+  //       })
+  //       .eq('id', game?.id)
+  //       .select();
+
+  //     if (dataGame) {
+  //       console.log('timeout players 업데이트 완료:', dataGame);
+  //       setIsSent(true);
+
+  //       // console.log('isTimeout:', isTimeout);
+  //       // if (isTimeout) moveToNextTurn();
+  //     }
+  //     if (errorGame) {
+  //       console.log('timeout players 업데이트 실패');
+  //       console.error(errorGame);
+  //       // setIsSent(true);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
+      // isZero();
+      // console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
       (async () => {
-        await handleSubmit();
+        if (!isComplete || trigger) await handleSubmitAuto(false);
+
         await moveToNextTurn();
       })();
-      reset();
     }
   }, [timeLeft]);
 
@@ -566,26 +620,54 @@ const DrawingCanvas = ({
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>제출</Button>
+          {isComplete ? (
+            <Button
+              disabled
+              className="w-[113px] h-[49px] px-0 py-0 cursor-not-allowed"
+            >
+              제출 완료
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              className="w-[113px] h-[49px] px-0 py-0"
+            >
+              제출
+            </Button>
+          )}
         </div>
       ) : (
         <div className="flex justify-between gap-7 w-[595px] mr-2">
-          <BaseInput
+          <LabeledInput
             ref={inputRef}
             value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
+            readOnly={isComplete}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+              setInvalid(false);
+            }}
+            title=""
+            invalidMessage="한 글자 이상 입력해주세요."
+            isInvalid={invalid}
             onKeyDown={keyDownHandler}
             placeholder="정답 입력"
-            className="text-[18px]"
+            className="w-[464px] text-[18px] mt-[-8px]"
           />
-          <Button
-            onClick={handleSubmit}
-            className={`w-[113px] h-[49px] px-8 ${
-              isComplete && 'w-[125px] px-3 cursor-not-allowed'
-            }`}
-          >
-            {isComplete ? '제출 완료' : '제출'}
-          </Button>
+          {isComplete ? (
+            <Button
+              disabled
+              className="w-[125px] h-[49px] px-3 cursor-not-allowed"
+            >
+              제출 완료
+            </Button>
+          ) : (
+            <Button
+              onClick={checkValidation}
+              className="w-[113px] h-[49px] px-8"
+            >
+              제출
+            </Button>
+          )}
         </div>
       )}
     </div>
