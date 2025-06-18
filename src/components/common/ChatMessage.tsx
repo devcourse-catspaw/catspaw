@@ -6,6 +6,7 @@ type ChatMessageProps = HTMLAttributes<HTMLDivElement> & {
   message: string;
   isMine: boolean;
   size?: "small" | "large";
+  showProfile?: boolean;
 };
 
 export default function ChatMessage({
@@ -13,6 +14,7 @@ export default function ChatMessage({
   message,
   isMine,
   size = "small",
+  showProfile = true,
   className,
   ...props
 }: ChatMessageProps) {
@@ -36,11 +38,12 @@ export default function ChatMessage({
     <div className={containerClass} {...props}>
       <div
         className={twMerge(
-          "flex flex-col w-full gap-2",
+          "flex flex-col w-full",
+          size === "small" ? "gap-1" : "gap-2",
           isMine ? "items-end" : "items-start"
         )}
       >
-        <span className={userNameClass}>{userName}</span>
+        {showProfile && <span className={userNameClass}>{userName}</span>}
         <div className={messageClass}>{message}</div>
       </div>
     </div>

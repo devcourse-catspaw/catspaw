@@ -80,7 +80,7 @@ export default function GameModeSelect() {
               <div onClick={() => setCount(3)} className="z-50 cursor-pointer">
                 <GameModeSelectCard mode="single" />
               </div>
-              <div onClick={() => navigate("/game/multi")} className="z-50">
+              <div onClick={() => navigate("/game/list")} className="z-50">
                 <GameModeSelectCard mode="multi" />
               </div>
             </div>

@@ -8,15 +8,19 @@ type LabeledInputProps = InputHTMLAttributes<HTMLInputElement> & {
   className?: string;
   invalidMessage?: string;
   isInvalid?: boolean;
+  ref?: React.Ref<HTMLInputElement>;
 };
 export default function LabeledInput({
   title = '게임방 입력',
   className,
   invalidMessage = '한 글자 이상 입력해주세요.',
   isInvalid = false,
+  ref,
   placeholder = '이름 입력',
   id,
   type,
+  value,
+  onChange,
   ...props
 }: LabeledInputProps) {
   const [showPW, setShowPw] = useState(false);
@@ -35,6 +39,9 @@ export default function LabeledInput({
       <div className="flex flex-col gap-[4px] relative">
         <input
           type={type === 'password' ? (showPW ? 'text' : 'password') : 'text'}
+          ref={ref}
+          value={value}
+          onChange={onChange}
           id={inputId}
           className={twMerge(LabeledInputStyle, className)}
           placeholder={placeholder}
@@ -56,11 +63,19 @@ export default function LabeledInput({
               className="absolute top-[13px] right-4"
             />
           ))}
-        {isInvalid && (
+        {/* {isInvalid && (
           <p className="text-[color:var(--red)] text-xs font-regular">
             *{invalidMessage}
           </p>
-        )}
+        )} */}
+        <p
+          className={twMerge(
+            'text-[color:var(--red)] text-xs font-regular',
+            !isInvalid && 'invisible'
+          )}
+        >
+          *{invalidMessage}
+        </p>
       </div>
     </div>
   );

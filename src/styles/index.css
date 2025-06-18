@@ -1,5 +1,5 @@
-@import "./tailwind.css";
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+@import './tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto:wght@500&display=swap');
 @import "swiper/css/bundle";
 
 :root {
@@ -65,6 +65,13 @@
     format("truetype");
 }
 
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('/src/assets/fonts/PatrickHand-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
 .font-gloria {
   font-family: "GloriaHallelujah", cursive;
 }
@@ -77,6 +84,19 @@
   font-family: "SinchonRhapsody", sans-serif;
 }
 
+.font-patrickHand {
+  font-family: 'Patrick Hand', cursive;
+}
+
 body {
   font-family: "Pretendard";
+}
+
+/* 스크롤 */
+.scroll-custom::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.scroll-custom::-webkit-scrollbar-thumb {
+  background: #939393;
 }

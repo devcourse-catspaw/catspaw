@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Home from "../pages/Home";
 import GameModeSelect from "../pages/game/GameModeSelect";
 import GameLayout from "./layouts/GameLayout";
@@ -6,7 +10,24 @@ import SingleModePage from "../pages/SingleModePage";
 import Login from "../pages/Login";
 import AiAnswering from "../pages/AiAnswering";
 import SingleModeResultPage from "../pages/SingleModeResultPage";
-import useAuthInit from './../utils/useAuthInit'
+import useAuthInit from "./../utils/useAuthInit";
+import GameRoomList from "../pages/game/GameRoomList";
+import GameWaitingRoom from "../pages/game/GameWaitingRoom";
+import MultiModeWords from "../pages/game/MultiModeWords";
+import MultiModeDrawing from "../pages/game/MultiModeDrawing";
+import MultiModeResult from "../pages/game/MultiModeResult";
+import Lounge from "../pages/Lounge";
+import LoungeLayout from "./layouts/LoungeLayout";
+import {
+  fetchExactPost,
+  fetchPostDetail,
+  fetchUsers,
+} from "./loader/post.loader";
+import LoungeDetail from "../pages/lounge/LoungDetail";
+import AddPost from "../pages/lounge/AddPost";
+import EditPost from "../pages/lounge/EditPost";
+import MyPage from "../pages/MyPage";
+import UserPage from "../pages/UserPage";
 
 const router = createBrowserRouter([
   {
@@ -28,11 +49,11 @@ const router = createBrowserRouter([
         element: <Navigate to="select" replace />,
       },
       {
-        path: 'select',
+        path: "select",
         element: <GameModeSelect />,
       },
       {
-        path: 'single',
+        path: "single",
         element: <SingleModePage />,
       },
       {
@@ -43,11 +64,59 @@ const router = createBrowserRouter([
         path: "single-result",
         element: <SingleModeResultPage />,
       },
+      { path: "list", element: <GameRoomList /> },
+      {
+        path: "room",
+        element: <GameWaitingRoom />,
+      },
+      {
+        path: "multi",
+        element: <MultiModeWords />,
+      },
+      {
+        path: "multi/drawing",
+        element: <MultiModeDrawing key="DRAWING" step="DRAWING" />,
+      },
+      {
+        path: "multi/words",
+        element: <MultiModeDrawing key="WORDS" step="WORDS" />,
+      },
+      {
+        path: "multi/result",
+        element: <MultiModeResult />,
+      },
     ],
   },
+  {
+    path: "/lounge",
+    element: <LoungeLayout />,
+    loader: fetchUsers,
+    children: [
+      { index: true, element: <Lounge /> },
+      { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },
+      { path: "add-post", element: <AddPost /> },
+      {
+        path: ":postId/edit-post",
+        element: <EditPost />,
+        loader: fetchExactPost,
+      },
+    ],
+  },
+
+  {
+    path: "/mypage",
+    element: <MyPage />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
+  {
+    path: "/user/:id",
+    element: <UserPage />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
 ]);
+
 export default function Router() {
-  useAuthInit()
+  useAuthInit();
   return (
     <>
       <RouterProvider router={router} />
