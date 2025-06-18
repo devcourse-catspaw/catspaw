@@ -1,14 +1,20 @@
 import backImg from "../../assets/images/background_doodle_2.svg";
-import { Outlet, useLoaderData } from "react-router-dom";
+import { Outlet, useLoaderData, useLocation } from "react-router-dom";
 import Header from "../../components/common/Header";
 import { useAuthStore } from "../../stores/authStore";
 import type { fetchUsers } from "../loader/post.loader";
+import { useEffect } from "react";
 
 export type UsersProfile = NonNullable<Awaited<ReturnType<typeof fetchUsers>>>;
 
 export default function LoungeLayout() {
   const users = useLoaderData<UsersProfile>();
   const user = useAuthStore((state) => state.user);
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
 
   const me = users.find((u) => u.id === user?.id) ?? null;
 
