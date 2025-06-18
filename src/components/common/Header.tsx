@@ -23,7 +23,7 @@ export default function Header({
       <div
         onClick={() => navigate("/")}
         className="flex  h-[60px] justify-start items-center gap-[20px]">
-        <LogoCatPaw className="w-[60px] h-[60px] text-[var(--black)]" />
+        <LogoCatPaw className="w-[60px] h-[60px] text-[var(--black)] cursor-pointer" />
         <span className="font-semibold text-lg text-[var(--black)]">
           {pageTitle}
         </span>
@@ -31,7 +31,9 @@ export default function Header({
       <div>
         {!user && (
           <div className="flex  h-[52px] items-center">
-            <Button className={buttonStyle}>Join to Draw</Button>
+            <Button onClick={() => navigate("/login")} className={buttonStyle}>
+              Join to Draw
+            </Button>
           </div>
         )}
         {user && (
