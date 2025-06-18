@@ -370,38 +370,6 @@ export type Database = {
           },
         ]
       }
-      results: {
-        Row: {
-          contents: Json
-          created_at: string
-          game_id: number
-          id: number
-          origin_player_id: string
-        }
-        Insert: {
-          contents: Json
-          created_at?: string
-          game_id: number
-          id?: number
-          origin_player_id: string
-        }
-        Update: {
-          contents?: Json
-          created_at?: string
-          game_id?: number
-          id?: number
-          origin_player_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "results_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       turns: {
         Row: {
           content: string | null
@@ -446,7 +414,6 @@ export type Database = {
       users: {
         Row: {
           avatar: string | null
-          character: string | null
           created_at: string
           email: string | null
           id: string
@@ -454,7 +421,6 @@ export type Database = {
         }
         Insert: {
           avatar?: string | null
-          character?: string | null
           created_at?: string
           email?: string | null
           id: string
@@ -462,7 +428,6 @@ export type Database = {
         }
         Update: {
           avatar?: string | null
-          character?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -503,7 +468,15 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_top_3_user_scores: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          score: number
+          nickname: string
+          avatar: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
