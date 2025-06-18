@@ -264,7 +264,7 @@ export default function MultiModeResult() {
                   resetPlayer();
                   resetTurn();
 
-                  navigate("/game/list");
+                  navigate("/game/select");
                 }
               }
             }
