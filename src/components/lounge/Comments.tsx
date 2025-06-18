@@ -7,6 +7,7 @@ import supabase from "../../utils/supabase";
 import { useAuthStore } from "../../stores/authStore";
 import type { fetchPostDetail } from "../../routes/loader/post.loader";
 import { useLoaderData } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export type PostDetail = NonNullable<
   Awaited<ReturnType<typeof fetchPostDetail>>
@@ -41,7 +42,8 @@ export default function Comments({
   ];
 
   const handleAddComment = async () => {
-    if (!user || !newComment.trim()) return;
+    if (!user) return toast.error("로그인 후 이용해주세요!");
+    if (!newComment.trim()) return toast.error("글 작성 후 등록해주세요!");
 
     // insert 후 users relation까지 함께 select
     const { data, error } = await supabase
