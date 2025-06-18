@@ -19,7 +19,7 @@ export default function PostList({
       <div className="w-full h-[55px] px-[20px] flex justify-between items-center">
         <div className="flex justify-between items-center gap-[12px]">
           <span
-            onClick={() => navigate(`/post/${postId}`)}
+            onClick={() => navigate(`/lounge/${postId}`)}
             className="font-semibold text-[15px] truncate max-w-[300px] cursor-pointer hover:underline"
           >
             {postTitle}

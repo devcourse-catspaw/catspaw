@@ -124,7 +124,7 @@ export default function MainLank() {
         />
         <div
           ref={crownRef}
-          className="w-[50vw] absolute top-[-60vh] flex justify-center "
+          className="w-[50vw] absolute top-[-45vh] flex justify-center "
         >
           <Crown className="size-[5vh] text-[#F4EC5A]" />
         </div>
@@ -140,9 +140,9 @@ export default function MainLank() {
             }/storage/v1/object/public/avatar-image/${ranker.avatar}`
 
             const avatarClass = [
-              'size-[150px] relative -translate-y-[5vh]',
-              'size-[150px] relative translate-y-[15vh]',
-              'size-[150px] relative translate-y-[20vh]',
+              'size-[10vw] relative translate-y-[5vw]',
+              'size-[10vw] relative translate-y-[10vw]',
+              'size-[10vw] relative translate-y-[15vw]',
             ][i]
 
             return <img key={i} src={avatarUrl} className={avatarClass} />

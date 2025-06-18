@@ -101,7 +101,7 @@ export default function NavBar() {
         </div>
         <div className="flex items-center gap-[12px]">
           <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/lounge')}
             className="w-[140px] h-[38px] text-[14px]"
           >
             Lounge
