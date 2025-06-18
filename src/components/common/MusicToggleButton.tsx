@@ -11,12 +11,52 @@ export default function MusicToggleButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const currentMusicPath = useRef<string>("");
 
+  const stopAndClearAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.src = "";
+      audioRef.current.load();
+      audioRef.current = null;
+    }
+    currentMusicPath.current = "";
+    setIsMusicOn(false);
+  };
+
   useEffect(() => {
+    const handleForceStopMusic = () => {
+      stopAndClearAudio();
+    };
+
+    window.addEventListener("forceStopMusic", handleForceStopMusic);
+
+    return () => {
+      window.removeEventListener("forceStopMusic", handleForceStopMusic);
+    };
+  }, []);
+
+  useEffect(() => {
+    const music1Paths = ["select", "result", "list", "room"];
     const music2Paths = ["ai-answering", "single", "multi"];
     const path = location.pathname;
+
+    if (path === "/") {
+      stopAndClearAudio();
+      return;
+    }
+
+    const shouldUseMusic1 = music1Paths.some((keyword) =>
+      path.includes(keyword)
+    );
     const shouldUseMusic2 = music2Paths.some((keyword) =>
       path.includes(keyword)
     );
+
+    if (!shouldUseMusic1 && !shouldUseMusic2) {
+      stopAndClearAudio();
+      return;
+    }
+
     const selectedMusic = shouldUseMusic2 ? backgroundMusic2 : backgroundMusic1;
 
     if (!audioRef.current) {
@@ -27,18 +67,20 @@ export default function MusicToggleButton() {
     }
 
     if (currentMusicPath.current !== selectedMusic) {
-      const isPlaying = !audioRef.current.paused;
-      audioRef.current.pause();
+      const isPlaying = isMusicOn && !audioRef.current.paused;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
       audioRef.current = new Audio(selectedMusic);
       audioRef.current.loop = true;
       audioRef.current.volume = 0.3;
       currentMusicPath.current = selectedMusic;
+
       if (isPlaying) {
         audioRef.current.play().catch(console.error);
       }
     }
-
-    return () => {};
   }, [location.pathname]);
 
   const toggleMusic = () => {

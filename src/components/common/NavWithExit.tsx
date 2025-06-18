@@ -4,6 +4,16 @@ import { useNavigate } from "react-router";
 
 export default function NavWithExit({ title }: { title?: string }) {
   const navigate = useNavigate();
+
+  const stopAllAudio = () => {
+    window.dispatchEvent(new CustomEvent("forceStopMusic"));
+  };
+
+  const handleNavigateHome = () => {
+    stopAllAudio();
+    navigate("/");
+  };
+
   return (
     <>
       <nav className="w-full flex justify-between items-center z-50">
@@ -12,7 +22,7 @@ export default function NavWithExit({ title }: { title?: string }) {
             src={logo}
             alt="Cat's Paw 로고"
             className="w-15 cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={handleNavigateHome}
           />
           {title && <span className="font-semibold text-lg">{title}</span>}
         </div>
@@ -21,7 +31,7 @@ export default function NavWithExit({ title }: { title?: string }) {
             src={exit}
             alt="나가기 버튼"
             className="cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={handleNavigateHome}
           />
         )}
       </nav>
