@@ -1,5 +1,6 @@
 @import './tailwind.css';
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto:wght@500&display=swap');
+@import "swiper/css/bundle";
 
 :root {
   --white: #ffffff;
@@ -12,62 +13,83 @@
 }
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/src/assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-ExtraBold.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/src/assets/fonts/Pretendard-Bold.woff2') format('woff2');
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/src/assets/fonts/Pretendard-SemiBold.woff2') format('woff2');
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/src/assets/fonts/Pretendard-Medium.woff2') format('woff2');
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/src/assets/fonts/Pretendard-Regular.woff2') format('woff2');
+  font-family: "Pretendard";
+  src: url("/src/assets/fonts/Pretendard-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretendard';
+  font-family: "Pretendard";
   font-weight: 300;
-  src: url('/src/assets/fonts/Pretendard-Light.woff2') format('woff2');
+  src: url("/src/assets/fonts/Pretendard-Light.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: 'GloriaHallelujah';
+  font-family: "GloriaHallelujah";
   font-weight: 400;
-  src: url('/src/assets/fonts/GloriaHallelujah-Regular.ttf') format('truetype');
+  src: url("/src/assets/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SinchonRhapsody";
+  src: url("/src/assets/fonts/SinchonRhapsodyTTF-ExtraBold.ttf")
+    format("truetype");
+}
+
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url('/src/assets/fonts/PatrickHand-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
 }
 
 .font-gloria {
-  font-family: 'GloriaHallelujah', cursive;
+  font-family: "GloriaHallelujah", cursive;
 }
 
 .font-roboto {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
+}
+
+.font-sinchon {
+  font-family: "SinchonRhapsody", sans-serif;
+}
+
+.font-patrickHand {
+  font-family: 'Patrick Hand', cursive;
 }
 
 body {
-  font-family: 'Pretendard';
+  font-family: "Pretendard";
 }
 
 /* 스크롤 */

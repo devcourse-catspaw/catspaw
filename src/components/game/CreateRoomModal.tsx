@@ -1,7 +1,6 @@
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
 import close from '../../assets/images/icon_close.svg';
-// import supabase from '../../utils/supabase';
 import { useState } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
@@ -43,13 +42,13 @@ export default function CreateRoomModal({
     );
 
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     closeCreateRoomModalHandler();
 
-    useGameRoomStore.getState().setPlayer(data.player);
-    console.log('useGameRoomStore Player:', useGameRoomStore.getState().player);
+    useGameRoomStore.getState().setPlayer(data.player[0]);
+    // console.log('useGameRoomStore Player:', useGameRoomStore.getState().player);
     useGameRoomStore.getState().setGame(data.game);
-    console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     navigate('/game/room');
   };
   return (

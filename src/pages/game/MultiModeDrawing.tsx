@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import send from '../../assets/images/icon_send.svg';
+import { useEffect, useState } from 'react';
 import NavWithExit from '../../components/common/NavWithExit';
 import DrawingCanvas from '../../components/game/DrawingCanvas';
 import { useNavigate } from 'react-router';
 import { useGameTimerStore } from '../../stores/gameTimerStore';
 import GameTimer from '../../components/game/GameTimer';
-import ChatMessage from '../../components/common/ChatMessage';
-import BaseInput from '../../components/common/BaseInput';
-import Button from '../../components/common/Button';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
+import Chat from '../../components/game/Chat';
+// import toast from 'react-hot-toast';
 
 export default function MultiModeDrawing({ step }: { step: string }) {
   const { user } = useAuthStore();
@@ -22,38 +20,8 @@ export default function MultiModeDrawing({ step }: { step: string }) {
   const [words, setWords] = useState('');
   const [drawingUrl, setDrawingUrl] = useState('');
   const [isComplete, setIsComplete] = useState(false);
-
-  const [msg, setMsg] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [reloadTrigger, setReloadTrigger] = useState(0);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
-
-  const bottomRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  let lastEnterTime = 0;
-  const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      const now = Date.now();
-      if (now - lastEnterTime < 500) return;
-
-      lastEnterTime = now;
-
-      e.preventDefault();
-      sendMessageHandler();
-    }
-  };
-
-  const getMessages = async () => {
-    setShouldScrollToBottom(true);
-  };
-
-  const sendMessageHandler = () => {
-    if (msg.trim() === '') return;
-    setReloadTrigger((reloadTrigger) => reloadTrigger + 1);
-    setShouldScrollToBottom(true);
-    inputRef.current?.focus();
-  };
+  // const [isTimeout, setIsTimeout] = useState(false);
+  const [trigger, setTrigger] = useState(false);
 
   const getWords = async () => {
     if (!game || !user) {
@@ -109,7 +77,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     }
   };
 
-  const sendWordsHandler = async (answer: string) => {
+  const sendWordsHandler = async (answer: string, isOver: boolean) => {
     if (!game || !user) return;
     const { data, error } = await supabase
       .from('turns')
@@ -124,21 +92,23 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     if (data) {
       console.log('저장 완료:', data);
 
-      const { data: dataGame, error: errorGame } = await supabase
-        .from('games')
-        .update({
-          complete_players: game.complete_players + 1,
-        })
-        .eq('id', game.id)
-        .select();
+      if (!isOver) {
+        const { data: dataGame, error: errorGame } = await supabase
+          .from('games')
+          .update({
+            complete_players: game.complete_players + 1,
+          })
+          .eq('id', game.id)
+          .select();
 
-      if (dataGame) {
-        console.log('complete players 업데이트 완료:', dataGame);
-        setIsComplete(true);
-      }
-      if (errorGame) {
-        console.log('complete players 업데이트 실패');
-        console.error(errorGame);
+        if (dataGame) {
+          console.log('complete players 업데이트 완료:', dataGame);
+          setIsComplete(true);
+        }
+        if (errorGame) {
+          console.log('complete players 업데이트 실패');
+          console.error(errorGame);
+        }
       }
     }
     if (error) {
@@ -147,7 +117,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     }
   };
 
-  const sendDrawingHandler = async (imageDataUrl: string) => {
+  const sendDrawingHandler = async (imageDataUrl: string, isOver: boolean) => {
     const filename = `drawing-${Date.now()}.png`;
     const fileData = await fetch(imageDataUrl);
     const blob = await fileData.blob();
@@ -183,21 +153,23 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     if (updateData) {
       console.log('publicUrl 업데이트 완료:', updateData);
 
-      const { data: dataGame, error: errorGame } = await supabase
-        .from('games')
-        .update({
-          complete_players: game.complete_players + 1,
-        })
-        .eq('id', game.id)
-        .select();
+      if (!isOver) {
+        const { data: dataGame, error: errorGame } = await supabase
+          .from('games')
+          .update({
+            complete_players: game.complete_players + 1,
+          })
+          .eq('id', game.id)
+          .select();
 
-      if (dataGame) {
-        console.log('complete players 업데이트 완료:', dataGame);
-        setIsComplete(true);
-      }
-      if (errorGame) {
-        console.log('complete players 업데이트 실패');
-        console.error(errorGame);
+        if (dataGame) {
+          console.log('complete players 업데이트 완료:', dataGame);
+          setIsComplete(true);
+        }
+        if (errorGame) {
+          console.log('complete players 업데이트 실패');
+          console.error(errorGame);
+        }
       }
     }
     if (updateError) {
@@ -206,37 +178,78 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     }
   };
 
+  // const isZero = async () => {
+  //   if (!game) return;
+
+  //   const { data: dataGame, error: errorGame } = await supabase
+  //     .from('games')
+  //     .update({
+  //       timeout_players: game.timeout_players + 1,
+  //     })
+  //     .eq('id', game?.id)
+  //     .select();
+
+  //   if (dataGame) {
+  //     console.log('timeout players 업데이트 완료:', dataGame);
+  //   }
+  //   if (errorGame) {
+  //     console.log('timeout players 업데이트 실패');
+  //     console.error(errorGame);
+  //   }
+  // };
+
   const moveToNextTurn = async () => {
     if (!game) return;
-    const { data: dataGame, error: errorGame } = await supabase
-      .from('games')
-      .update({
-        complete_players: 0,
-      })
-      .eq('id', game?.id)
-      .select();
 
-    if (dataGame) {
-      console.log('complete players 초기화 완료:', dataGame);
-      useGameRoomStore
-        .getState()
-        .updateGame({ complete_players: dataGame[0].complete_players });
-      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
-    }
-    if (errorGame) {
-      console.log('complete players 초기화 실패');
-      console.error(errorGame);
+    if (!isComplete) {
+      setTrigger(true);
     }
 
     console.log('turn:', turn);
     console.log('game.current_players:', game.current_players);
 
-    if (turn === game.current_players) {
-      // if (turn > game.current_players) {
+    // if (
+    //   turn === game.current_players &&
+    //   game.timeout_players >= game.current_players
+    // ) {
+    if (turn >= game.current_players) {
       console.log('결과화면으로 이동합니당');
+      // await new Promise((resolve) => setTimeout(resolve, 500));
       navigate('/game/multi/result');
       return;
     }
+
+    const { data: dataGame, error: errorGame } = await supabase
+      .from('games')
+      .update({
+        complete_players: 0,
+        timeout_players: 0,
+      })
+      .eq('id', game?.id)
+      .select();
+
+    if (dataGame) {
+      console.log('complete players, timeout_players 초기화 완료:', dataGame);
+      useGameRoomStore.getState().updateGame({
+        complete_players: dataGame[0].complete_players,
+        timeout_players: dataGame[0].timeout_players,
+      });
+      console.log('useGameRoomStore:', useGameRoomStore.getState().game);
+    }
+    if (errorGame) {
+      console.log('complete players, timeout_players 초기화 실패');
+      console.error(errorGame);
+    }
+
+    // console.log('turn:', turn);
+    // console.log('game.current_players:', game.current_players);
+
+    // if (turn === game.current_players) {
+    //   // if (turn > game.current_players) {
+    //   console.log('결과화면으로 이동합니당');
+    //   navigate('/game/multi/result');
+    //   return;
+    // }
 
     useGameRoomStore.getState().changeTurn(turn + 1);
     console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
@@ -251,6 +264,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
   };
 
   useEffect(() => {
+    useGameRoomStore.getState().loadGameFromSession();
+    useGameRoomStore.getState().loadPlayerFromSession();
+    useGameRoomStore.getState().loadTurnFromSession();
+
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
       .on(
@@ -264,15 +281,28 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         (payload) => {
           const newStatus = payload.new;
 
-          useGameRoomStore
-            .getState()
-            .updateGame({ complete_players: newStatus.complete_players });
+          useGameRoomStore.getState().updateGame({
+            complete_players: newStatus.complete_players,
+            timeout_players: newStatus.timeout_players,
+          });
           console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
           if (newStatus.complete_players === newStatus.current_players) {
             console.log('전원 제출해서 넘어감');
             moveToNextTurn();
+            return;
           }
+          // } else if (newStatus.timeout_players === newStatus.current_players) {
+          // } else if (newStatus.timeout_players >= newStatus.current_players) {
+          // } else if (newStatus.timeout_players >= 1) {
+          //   console.log('전원.. 타이머 끝나서 넘어감');
+          //   // if (!isComplete) saveWords(false);
+          //   // moveToNextTurn();
+          //   setIsTimeout(true);
+          //   console.log('isTimeout:', isTimeout);
+
+          //   return;
+          // }
         }
       )
       .subscribe();
@@ -283,14 +313,21 @@ export default function MultiModeDrawing({ step }: { step: string }) {
   }, [game?.id]);
 
   useEffect(() => {
-    useGameRoomStore.getState().loadGameFromSession();
-    useGameRoomStore.getState().loadPlayerFromSession();
-    useGameRoomStore.getState().loadTurnFromSession();
+    // useGameRoomStore.getState().loadGameFromSession();
+    // useGameRoomStore.getState().loadPlayerFromSession();
+    // useGameRoomStore.getState().loadTurnFromSession();
 
-    if (step === 'DRAWING') getWords();
-    else if (step === 'WORDS') getDrawings();
+    if (step === 'DRAWING') {
+      getWords();
+      // setTime(180);
+      setTime(90);
+    } else if (step === 'WORDS') {
+      getDrawings();
+      // setTime(120);
+      setTime(60);
+    }
 
-    setTime(180);
+    // setTime(180);
     const timer = setInterval(() => {
       decrease();
     }, 1000);
@@ -300,22 +337,122 @@ export default function MultiModeDrawing({ step }: { step: string }) {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      console.log('시간 다 돼서 넘어감');
+      // console.log('시간 다 돼서 넘어감');
       reset();
       // moveToNextTurn();
     }
   }, [timeLeft]);
 
-  useEffect(() => {
-    getMessages();
-  }, [reloadTrigger]);
+  //   useEffect(() => {
+  //   if (step !== 'DRAWING') return;
+
+  //   const interval = setInterval(() => {
+  //     getWords();
+  //   }, 2000);
+
+  //   return () => clearInterval(interval);
+  // }, [step, game?.id, turn, user?.id]);
+
+  // 2초마다 출력하는 게 맞는 건가..
+  // useEffect(() => {
+  //   if (!game || !user) return;
+  //   let pollingInterval: NodeJS.Timeout;
+
+  //   if (step === 'DRAWING') {
+  //     pollingInterval = setInterval(async () => {
+  //       const { data, error } = await supabase
+  //         .from('turns')
+  //         .select('content')
+  //         .eq('game_id', game?.id)
+  //         .eq('turn_number', turn - 1)
+  //         .eq('receiver_id', user?.id);
+
+  //       if (data && data[0]?.content) {
+  //         console.log('제시어 polling 성공:', data);
+  //         setWords(data[0].content);
+  //         clearInterval(pollingInterval);
+  //       }
+
+  //       if (error) {
+  //         console.error('제시어 polling 실패:', error);
+  //       }
+  //     }, 2000);
+  //   }
+
+  //   if (step === 'WORDS') {
+  //     pollingInterval = setInterval(async () => {
+  //       const { data, error } = await supabase
+  //         .from('turns')
+  //         .select('content')
+  //         .eq('game_id', game?.id)
+  //         .eq('turn_number', turn - 1)
+  //         .eq('receiver_id', user?.id);
+
+  //       if (data && data[0]?.content) {
+  //         console.log('그림 polling 성공:', data);
+  //         setDrawingUrl(data[0].content);
+  //         clearInterval(pollingInterval);
+  //       }
+
+  //       if (error) {
+  //         console.error('그림 polling 실패:', error);
+  //       }
+  //     }, 2000);
+  //   }
+
+  //   return () => {
+  //     clearInterval(pollingInterval);
+  //   };
+  // }, [game?.id, turn, step, user?.id]);
 
   useEffect(() => {
-    if (bottomRef && shouldScrollToBottom) {
-      bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
-      setShouldScrollToBottom(false);
+    if (!game || !user) return;
+    let pollingInterval: NodeJS.Timeout;
+    let pollingCount = 0;
+    // toast.success('다른 플레이어의 결과를 잠시 기다려봅시다!');
+
+    const poll = async () => {
+      const { data, error } = await supabase
+        .from('turns')
+        .select('content')
+        .eq('game_id', game.id)
+        .eq('turn_number', turn - 1)
+        .eq('receiver_id', user.id);
+
+      if (step === 'DRAWING') {
+        pollingCount += 1;
+
+        if (data && data[0]?.content) {
+          console.log('제시어 polling 성공:', data);
+          setWords(data[0].content);
+        }
+
+        if (pollingCount >= 5) {
+          clearInterval(pollingInterval);
+        }
+      }
+
+      if (step === 'WORDS') {
+        if (data && data[0]?.content) {
+          console.log('그림 polling 성공:', data);
+          setDrawingUrl(data[0].content);
+          clearInterval(pollingInterval);
+        }
+      }
+
+      if (error) {
+        console.error('polling 실패:', error);
+      }
+    };
+
+    if (step === 'DRAWING' || step === 'WORDS') {
+      pollingInterval = setInterval(poll, 2000);
     }
-  }, [reloadTrigger, bottomRef, messages, shouldScrollToBottom]);
+
+    return () => {
+      clearInterval(pollingInterval);
+    };
+  }, [game?.id, turn, step, user?.id]);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
@@ -334,6 +471,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
             <DrawingCanvas
               step={step}
               isComplete={isComplete}
+              timeLeft={timeLeft}
+              // isTimeout={isTimeout}
+              trigger={trigger}
+              // isZero={isZero}
               onSubmitDrawing={sendDrawingHandler}
               moveToNextTurn={moveToNextTurn}
             />
@@ -341,6 +482,10 @@ export default function MultiModeDrawing({ step }: { step: string }) {
             <DrawingCanvas
               step={step}
               isComplete={isComplete}
+              timeLeft={timeLeft}
+              // isTimeout={isTimeout}
+              trigger={trigger}
+              // isZero={isZero}
               drawingUrl={drawingUrl}
               onSubmitWords={sendWordsHandler}
               moveToNextTurn={moveToNextTurn}
@@ -348,72 +493,14 @@ export default function MultiModeDrawing({ step }: { step: string }) {
           )}
         </div>
         <div className="flex items-center mt-3">
-          <GameTimer totalTime={180} />
+          {step === 'DRAWING' ? (
+            <GameTimer totalTime={90} />
+          ) : (
+            <GameTimer totalTime={60} />
+          )}
         </div>
         {/* h-[480px]  */}
-        <div className="flex flex-col w-[287px] h-[480px] bg-[var(--white)] rounded-[6px] border-2 border-[var(--black)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
-          <div className="h-15 font-bold text-[18px] flex justify-center items-center">
-            채팅
-          </div>
-          {/* h-[316px]  */}
-          <div className="h-[342px] flex flex-col gap-2 px-4 border-y-2 border-[var(--black)] overflow-y-auto">
-            <div className="py-2 space-y-2">
-              <ChatMessage
-                userName="유코딩"
-                message="안녕하세욥!"
-                isMine={false}
-                size="small"
-              />
-              <ChatMessage
-                userName="유코딩"
-                message="그림 잘 그리세요? 사실 전 그림 못 그리는 사람과는 하고 싶지 않거든요"
-                isMine={false}
-                size="small"
-              />
-              <ChatMessage
-                userName="Yubin"
-                message="네"
-                isMine={true}
-                size="small"
-              />
-              <ChatMessage
-                userName="유코딩"
-                message="ㅎㅎ"
-                isMine={false}
-                size="small"
-              />
-              <ChatMessage
-                userName="Yubin"
-                message="네네네네네네네네ㅔㄴ네네네ㅔㄴ네ㅔㅔ네네ㅔ네네네네네ㅔ네"
-                isMine={true}
-                size="small"
-              />
-              <ChatMessage
-                userName="Yubin"
-                message="네네네ㅔㄴ네네ㅔㅔ네ㅔ네네ㅔ네ㅔ"
-                isMine={true}
-                size="small"
-              />
-            </div>
-            <div ref={bottomRef}></div>
-          </div>
-          <div className="flex justify-between gap-[10px] px-4 py-4">
-            <BaseInput
-              ref={inputRef}
-              value={msg}
-              onChange={(e) => setMsg(e.target.value)}
-              onKeyDown={keyDownHandler}
-              placeholder="메시지 입력"
-              className="text-[14px] h-10"
-            />
-            <Button
-              onClick={sendMessageHandler}
-              className="w-[46px] h-[35px] px-2 py-0"
-            >
-              <img src={send} alt="전송" className="w-[20px] h-[20px]"></img>
-            </Button>
-          </div>
-        </div>
+        <Chat size="small" />
       </div>
     </div>
   );
