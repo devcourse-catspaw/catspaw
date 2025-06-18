@@ -4,7 +4,7 @@ import doodle from '../../assets/images/background_doodle4.svg';
 import NavWithExit from '../../components/common/NavWithExit';
 import LabeledInput from '../../components/common/LabeledInput';
 import { useEffect, useRef, useState } from 'react';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
+import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
 import { useNavigate } from 'react-router-dom';
 import GameTimer from '../../components/game/GameTimer';
 import supabase from '../../utils/supabase';
@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 export default function MultiModeWords() {
   const { user } = useAuthStore();
   const { game, turn } = useGameRoomStore();
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+  const { timeLeft, setTime, decrease, reset } = useGameMultiTimerStore();
 
   const navigate = useNavigate();
 

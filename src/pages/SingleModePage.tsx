@@ -1,5 +1,5 @@
-import DrawingCanvas from "../components/game/DrawingCanvas";
-import SingleModeHeader from "../components/game/SingleModeHeader";
+import DrawingCanvas from '../components/game/DrawingCanvasMulti';
+import SingleModeHeader from '../components/game/SingleModeHeader';
 
 export default function SingleModePage() {
   return (

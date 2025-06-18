@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import NavWithExit from '../../components/common/NavWithExit';
-import DrawingCanvas from '../../components/game/DrawingCanvas';
+import DrawingCanvasMulti from '../../components/game/DrawingCanvasMulti';
 import { useNavigate } from 'react-router';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
+import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
 import GameTimer from '../../components/game/GameTimer';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
@@ -13,7 +13,7 @@ import Chat from '../../components/game/Chat';
 export default function MultiModeDrawing({ step }: { step: string }) {
   const { user } = useAuthStore();
   const { game, turn } = useGameRoomStore();
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+  const { timeLeft, setTime, decrease, reset } = useGameMultiTimerStore();
 
   const navigate = useNavigate();
 
@@ -468,7 +468,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
             </div>
           </div>
           {step === 'DRAWING' ? (
-            <DrawingCanvas
+            <DrawingCanvasMulti
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}
@@ -479,7 +479,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
               moveToNextTurn={moveToNextTurn}
             />
           ) : (
-            <DrawingCanvas
+            <DrawingCanvasMulti
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}

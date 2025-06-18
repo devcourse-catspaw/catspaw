@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
-interface GameTimerState {
+interface GameMultiTimerState {
   timeLeft: number;
   setTime: (seconds: number) => void;
   decrease: () => void;
   reset: () => void;
 }
 
-export const useGameTimerStore = create<GameTimerState>((set, get) => ({
+export const useGameMultiTimerStore = create<GameMultiTimerState>((set, get) => ({
   timeLeft: 1,
   setTime: (seconds) => set({ timeLeft: seconds }),
   decrease: () => {

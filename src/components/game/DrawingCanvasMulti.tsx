@@ -22,7 +22,7 @@ type HistoryState = {
   data: LineData[] | string;
 };
 
-const DrawingCanvas = ({
+const DrawingCanvasMulti = ({
   step,
   isComplete,
   timeLeft,
@@ -418,7 +418,7 @@ const DrawingCanvas = ({
   useEffect(() => {
     if (timeLeft <= 0) {
       // isZero();
-      // console.log('DrawingCanvas에서 시간 다 돼서 넘어감');
+      // console.log('DrawingCanvasMulti에서 시간 다 돼서 넘어감');
       (async () => {
         if (!isComplete || trigger) await handleSubmitAuto(false);
 
@@ -674,4 +674,4 @@ const DrawingCanvas = ({
   );
 };
 
-export default DrawingCanvas;
+export default DrawingCanvasMulti;
