@@ -205,8 +205,11 @@ export default function MultiModeDrawing({ step }: { step: string }) {
       setTrigger(true);
     }
 
-    console.log('turn:', turn);
-    console.log('game.current_players:', game.current_players);
+    console.log('moveToNextTurn에서 turn:', turn);
+    console.log(
+      'moveToNextTurn에서 game.current_players:',
+      game.current_players
+    );
 
     // if (
     //   turn === game.current_players &&
@@ -268,6 +271,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     useGameRoomStore.getState().loadPlayerFromSession();
     useGameRoomStore.getState().loadTurnFromSession();
 
+    if (!game) return; // 추가
     const channel = supabase
       .channel(`room-complete-${game?.id}`)
       .on(

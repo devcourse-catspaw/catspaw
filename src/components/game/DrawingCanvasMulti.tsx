@@ -553,11 +553,13 @@ const DrawingCanvasMulti = ({
                 </Layer>
               </Stage>
             ) : (
-              <img
-                src={drawingUrl}
-                alt="문제 그림"
-                className="w-[584px] h-[350px]"
-              />
+              drawingUrl && (
+                <img
+                  src={drawingUrl}
+                  alt="문제 그림"
+                  className="w-[584px] h-[350px]"
+                />
+              )
             )}
             <img
               src={sketchBook}
