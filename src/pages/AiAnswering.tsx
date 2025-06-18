@@ -52,7 +52,7 @@ export default function AiAnswering() {
 
     const timer = setTimeout(fetchImage, 300);
     return () => clearTimeout(timer);
-  }, [filename]);
+  }, [filename, retryCount]);
 
   useEffect(() => {
     if (!imageUrl || !imageReady) return;

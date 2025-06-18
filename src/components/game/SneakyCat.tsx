@@ -31,7 +31,7 @@ export default function SneakyCat({
     const timer = setTimeout(() => {
       setIsError(false);
       navigate("/game");
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearTimeout(timer);

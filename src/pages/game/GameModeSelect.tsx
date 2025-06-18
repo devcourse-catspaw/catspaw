@@ -13,7 +13,7 @@ export default function GameModeSelect() {
   const navigate = useNavigate();
   const [count, setCount] = useState<number | null>(null);
   const user = useAuthStore((state) => state.user);
-  const { resetTopicList, getRandomTopic } = useDrawingStore();
+  const { resetTopicList } = useDrawingStore();
   const reset = useGameTimerStore((state) => state.reset);
 
   useEffect(() => {
@@ -55,7 +55,6 @@ export default function GameModeSelect() {
         }
 
         resetTopicList();
-        getRandomTopic();
       } catch (error) {
         console.error("clearData 에러:", error);
       }
