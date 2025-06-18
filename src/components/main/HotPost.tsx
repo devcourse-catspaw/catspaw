@@ -2,8 +2,52 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper-bundle.css'
 import PostCard from '../common/PostCard'
+import supabase from '../../utils/supabase'
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 export default function HotPost() {
+  const [hotPosts, setHotPosts] = useState([])
+  useEffect(() => {
+    const fetchHotPosts = async () => {
+      const { data, error } = await supabase.from('posts').select(`
+          *,
+          users (
+            nickname,
+            avatar
+          ),
+          likes(count),
+          comments(count)
+        `)
+
+      if (error) {
+        toast.error('인기 게시글 불러오기 실패')
+        console.log(error)
+        return
+      }
+
+      const sorted = data
+        .map((post) => ({
+          ...post,
+          likeCount: post.likes?.[0]?.count || 0,
+          commentCount: post.comments?.[0]?.count || 0,
+        }))
+        .sort((a, b) => {
+          if (b.likeCount !== a.likeCount) {
+            return b.likeCount - a.likeCount
+          } else {
+            return b.commentCount - a.commentCount
+          }
+        })
+        .slice(0, 8)
+
+      setHotPosts(sorted)
+      console.log(sorted)
+    }
+
+    fetchHotPosts()
+  }, [])
+
   return (
     <>
       <Swiper
@@ -19,102 +63,25 @@ export default function HotPost() {
         modules={[Autoplay, Pagination, Navigation]}
         className="w-full flex justify-center"
       >
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <PostCard
-            postId={1234}
-            postTitle="테스트용 post 카드"
-            date="2025.06.28"
-            contents="내뇽내ㅛㅇ내ㅛㅇ내요내ㅛㅇㅇㄴ"
-            userName="예빈테스트"
-            likeCount={0}
-            isLiked
-            springImg="no"
-          />
-        </SwiperSlide>
+        {hotPosts.map((post) => {
+          return (
+            <SwiperSlide>
+              <PostCard
+                postId={post.id}
+                postTitle={post.title}
+                date={post.created_at.slice(0, 10)}
+                contents={post.content}
+                userName={post.users?.nickname}
+                image={post.images}
+                likeCount={post.likeCount}
+                avatar={`${
+                  import.meta.env.VITE_SUPABASE_URL
+                }/storage/v1/object/public/avatar-image/${post.users?.avatar}`}
+                springImg="no"
+              />
+            </SwiperSlide>
+          )
+        })}
       </Swiper>
     </>
   )
