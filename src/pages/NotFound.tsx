@@ -6,7 +6,6 @@ import doodle3 from '../assets/images/doodle_small7.svg'
 import doodle4 from '../assets/images/doodle_small4.svg'
 import doodle5 from '../assets/images/doodle_small5.svg'
 import doodle6 from '../assets/images/doodle_small6.svg'
-import doodle7 from '../assets/images/doodle_small7.svg'
 import notfound from '../assets/images/notfound.svg'
 
 export default function NotFound() {
