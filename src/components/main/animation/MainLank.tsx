@@ -4,7 +4,7 @@ import sparklers from '../../../assets/images/birthday_sparklers.svg'
 import { ScrollTrigger } from 'gsap/all'
 import { useEffect, useRef, useState } from 'react'
 import supabase from '../../../utils/supabase'
-import crown from '../../../assets/images/crown.svg'
+import Crown from '../../../assets/images/crown.svg?react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -15,6 +15,7 @@ export default function MainLank() {
   const sparklerRightRef = useRef<HTMLImageElement>(null)
   const rankerNameRef = useRef<HTMLDivElement>(null)
   const rankerAvatarRef = useRef<HTMLDivElement>(null)
+  const crownRef = useRef<HTMLDivElement>(null)
   const [ranking, setRanking] = useState([])
   const customOrder = [1, 0, 2]
 
@@ -40,6 +41,7 @@ export default function MainLank() {
     const sparklerRight = sparklerRightRef.current
     const rankerNameArea = rankerNameRef.current
     const rankerAvatarArea = rankerAvatarRef.current
+    const crownArea = crownRef.current
 
     gsap.to(imgPosition, {
       scrollTrigger: {
@@ -60,18 +62,18 @@ export default function MainLank() {
       y: '-80vh',
     })
 
-    gsap.set(rankerAvatarArea, {
+    gsap.set([rankerAvatarArea, crownArea], {
       opacity: 0,
     })
-    gsap.to(rankerAvatarArea, {
+    gsap.to([rankerAvatarArea, crownArea], {
       scrollTrigger: {
         trigger: divArea,
-        start: 'top center',
+        start: 'top bottom',
         end: 'bottom bottom',
         scrub: 3,
       },
       opacity: 1,
-      y: '30vh',
+      y: '40vh',
     })
 
     gsap.set([sparklerLeft], {
@@ -120,8 +122,11 @@ export default function MainLank() {
           src={sparklers}
           className="absolute w-[10vw] top-[20vh] right-0 -scale-x-100"
         />
-        <div>
-          <img src={crown} alt="crown" className="size-[90px]" />
+        <div
+          ref={crownRef}
+          className="w-[50vw] absolute top-[-60vh] flex justify-center "
+        >
+          <Crown className="size-[5vh] text-[#F4EC5A]" />
         </div>
         <div
           ref={rankerAvatarRef}

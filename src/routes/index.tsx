@@ -9,7 +9,7 @@ import MultiModeWords from '../pages/game/MultiModeWords'
 import MultiModeDrawing from '../pages/game/MultiModeDrawing'
 import MultiModeResult from '../pages/game/MultiModeResult'
 import Login from '../pages/Login'
-import useAuthInit from './../utils/useAuthInit'
+import useAuthInit from './../hooks/useAuthInit'
 
 const router = createBrowserRouter([
   {
