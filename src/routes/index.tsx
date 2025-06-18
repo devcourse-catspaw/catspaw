@@ -10,6 +10,8 @@ import MultiModeDrawing from '../pages/game/MultiModeDrawing'
 import MultiModeResult from '../pages/game/MultiModeResult'
 import Login from '../pages/Login'
 import useAuthInit from './../hooks/useAuthInit'
+import MyPage from '../pages/MyPage'
+import UserPage from '../pages/UserPage'
 
 const router = createBrowserRouter([
   {
@@ -64,7 +66,18 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: '/mypage',
+    element: <MyPage />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
+  {
+    path: '/user/:id',
+    element: <UserPage />,
+    hydrateFallbackElement: <h1>Loading ...</h1>,
+  },
 ])
+
 export default function Router() {
   useAuthInit()
   return (

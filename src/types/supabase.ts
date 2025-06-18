@@ -7,31 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       comments: {
@@ -76,34 +51,78 @@ export type Database = {
           },
         ]
       }
-      follows: {
+      friend_requests: {
         Row: {
-          created_at: string
-          follower_id: string
-          following_id: string
+          created_at: string | null
+          id: string
+          receiver_id: string | null
+          sender_id: string | null
+          status: string | null
         }
         Insert: {
-          created_at?: string
-          follower_id: string
-          following_id: string
+          created_at?: string | null
+          id?: string
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: string | null
         }
         Update: {
-          created_at?: string
-          follower_id?: string
-          following_id?: string
+          created_at?: string | null
+          id?: string
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "follows_follower_id_fkey"
-            columns: ["follower_id"]
+            foreignKeyName: "friend_requests_receiver_id_fkey"
+            columns: ["receiver_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "follows_following_id_fkey"
-            columns: ["following_id"]
+            foreignKeyName: "friend_requests_sender_id_fkey"
+            columns: ["sender_id"]
             isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      friends: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id_1: string | null
+          user_id_2: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friends_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_user_id_2_fkey"
+            columns: ["user_id_2"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -134,12 +153,14 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
       games: {
         Row: {
+          complete_players: number
           complete_players: number
           created_at: string
           current_players: number
@@ -148,13 +169,24 @@ export type Database = {
           ready_players: number
           room_name: string
           room_password: string | null
+          leader_id: string
+          ready_players: number
+          room_name: string
+          room_password: string | null
           status: string
         }
         Insert: {
           complete_players?: number
+          complete_players?: number
           created_at?: string
           current_players?: number
+          current_players?: number
           id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name: string
+          room_password?: string | null
+          status?: string
           leader_id?: string
           ready_players?: number
           room_name: string
@@ -163,9 +195,14 @@ export type Database = {
         }
         Update: {
           complete_players?: number
+          complete_players?: number
           created_at?: string
           current_players?: number
           id?: number
+          leader_id?: string
+          ready_players?: number
+          room_name?: string
+          room_password?: string | null
           leader_id?: string
           ready_players?: number
           room_name?: string
@@ -198,12 +235,15 @@ export type Database = {
             foreignKeyName: "likes_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
+            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "likes_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -218,6 +258,8 @@ export type Database = {
           id: number
           nickname: string | null
           player_id: string
+          nickname: string | null
+          player_id: string
         }
         Insert: {
           content: string
@@ -226,12 +268,16 @@ export type Database = {
           id?: number
           nickname?: string | null
           player_id: string
+          nickname?: string | null
+          player_id: string
         }
         Update: {
           content?: string
           created_at?: string
           game_id?: number
           id?: number
+          nickname?: string | null
+          player_id?: string
           nickname?: string | null
           player_id?: string
         }
@@ -251,6 +297,8 @@ export type Database = {
           id: number
           is_leader: boolean | null
           is_ready: boolean | null
+          is_leader: boolean | null
+          is_ready: boolean | null
           joined_at: string
           user_id: string
         }
@@ -259,12 +307,16 @@ export type Database = {
           id?: number
           is_leader?: boolean | null
           is_ready?: boolean | null
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           joined_at?: string
           user_id: string
         }
         Update: {
           game_id?: number
           id?: number
+          is_leader?: boolean | null
+          is_ready?: boolean | null
           is_leader?: boolean | null
           is_ready?: boolean | null
           joined_at?: string
@@ -282,6 +334,7 @@ export type Database = {
             foreignKeyName: "players_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -321,6 +374,7 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -332,6 +386,7 @@ export type Database = {
           game_id: number
           id: number
           origin_player_id: string
+          origin_player_id: string
         }
         Insert: {
           contents: Json
@@ -339,12 +394,14 @@ export type Database = {
           game_id: number
           id?: number
           origin_player_id: string
+          origin_player_id: string
         }
         Update: {
           contents?: Json
           created_at?: string
           game_id?: number
           id?: number
+          origin_player_id?: string
           origin_player_id?: string
         }
         Relationships: [
@@ -360,9 +417,12 @@ export type Database = {
       turns: {
         Row: {
           content: string | null
+          content: string | null
           created_at: string
           game_id: number
           id: number
+          receiver_id: string
+          sender_id: string
           receiver_id: string
           sender_id: string
           turn_number: number
@@ -370,9 +430,13 @@ export type Database = {
         }
         Insert: {
           content?: string | null
+          content?: string | null
           created_at?: string
           game_id: number
           id?: number
+          receiver_id: string
+          sender_id: string
+          turn_number?: number
           receiver_id: string
           sender_id: string
           turn_number?: number
@@ -380,9 +444,12 @@ export type Database = {
         }
         Update: {
           content?: string | null
+          content?: string | null
           created_at?: string
           game_id?: number
           id?: number
+          receiver_id?: string
+          sender_id?: string
           receiver_id?: string
           sender_id?: string
           turn_number?: number
@@ -401,6 +468,7 @@ export type Database = {
       users: {
         Row: {
           avatar: string | null
+          character: string | null
           created_at: string
           email: string | null
           id: string
@@ -408,6 +476,7 @@ export type Database = {
         }
         Insert: {
           avatar?: string | null
+          character?: string | null
           created_at?: string
           email?: string | null
           id: string
@@ -415,6 +484,7 @@ export type Database = {
         }
         Update: {
           avatar?: string | null
+          character?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -442,12 +512,16 @@ export type Database = {
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "players_user_id_fkey"
             columns: ["user_id"]
+            foreignKeyName: "players_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "users"
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -572,9 +646,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
