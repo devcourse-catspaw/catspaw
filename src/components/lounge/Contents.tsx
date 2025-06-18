@@ -51,11 +51,10 @@ export default function Contents({
         {/* title + content */}
         <div className="w-[840px] flex flex-col px-[16px] gap-[24px]">
           <div className="w-[808px] h-[25px] text-xl font-bold">{title}</div>
-          <ul>
+          <ul className="gap-2">
             {images &&
               images.map((img) => (
                 <li key={img}>
-                  {" "}
                   <img src={img} alt="" />
                 </li>
               ))}
