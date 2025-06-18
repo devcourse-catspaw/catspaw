@@ -12,7 +12,7 @@ import notfound from '../assets/images/notfound.svg'
 export default function NotFound() {
   const navigate = useNavigate()
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <nav className="px-20 py-8  w-full flex justify-between items-center">
         <div className="flex gap-5 items-center">
           <img
@@ -29,22 +29,22 @@ export default function NotFound() {
       <img
         src={doodle1}
         alt="낙서그림1"
-        className="absolute left-[24px] bottom-[200px] w-[152px]"
+        className="absolute left-[-24px] bottom-[200px] w-[152px]"
       />
       <img
         src={doodle2}
         alt="낙서그림2"
-        className="absolute left-[350px] bottom-1/2 w-[152px] rotate-[-34deg]"
+        className="absolute left-[250px] top-[200px] w-[152px] rotate-[-34deg]"
       />
       <img
         src={doodle3}
         alt="낙서그림3"
-        className="absolute bottom-[30px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg]"
+        className="absolute bottom-[-60px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg]"
       />
       <img
         src={doodle4}
         alt="낙서그림4"
-        className="absolute top-[10px] right-[115px] w-[152px] "
+        className="absolute top-[10px] right-[100px] w-[152px] "
       />
       <img
         src={doodle5}
@@ -53,13 +53,8 @@ export default function NotFound() {
       />
       <img
         src={doodle6}
-        alt="낙서그림5"
-        className="absolute right-1/2 top-[10px] w-[152px] r"
-      />
-      <img
-        src={doodle7}
-        alt="낙서그림5"
-        className="absolute right-1 bottom-[68px] w-[152px] r"
+        alt="낙서그림6"
+        className="absolute right-1/2 top-[-30px] w-[152px] r"
       />
     </div>
   )
