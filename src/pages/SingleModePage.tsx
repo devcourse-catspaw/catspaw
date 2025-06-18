@@ -24,11 +24,11 @@ export default function SingleModePage() {
     const data = await fetch(imageDataUrl);
     const blob = await data.blob();
 
-    const file = new File([blob], filename, { type: "image/jpeg" });
+    const file = new File([blob], filename, { type: 'image/jpeg' });
     setFilename(filename);
 
     const { error } = await supabase.storage
-      .from("singlemode-images")
+      .from('singlemode-images')
       .upload(`private/${user?.id}/${filename}`, file);
 
     if (error) {
@@ -36,7 +36,7 @@ export default function SingleModePage() {
       return;
     }
 
-    navigate("/game/ai-answering");
+    navigate('/game/ai-answering');
   };
 
   useEffect(() => {
@@ -62,10 +62,10 @@ export default function SingleModePage() {
   };
   useEffect(() => {
     (() => {
-      window.addEventListener("beforeunload", preventClose);
+      window.addEventListener('beforeunload', preventClose);
     })();
     return () => {
-      window.removeEventListener("beforeunload", preventClose);
+      window.removeEventListener('beforeunload', preventClose);
     };
   }, []);
 

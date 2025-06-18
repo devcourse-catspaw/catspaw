@@ -291,7 +291,6 @@ export default function GameWaitingRoom() {
                       email: user?.email ?? '',
                       id: user?.id ?? '',
                       nickname: user?.nickname ?? '',
-                      character: user?.character ?? '',
                     },
                   },
                 ];
@@ -317,7 +316,6 @@ export default function GameWaitingRoom() {
                           email: user?.email ?? '',
                           id: user?.id ?? '',
                           nickname: user?.nickname ?? '',
-                          character: user?.character ?? '',
                         },
                       }
                     : p

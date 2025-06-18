@@ -1,9 +1,9 @@
 import ProgressBar from '@ramonak/react-progress-bar';
 import timer from '../../assets/images/icon_timer.svg';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
+import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
 
-export default function GameTimer({ totalTime }: { totalTime: number }) {
-  const timeLeft = useGameTimerStore((state) => state.timeLeft);
+export default function GameMultiTimer({ totalTime }: { totalTime: number }) {
+  const timeLeft = useGameMultiTimerStore((state) => state.timeLeft);
   const percent = (timeLeft / totalTime) * 100;
   return (
     <div className="border-[2px] border-[color:var(--black)] rounded-[20px] w-5 h-[371px] relative flex justify-center items-center">
