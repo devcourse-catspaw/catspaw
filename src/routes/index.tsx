@@ -1,35 +1,31 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
-import Home from '../pages/Home';
-import GameModeSelect from '../pages/game/GameModeSelect';
-import GameLayout from './layouts/GameLayout';
-import SingleModePage from '../pages/SingleModePage';
-import Login from '../pages/Login';
-import AiAnswering from '../pages/AiAnswering';
-import SingleModeResultPage from '../pages/SingleModeResultPage';
-import GameRoomList from '../pages/game/GameRoomList';
-import GameWaitingRoom from '../pages/game/GameWaitingRoom';
-import MultiModeWords from '../pages/game/MultiModeWords';
-import MultiModeDrawing from '../pages/game/MultiModeDrawing';
-import MultiModeResult from '../pages/game/MultiModeResult';
-import Lounge from '../pages/Lounge';
-import LoungeLayout from './layouts/LoungeLayout';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import Home from '../pages/Home'
+import GameModeSelect from '../pages/game/GameModeSelect'
+import GameLayout from './layouts/GameLayout'
+import SingleModePage from '../pages/SingleModePage'
+import Login from '../pages/Login'
+import AiAnswering from '../pages/AiAnswering'
+import SingleModeResultPage from '../pages/SingleModeResultPage'
+import GameRoomList from '../pages/game/GameRoomList'
+import GameWaitingRoom from '../pages/game/GameWaitingRoom'
+import MultiModeWords from '../pages/game/MultiModeWords'
+import MultiModeDrawing from '../pages/game/MultiModeDrawing'
+import MultiModeResult from '../pages/game/MultiModeResult'
+import Lounge from '../pages/Lounge'
+import LoungeLayout from './layouts/LoungeLayout'
 import {
   fetchExactPost,
   fetchPostDetail,
   fetchUsers,
-} from './loader/post.loader';
-import LoungeDetail from '../pages/lounge/LoungDetail';
-import AddPost from '../pages/lounge/AddPost';
-import EditPost from '../pages/lounge/EditPost';
-import MyPage from '../pages/MyPage';
-import UserPage from '../pages/UserPage';
-import NotFound from '../pages/NotFound';
-import useAuthInit from '../hooks/useAuthInit';
-import ProtectedRoute from '../components/common/ProtectedRoute';
+} from './loader/post.loader'
+import LoungeDetail from '../pages/lounge/LoungDetail'
+import AddPost from '../pages/lounge/AddPost'
+import EditPost from '../pages/lounge/EditPost'
+import MyPage from '../pages/MyPage'
+import UserPage from '../pages/UserPage'
+import NotFound from '../pages/NotFound'
+import useAuthInit from '../hooks/useAuthInit'
+import ProtectedRoute from '../components/common/ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -67,7 +63,7 @@ const router = createBrowserRouter([
         element: <AiAnswering />,
       },
       {
-        path: "score-result",
+        path: 'score-result',
         element: <SingleModeResultPage />,
       },
       { path: 'list', element: <GameRoomList /> },
@@ -88,7 +84,7 @@ const router = createBrowserRouter([
         element: <MultiModeDrawing key="WORDS" step="WORDS" />,
       },
       {
-        path: "result",
+        path: 'result',
         element: <MultiModeResult />,
       },
     ],
@@ -131,13 +127,13 @@ const router = createBrowserRouter([
     path: '*',
     element: <NotFound />,
   },
-]);
+])
 
 export default function Router() {
-  useAuthInit();
+  useAuthInit()
   return (
     <>
       <RouterProvider router={router} />
     </>
-  );
+  )
 }

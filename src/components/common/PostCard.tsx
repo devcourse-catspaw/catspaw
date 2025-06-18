@@ -22,7 +22,7 @@ type PostCardProps = {
   isLiked: boolean
   avatar: string
   springImg: 'yes' | 'no'
-  onLike: () => void
+  onLike?: () => void
 }
 
 const cardLayout =

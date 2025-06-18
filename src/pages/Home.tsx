@@ -10,13 +10,14 @@ import MainBGDoodle4 from '../components/main/animation/MainBGDoodle4'
 import MainLank from '../components/main/animation/MainLank'
 import AboutUs from '../components/main/animation/AboutUs'
 import main_speech_bubble from '../assets/images/main_speech_bubble.svg'
-import main_cat_lightmode from '../assets/images/main_cat_lightmode.PNG'
+import main_cat_lightmode from '../assets/images/main_cat_lightmode.png'
 import gsap from 'gsap'
 import { ScrollSmoother, ScrollTrigger } from 'gsap/all'
 import HotPost from '../components/main/HotPost'
 import Button from '../components/common/Button'
 import Fire from '../components/main/animation/Fire'
 import { useNavigate } from 'react-router-dom'
+import ThanksTo from '../components/main/animation/ThanksTo'
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 
@@ -85,6 +86,7 @@ export default function Home() {
             <MainBGDoodle3 />
             <AboutUs />
             <MainBGDoodle4 />
+            <ThanksTo />
           </div>
         </div>
       </div>

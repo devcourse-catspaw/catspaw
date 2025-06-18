@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import fire from '../../../assets/images/main_hot.PNG'
+import fire from '../../../assets/images/main_hot.png'
 import gsap from 'gsap'
 
 export default function Fire() {
