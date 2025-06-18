@@ -20,7 +20,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
   const [words, setWords] = useState('');
   const [drawingUrl, setDrawingUrl] = useState('');
   const [isComplete, setIsComplete] = useState(false);
-  const [isTimeout, setIsTimeout] = useState(false);
+  // const [isTimeout, setIsTimeout] = useState(false);
   const [trigger, setTrigger] = useState(false);
 
   const getWords = async () => {

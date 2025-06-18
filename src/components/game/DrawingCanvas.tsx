@@ -9,7 +9,6 @@ import paint from '../../assets/images/icon_paint.svg';
 import back from '../../assets/images/icon_back_game.svg';
 import Button from '../common/Button';
 import LabeledInput from '../common/LabeledInput';
-import { useGameRoomStore } from '../../stores/gameRoomStore';
 
 type LineData = {
   tool: string;
