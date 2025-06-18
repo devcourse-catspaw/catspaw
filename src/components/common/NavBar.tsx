@@ -55,7 +55,10 @@ export default function NavBar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropBoxRef.current && !dropBoxRef.current.contains(event.target)) {
+      if (
+        dropBoxRef.current &&
+        !dropBoxRef.current.contains(event.target as Node)
+      ) {
         setIsDropBox(false)
       }
     }
@@ -101,7 +104,7 @@ export default function NavBar() {
         </div>
         <div className="flex items-center gap-[12px]">
           <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/lounge')}
             className="w-[140px] h-[38px] text-[14px]"
           >
             Lounge

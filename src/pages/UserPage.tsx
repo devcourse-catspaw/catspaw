@@ -8,7 +8,17 @@ import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
 import UserListDiv from '../components/profile/UserListDiv'
 import NavBar from '../components/common/NavBar'
+import type { Database } from '../types/supabase'
 
+type FriendRequestTable = Database['public']['Tables']['friend_requests']['Row']
+type FriendTable = Database['public']['Tables']['friends']['Row']
+
+type rowInfo = {
+  user_id_1: string
+  user_id_2: string
+  receiver_id: string
+  sender_id: string
+}
 type UserInfo = {
   id: string
   nickname: string
@@ -86,7 +96,7 @@ export default function UserPage() {
 
       if (!user || !userIdFromParams) return
 
-      const isRelated = (row: any) =>
+      const isRelated = (row: rowInfo) =>
         row &&
         [row.user_id_1, row.user_id_2, row.sender_id, row.receiver_id].includes(
           user.id

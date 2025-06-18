@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import supabase from '../utils/supabase'
 import toast from 'react-hot-toast'
-import NavBar from '../components/main/NavBar'
+import NavBar from '../components/common/NavBar'
 import main_catdoodle from '../assets/images/main_catdoodle.gif'
 import MainBGDoodle1 from '../components/main/animation/MainBGDoodle1'
 import MainBGDoodle2 from '../components/main/animation/MainBGDoodle2'
@@ -45,7 +45,7 @@ export default function Home() {
           <NavBar />
           <div className="flex flex-col justify-center w-full ">
             <div
-              className="relative w-full aspect-[16/9] bg-cover bg-no-repeat "
+              className="relative w-full aspect-[16/8.4] bg-cover bg-no-repeat "
               style={{ backgroundImage: `url(${main_catdoodle})` }}
             >
               <img
@@ -54,7 +54,7 @@ export default function Home() {
                 alt="speech_bubble"
               />
               <img
-                className="absolute bottom-[10vw] left-1/2 -translate-x-[81%] size-[5vw] cursor-pointer"
+                className="absolute bottom-[6vw] left-1/2 -translate-x-[81%] size-[5vw] cursor-pointer"
                 src={main_cat_lightmode}
                 alt="main_cat_lightmode"
               />
@@ -68,7 +68,7 @@ export default function Home() {
             <MainBGDoodle1 />
             <MainLank />
             <MainBGDoodle2 />
-            <div className=" w-full  px-[80px] my-[100px]">
+            <div className=" w-full px-[80px] my-[100px]">
               <div className=" flex flex-col gap-[5vh] w-full h-[80%] px-[40px] pt-[20px] pb-[40px] bg-[var(--grey-200)] rounded-[24px]">
                 <div className=" flex justify-center items-end gap-[54px] -translate-y-[50px]">
                   <Fire />

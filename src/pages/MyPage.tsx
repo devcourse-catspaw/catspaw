@@ -16,7 +16,7 @@ export default function MyPage() {
     id: string
     nickname: string
     avatar: string
-    email: string
+    email: string | null
   }
   type PostInfo = {
     id: number
@@ -29,8 +29,8 @@ export default function MyPage() {
   const [postList, setPostList] = useState<PostInfo[]>([])
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [isNameModalOpen, setIsNameModalOpen] = useState(false)
-  const [selectedCharacter, setSelectedCharacter] = useState<string>(null)
-  const [changedName, setChangedName] = useState<string>(null)
+  const [selectedCharacter, setSelectedCharacter] = useState<string>()
+  const [changedName, setChangedName] = useState<string>()
   const [activeTab, setActiveTab] = useState('tab1')
   const avatarUrl = selectedCharacter
     ? `${
@@ -83,7 +83,6 @@ export default function MyPage() {
       return
     }
     setSelectedCharacter(selectedImageName)
-    console.log(avatarUrl)
 
     setUser((prev) => prev && { ...prev, avatar: selectedImageName })
   }

@@ -1,38 +1,38 @@
-import { twMerge } from "tailwind-merge";
-import Spring from "../../assets/images/spring_small.svg?react";
-import like from "../../assets/images/icon_like.svg";
-import likeFilled from "../../assets/images/icon_like_filled.svg";
-import Paw from "../../assets/images/logo_catpaw.svg?react";
-import Typo from "../../assets/images/logo_typo_sm.svg?react";
-import kisu from "../../assets/images/kisu_.svg";
+import { twMerge } from 'tailwind-merge'
+import Spring from '../../assets/images/spring_small.svg?react'
+import like from '../../assets/images/icon_like.svg'
+import likeFilled from '../../assets/images/icon_like_filled.svg'
+import Paw from '../../assets/images/logo_catpaw.svg?react'
+import Typo from '../../assets/images/logo_typo_sm.svg?react'
+import kisu from '../../assets/images/kisu_.svg'
 // import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import TimeAgo from "../lounge/TimeAgo";
-import { useAuthStore } from "../../stores/authStore";
+import { useNavigate } from 'react-router-dom'
+import TimeAgo from '../lounge/TimeAgo'
+import { useAuthStore } from '../../stores/authStore'
 
 type PostCardProps = {
-  postId: number;
-  userId: string;
-  postTitle: string;
-  date: string;
-  contents: string;
-  userName: string;
-  image?: string;
-  likeCount: number;
-  isLiked: boolean;
-  avatar: string;
-  springImg: "yes" | "no";
-  onLike: () => void;
-};
+  postId: number
+  userId: string
+  postTitle: string
+  date: string
+  contents: string
+  userName: string
+  image?: string
+  likeCount: number
+  isLiked: boolean
+  avatar: string
+  springImg: 'yes' | 'no'
+  onLike: () => void
+}
 
 const cardLayout =
-  "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex";
+  'w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex'
 const titleStyle =
-  "min-w-[150px] text-[var(--black)] text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+  'min-w-[150px] text-[var(--black)] text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap'
 const contentStyle =
-  "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+  'text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap'
 const likeCountStyle =
-  "text-[var(--black)] text-sm font-bold min-w-[27px] text-center";
+  'text-[var(--black)] text-sm font-bold min-w-[27px] text-center'
 
 export default function PostCard({
   postId,
@@ -48,29 +48,30 @@ export default function PostCard({
   springImg,
   onLike,
 }: PostCardProps) {
-  const navigate = useNavigate();
-  const loginUser = useAuthStore((state) => state.user);
+  const navigate = useNavigate()
+  const loginUser = useAuthStore((state) => state.user)
 
   const goToDetail = () => {
-    navigate(`/lounge/${postId}`);
-  };
+    navigate(`/lounge/${postId}`)
+  }
 
   const goToUserPage = () => {
-    if (userId === loginUser?.id) return navigate("/mypage");
-    navigate(`/user/${userId}`);
-  };
+    if (userId === loginUser?.id) return navigate('/mypage')
+    navigate(`/user/${userId}`)
+  }
 
   return (
     <>
       <div className="relative leading-[24px] overflow-visible">
-        {springImg === "yes" && (
+        {springImg === 'yes' && (
           <Spring className="absolute -top-3  z-10 text-[var(--black)]" />
         )}
         <div className={twMerge(cardLayout)}>
           {/* 카드 이미지 */}
           <div
             className="w-[240px] h-[200px] justify-center items-center flex pt-4 cursor-pointer"
-            onClick={goToDetail}>
+            onClick={goToDetail}
+          >
             {image ? (
               <img
                 className="w-[208px] h-[150px] object-cover"
@@ -89,15 +90,17 @@ export default function PostCard({
             {/* 제목, 날짜 */}
             <div
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
-              onClick={goToDetail}>
+              onClick={goToDetail}
+            >
               <span className={twMerge(titleStyle)}>{postTitle}</span>
               <TimeAgo timestamp={date} />
             </div>
             {/* 내용 */}
             <div className="flex">
               <div
-                className={twMerge(contentStyle, "cursor-pointer")}
-                onClick={goToDetail}>
+                className={twMerge(contentStyle, 'cursor-pointer')}
+                onClick={goToDetail}
+              >
                 {contents}
               </div>
             </div>
@@ -105,7 +108,8 @@ export default function PostCard({
             <div className="flex justify-between">
               <div
                 onClick={goToUserPage}
-                className="flex justify-between items-center gap-1 cursor-pointer">
+                className="flex justify-between items-center gap-1 cursor-pointer"
+              >
                 <img className="w-[28px]" src={avatar} alt="프로필사진" />
                 <span className={contentStyle}>{userName}</span>
               </div>
@@ -114,7 +118,7 @@ export default function PostCard({
                 <img
                   className="w-6 h-6 cursor-pointer"
                   src={isLiked ? likeFilled : like}
-                  alt={isLiked ? "좋아요 취소" : "좋아요"}
+                  alt={isLiked ? '좋아요 취소' : '좋아요'}
                   onClick={onLike}
                 />
 
@@ -125,5 +129,5 @@ export default function PostCard({
         </div>
       </div>
     </>
-  );
+  )
 }

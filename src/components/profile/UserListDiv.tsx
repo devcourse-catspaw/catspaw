@@ -6,7 +6,7 @@ import supabase from '../../utils/supabase'
 type UserInfo = {
   id: string
   nickname: string
-  avatar: string | null
+  avatar: string
 }[]
 export default function UserListDiv() {
   const [searchTerm, setSearchTerm] = useState('')
