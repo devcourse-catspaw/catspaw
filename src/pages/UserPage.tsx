@@ -10,15 +10,6 @@ import UserListDiv from '../components/profile/UserListDiv'
 import NavBar from '../components/common/NavBar'
 import type { Database } from '../types/supabase'
 
-type FriendRequestTable = Database['public']['Tables']['friend_requests']['Row']
-type FriendTable = Database['public']['Tables']['friends']['Row']
-
-type rowInfo = {
-  user_id_1: string
-  user_id_2: string
-  receiver_id: string
-  sender_id: string
-}
 type UserInfo = {
   id: string
   nickname: string
@@ -32,6 +23,9 @@ type PostInfo = {
   comments: { count: number }[]
 }
 
+type FriendRow = Database['public']['Tables']['friends']['Row']
+type FriendRequestRow = Database['public']['Tables']['friend_requests']['Row']
+type FriendOrRequestRow = Partial<FriendRow & FriendRequestRow>
 type FriendRequestStatus = 'none' | 'pending' | 'accepted' | 'rejected'
 
 export default function UserPage() {
@@ -96,7 +90,7 @@ export default function UserPage() {
 
       if (!user || !userIdFromParams) return
 
-      const isRelated = (row: rowInfo) =>
+      const isRelated = (row: FriendOrRequestRow) =>
         row &&
         [row.user_id_1, row.user_id_2, row.sender_id, row.receiver_id].includes(
           user.id

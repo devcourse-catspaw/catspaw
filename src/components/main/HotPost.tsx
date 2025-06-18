@@ -24,6 +24,7 @@ type HotPostType = {
 
 export default function HotPost() {
   const [hotPosts, setHotPosts] = useState<HotPostType[]>([])
+
   useEffect(() => {
     const fetchHotPosts = async () => {
       const { data, error } = await supabase.from('posts').select(`
@@ -86,8 +87,11 @@ export default function HotPost() {
                 postTitle={post.title}
                 date={post.created_at.slice(0, 10)}
                 contents={post.content}
+                userId={post.user_id}
                 userName={post.users?.nickname}
-                image={post.images?.[0]}
+                image={
+                  post.images && post.images.length > 0 ? post.images?.[0] : ''
+                }
                 likeCount={post.likeCount}
                 isLiked={false}
                 avatar={`${

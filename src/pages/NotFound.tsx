@@ -1,14 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import catspaw from "../assets/images/logo_catpaw.svg";
-import doodle1 from "../assets/images/doodle_small1.svg";
-import doodle2 from "../assets/images/doodle_small2.svg";
-import doodle3 from "../assets/images/doodle_small7.svg";
-import doodle4 from "../assets/images/doodle_small4.svg";
-import doodle5 from "../assets/images/doodle_small5.svg";
-import notfound from "../assets/images/notfound.svg";
+import { useNavigate } from 'react-router-dom'
+import catspaw from '../assets/images/logo_catpaw.svg'
+import doodle1 from '../assets/images/doodle_small1.svg'
+import doodle2 from '../assets/images/doodle_small2.svg'
+import doodle3 from '../assets/images/doodle_small7.svg'
+import doodle4 from '../assets/images/doodle_small4.svg'
+import doodle5 from '../assets/images/doodle_small5.svg'
+import doodle6 from '../assets/images/doodle_small6.svg'
+import doodle7 from '../assets/images/doodle_small7.svg'
+import notfound from '../assets/images/notfound.svg'
 
 export default function NotFound() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <div className="relative w-full min-h-screen">
       <nav className="px-20 py-8  w-full flex justify-between items-center">
@@ -17,7 +19,7 @@ export default function NotFound() {
             src={catspaw}
             alt="Cat's Paw 로고"
             className="w-15 cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => navigate('/')}
           />
         </div>
       </nav>
@@ -32,23 +34,33 @@ export default function NotFound() {
       <img
         src={doodle2}
         alt="낙서그림2"
-        className="absolute left-[80px] top-[140px] w-[152px] rotate-[-34deg]"
+        className="absolute left-[350px] bottom-1/2 w-[152px] rotate-[-34deg]"
       />
       <img
         src={doodle3}
         alt="낙서그림3"
-        className="absolute bottom-[-80px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg]"
+        className="absolute bottom-[30px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg]"
       />
       <img
         src={doodle4}
         alt="낙서그림4"
-        className="absolute top-[-30px] right-[115px] w-[152px] "
+        className="absolute top-[10px] right-[115px] w-[152px] "
       />
       <img
         src={doodle5}
         alt="낙서그림5"
         className="absolute right-1 bottom-[68px] w-[152px] r"
       />
+      <img
+        src={doodle6}
+        alt="낙서그림5"
+        className="absolute right-1/2 top-[10px] w-[152px] r"
+      />
+      <img
+        src={doodle7}
+        alt="낙서그림5"
+        className="absolute right-1 bottom-[68px] w-[152px] r"
+      />
     </div>
-  );
+  )
 }

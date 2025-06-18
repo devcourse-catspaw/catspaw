@@ -10,6 +10,11 @@ import FriendRequestDiv from '../components/profile/FriendRequestDiv'
 import supabase from '../utils/supabase.ts'
 import UserListDiv from '../components/profile/UserListDiv.tsx'
 import NavBar from '../components/common/NavBar.tsx'
+import doodle1 from '../assets/images/doodle_small1.svg'
+import doodle2 from '../assets/images/doodle_small2.svg'
+import doodle3 from '../assets/images/doodle_small7.svg'
+import doodle4 from '../assets/images/doodle_small4.svg'
+import doodle5 from '../assets/images/doodle_small5.svg'
 
 export default function MyPage() {
   type UserInfo = {
@@ -172,7 +177,32 @@ export default function MyPage() {
       )}
       <div className="w-screen h-screen flex flex-col">
         <NavBar />
-        <div className="flex-1 flex justify-center items-center">
+        <div className="relative flex-1 flex justify-center items-center">
+          <img
+            src={doodle1}
+            alt="낙서그림1"
+            className="absolute left-[24px] bottom-[200px] w-[152px]"
+          />
+          <img
+            src={doodle2}
+            alt="낙서그림2"
+            className="absolute left-[80px] top-[140px] w-[152px] rotate-[-34deg]"
+          />
+          <img
+            src={doodle3}
+            alt="낙서그림3"
+            className="absolute bottom-[50px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg]"
+          />
+          <img
+            src={doodle4}
+            alt="낙서그림4"
+            className="absolute top-[-30px] right-[115px] w-[152px] "
+          />
+          <img
+            src={doodle5}
+            alt="낙서그림5"
+            className="absolute right-1 bottom-[68px] w-[152px] r"
+          />
           <div className="flex gap-[37px] items-end mx-auto">
             <div className="flex flex-col gap-0 items-end">
               <div className="flex gap-0 items-end pr-[4px]">
