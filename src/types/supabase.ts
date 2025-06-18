@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       comments: {
@@ -36,19 +61,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "comments_post_id_fkey"
-            columns: ["post_id"]
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
             isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "comments_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'comments_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       friend_requests: {
@@ -75,19 +100,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "friend_requests_receiver_id_fkey"
-            columns: ["receiver_id"]
+            foreignKeyName: 'friend_requests_receiver_id_fkey'
+            columns: ['receiver_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: 'users'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "friend_requests_sender_id_fkey"
-            columns: ["sender_id"]
+            foreignKeyName: 'friend_requests_sender_id_fkey'
+            columns: ['sender_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       friends: {
@@ -111,19 +136,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "friends_user_id_1_fkey"
-            columns: ["user_id_1"]
+            foreignKeyName: 'friends_user_id_1_fkey'
+            columns: ['user_id_1']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: 'users'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "friends_user_id_2_fkey"
-            columns: ["user_id_2"]
+            foreignKeyName: 'friends_user_id_2_fkey'
+            columns: ['user_id_2']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       game_scores: {
@@ -147,12 +172,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "game_scores_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'game_scores_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       games: {
@@ -167,6 +192,7 @@ export type Database = {
           room_password: string | null
           status: string
           timeout_players: number
+          timeout_players: number
         }
         Insert: {
           complete_players?: number
@@ -179,6 +205,7 @@ export type Database = {
           room_password?: string | null
           status?: string
           timeout_players?: number
+          timeout_players?: number
         }
         Update: {
           complete_players?: number
@@ -190,6 +217,7 @@ export type Database = {
           room_name?: string
           room_password?: string | null
           status?: string
+          timeout_players?: number
           timeout_players?: number
         }
         Relationships: []
@@ -215,19 +243,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "likes_post_id_fkey"
-            columns: ["post_id"]
+            foreignKeyName: 'likes_post_id_fkey'
+            columns: ['post_id']
             isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "likes_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'likes_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       messages: {
@@ -257,12 +285,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "messages_game_id_fkey"
-            columns: ["game_id"]
+            foreignKeyName: 'messages_game_id_fkey'
+            columns: ['game_id']
             isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'games'
+            referencedColumns: ['id']
+          }
         ]
       }
       players: {
@@ -292,19 +320,19 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "players_game_id_fkey"
-            columns: ["game_id"]
+            foreignKeyName: 'players_game_id_fkey'
+            columns: ['game_id']
             isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
+            referencedRelation: 'games'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "players_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'players_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       posts: {
@@ -337,12 +365,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
       turns: {
@@ -378,12 +406,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "turns_game_id_fkey"
-            columns: ["game_id"]
+            foreignKeyName: 'turns_game_id_fkey'
+            columns: ['game_id']
             isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'games'
+            referencedColumns: ['id']
+          }
         ]
       }
       users: {
@@ -426,23 +454,32 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "players_game_id_fkey"
-            columns: ["game_id"]
+            foreignKeyName: 'players_game_id_fkey'
+            columns: ['game_id']
             isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
+            referencedRelation: 'games'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "players_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'players_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
         ]
       }
     }
     Functions: {
+      get_top_3_user_scores: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          score: number
+          nickname: string
+          avatar: string
+        }[]
+      }
       get_top_3_user_scores: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -462,112 +499,115 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, 'public'>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    ? keyof (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+  ? (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] &
+      DefaultSchema['Views'])
+  ? (DefaultSchema['Tables'] &
+      DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
     : never
+  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
     : never
+  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
     : never
+  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
+    | keyof DefaultSchema['Enums']
     | { schema: keyof Database },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    ? keyof Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never = never
 > = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+  ? Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+  ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
+    | keyof DefaultSchema['CompositeTypes']
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+  ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

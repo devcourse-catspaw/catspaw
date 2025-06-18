@@ -1,4 +1,4 @@
-import deleteIcon from "../../../assets/images/icon_cancel.svg";
+import deleteIcon from "../../assets/images/icon_cancel.svg";
 
 type Props = {
   image: string;
@@ -11,7 +11,7 @@ export default function ImageBox({ image, onDelete }: Props) {
       <img
         src={image}
         alt="업로드되는 이미지"
-        className="w-[142px] h-[137px] object-cover rounded-[4px]"
+        className="w-[142px] h-[138px] object-cover rounded-[4px]"
       />
       {/* 업로드 사진 삭제 버튼 */}
       <img

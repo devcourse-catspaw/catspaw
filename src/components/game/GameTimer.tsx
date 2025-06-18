@@ -1,6 +1,6 @@
-import ProgressBar from "@ramonak/react-progress-bar";
-import timer from "../../assets/images/icon_timer.svg";
-import { useGameTimerStore } from "../../stores/gameTimerStore";
+import ProgressBar from '@ramonak/react-progress-bar';
+import timer from '../../assets/images/icon_timer.svg';
+import { useGameTimerStore } from '../../stores/gameTimerStore';
 
 export default function GameTimer({ totalTime }: { totalTime: number }) {
   const timeLeft = useGameTimerStore((state) => state.timeLeft);
@@ -18,7 +18,7 @@ export default function GameTimer({ totalTime }: { totalTime: number }) {
         borderRadius="20px"
         className="rotate-[-90deg]"
         animateOnRender={true}
-        initCompletedOnAnimation={100}
+        initCompletedOnAnimation={percent}
       />
       <img src={timer} alt="타이머" className="absolute bottom-[-20px]" />
     </div>
