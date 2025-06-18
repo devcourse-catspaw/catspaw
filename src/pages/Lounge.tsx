@@ -41,7 +41,6 @@ export default function Lounge() {
   const [allLikes, setAllLikes] = useState<Likes>([]);
 
   const [input, setInput] = useState("");
-
   const [isActive, setIsActive] = useState(false);
   const activeHandler = () => {
     setIsActive((prev) => !prev);
@@ -103,19 +102,24 @@ export default function Lounge() {
               p.content.toLowerCase().includes(keyword) ||
               p.users.nickname.toLowerCase().includes(keyword)
           );
-    return isActive
-      ? filtered
-          .slice()
-          .sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0))
-      : filtered
-          .slice()
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          );
-  }, [posts, likeCounts, isActive, input]);
 
+    if (isActive) {
+      // 인기순: 좋아요 수 우선, 동률이면 댓글 수
+      return filtered.slice().sort((a, b) => {
+        const likeDiff = (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0);
+        if (likeDiff !== 0) return likeDiff;
+        return b.comments.length - a.comments.length;
+      });
+    } else {
+      // 최신순
+      return filtered
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+    }
+  }, [posts, likeCounts, isActive, input]);
   const handleLikeClick = async (postId: number) => {
     if (!user) return;
 

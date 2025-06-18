@@ -16,6 +16,17 @@ export const fetchPosts = async (offset: number, limit: number) => {
       avatar,
       nickname
     ),
+    comments (
+      id, 
+      content,
+      updated_at,
+      post_id,
+      users (
+        id, 
+        nickname,
+        avatar
+      )
+    ),
      likes(*)
   `
       )
