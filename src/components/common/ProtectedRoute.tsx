@@ -9,14 +9,15 @@ type ProtectedRouteProps = {
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const navigate = useNavigate();
   const [show, setIsShow] = useState(false);
-  const user = useAuthStore((state) => state.user);
+  const { user, isLoading } = useAuthStore();
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) {
       navigate("/login");
       return;
     }
     setIsShow(true);
-  }, [user, navigate]);
+  }, [user, navigate, isLoading]);
   return <>{show && children}</>;
 }
