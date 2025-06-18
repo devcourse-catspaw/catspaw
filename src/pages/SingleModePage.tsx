@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import DrawingCanvas from "../components/game/DrawingCanvas";
-import DrawingPropmt from "../components/game/DrawingPropmt";
-import GameTimer from "../components/game/GameTimer";
-import SingleModeHeader from "../components/game/SingleModeHeader";
-import { useDrawingStore } from "../stores/drawingStore";
-import { useNavigate } from "react-router";
-import supabase from "../utils/supabase";
-import { useGameTimerStore } from "../stores/gameTimerStore";
-import { useAuthStore } from "../stores/authStore.ts";
-import toast from "react-hot-toast";
+import { useEffect } from 'react';
+import DrawingCanvas from '../components/game/DrawingCanvas';
+import DrawingPropmt from '../components/game/DrawingPropmt';
+import GameTimer from '../components/game/GameTimer';
+import SingleModeHeader from '../components/game/SingleModeHeader';
+import { useDrawingStore } from '../stores/drawingStore';
+import { useNavigate } from 'react-router';
+import supabase from '../utils/supabase';
+import { useGameTimerStore } from '../stores/gameTimerStore';
+import { useAuthStore } from '../stores/authStore.ts';
+import toast from 'react-hot-toast';
 
 export default function SingleModePage() {
   const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
@@ -17,10 +17,10 @@ export default function SingleModePage() {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    const hasShownBgmToast = sessionStorage.getItem("bgm-toast-shown");
+    const hasShownBgmToast = sessionStorage.getItem('bgm-toast-shown');
     if (!hasShownBgmToast) {
-      toast("좌측 하단의 버튼을 통해 BGM을 켜보세요!");
-      sessionStorage.setItem("bgm-toast-shown", "true");
+      toast('좌측 하단의 버튼을 통해 BGM을 켜보세요!');
+      sessionStorage.setItem('bgm-toast-shown', 'true');
     }
 
     getRandomTopic();
@@ -31,11 +31,11 @@ export default function SingleModePage() {
     const data = await fetch(imageDataUrl);
     const blob = await data.blob();
 
-    const file = new File([blob], filename, { type: "image/jpeg" });
+    const file = new File([blob], filename, { type: 'image/jpeg' });
     setFilename(filename);
 
     const { error } = await supabase.storage
-      .from("singlemode-images")
+      .from('singlemode-images')
       .upload(`private/${user?.id}/${filename}`, file);
 
     if (error) {
@@ -43,7 +43,7 @@ export default function SingleModePage() {
       return;
     }
 
-    navigate("/game/ai-answering");
+    navigate('/game/ai-answering');
   };
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function SingleModePage() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (timeLeft <= 0) {
-        navigate("/game/single-result");
+        navigate('/game/single-result');
       }
     }, 100);
 
@@ -69,10 +69,10 @@ export default function SingleModePage() {
   };
   useEffect(() => {
     (() => {
-      window.addEventListener("beforeunload", preventClose);
+      window.addEventListener('beforeunload', preventClose);
     })();
     return () => {
-      window.removeEventListener("beforeunload", preventClose);
+      window.removeEventListener('beforeunload', preventClose);
     };
   }, []);
 

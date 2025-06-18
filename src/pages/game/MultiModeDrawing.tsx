@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import NavWithExit from '../../components/common/NavWithExit';
-import DrawingCanvas from '../../components/game/DrawingCanvas';
+import DrawingCanvasMulti from '../../components/game/DrawingCanvasMulti';
 import { useNavigate } from 'react-router';
-import { useGameTimerStore } from '../../stores/gameTimerStore';
-import GameTimer from '../../components/game/GameTimer';
+import { useGameMultiTimerStore } from '../../stores/gameMultiTimerStore';
+import GameMultiTimer from '../../components/game/GameMultiTimer';
 import supabase from '../../utils/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import { useGameRoomStore } from '../../stores/gameRoomStore';
@@ -13,7 +13,7 @@ import Chat from '../../components/game/Chat';
 export default function MultiModeDrawing({ step }: { step: string }) {
   const { user } = useAuthStore();
   const { game, turn } = useGameRoomStore();
-  const { timeLeft, setTime, decrease, reset } = useGameTimerStore();
+  const { timeLeft, setTime, decrease, reset } = useGameMultiTimerStore();
 
   const navigate = useNavigate();
 
@@ -215,7 +215,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     if (turn >= game.current_players) {
       console.log('결과화면으로 이동합니당');
       // await new Promise((resolve) => setTimeout(resolve, 500));
-      navigate('/game/multi/result');
+      navigate('/game/result');
       return;
     }
 
@@ -247,7 +247,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
     // if (turn === game.current_players) {
     //   // if (turn > game.current_players) {
     //   console.log('결과화면으로 이동합니당');
-    //   navigate('/game/multi/result');
+    //   navigate('/game/result');
     //   return;
     // }
 
@@ -468,7 +468,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
             </div>
           </div>
           {step === 'DRAWING' ? (
-            <DrawingCanvas
+            <DrawingCanvasMulti
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}
@@ -479,7 +479,7 @@ export default function MultiModeDrawing({ step }: { step: string }) {
               moveToNextTurn={moveToNextTurn}
             />
           ) : (
-            <DrawingCanvas
+            <DrawingCanvasMulti
               step={step}
               isComplete={isComplete}
               timeLeft={timeLeft}
@@ -494,9 +494,9 @@ export default function MultiModeDrawing({ step }: { step: string }) {
         </div>
         <div className="flex items-center mt-3">
           {step === 'DRAWING' ? (
-            <GameTimer totalTime={90} />
+            <GameMultiTimer totalTime={90} />
           ) : (
-            <GameTimer totalTime={60} />
+            <GameMultiTimer totalTime={60} />
           )}
         </div>
         {/* h-[480px]  */}

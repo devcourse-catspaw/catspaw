@@ -1,13 +1,13 @@
-import { useRef, useState, useCallback, useEffect } from "react";
-import { Stage, Layer, Line } from "react-konva";
-import Konva from "konva";
-import hexToRgba from "hex-to-rgba";
-import sketchBook from "../../assets/images/sketchbook.svg";
-import pencil from "../../assets/images/icon_pencil.svg";
-import eraser from "../../assets/images/icon_eraser.svg";
-import paint from "../../assets/images/icon_paint.svg";
-import back from "../../assets/images/icon_back_game.svg";
-import Button from "../common/Button";
+import { useRef, useState, useCallback, useEffect } from 'react';
+import { Stage, Layer, Line } from 'react-konva';
+import Konva from 'konva';
+import hexToRgba from 'hex-to-rgba';
+import sketchBook from '../../assets/images/sketchbook.svg';
+import pencil from '../../assets/images/icon_pencil.svg';
+import eraser from '../../assets/images/icon_eraser.svg';
+import paint from '../../assets/images/icon_paint.svg';
+import back from '../../assets/images/icon_back_game.svg';
+import Button from '../common/Button';
 
 type LineData = {
   tool: string;
@@ -17,7 +17,7 @@ type LineData = {
 };
 
 type HistoryState = {
-  type: "lines" | "image";
+  type: 'lines' | 'image';
   data: LineData[] | string;
 };
 
@@ -26,14 +26,14 @@ const DrawingCanvas = ({
 }: {
   onSubmit: (imageData: string) => void;
 }) => {
-  const [tool, setTool] = useState<string>("pen");
+  const [tool, setTool] = useState<string>('pen');
   const [lines, setLines] = useState<LineData[]>([]);
   const isDrawing = useRef<boolean>(false);
   const [history, setHistory] = useState<HistoryState[]>([
-    { type: "lines", data: [] },
+    { type: 'lines', data: [] },
   ]);
   const [historyStep, setHistoryStep] = useState<number>(0);
-  const [color, setColor] = useState<string>("#1D1D1F");
+  const [color, setColor] = useState<string>('#1D1D1F');
   const [stroke, setStroke] = useState<number>(2);
   const [hasImage, setHasImage] = useState<boolean>(false);
   const stageRef = useRef<Konva.Stage>(null);
@@ -60,8 +60,8 @@ const DrawingCanvas = ({
   const saveCurrentState = useCallback(() => {
     const currentState: HistoryState =
       hasImage && stageRef.current
-        ? { type: "image", data: stageRef.current.toCanvas().toDataURL() }
-        : { type: "lines", data: [...lines] };
+        ? { type: 'image', data: stageRef.current.toCanvas().toDataURL() }
+        : { type: 'lines', data: [...lines] };
 
     addToHistory(currentState);
   }, [lines, hasImage, addToHistory]);
@@ -70,7 +70,7 @@ const DrawingCanvas = ({
     const rgbaStr = hexToRgba(color);
     const rgba = rgbaStr
       .substring(5, rgbaStr.length - 1)
-      .split(",")
+      .split(',')
       .map((str: string) => Number(str));
     rgba[3] = rgba[3] * 255;
     return new Uint8ClampedArray(rgba);
@@ -121,7 +121,7 @@ const DrawingCanvas = ({
         if (!stage) return;
 
         const canvas = stage.toCanvas();
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
         const imageData = ctx.getImageData(0, 0, 580, 350);
@@ -181,12 +181,12 @@ const DrawingCanvas = ({
             setHasImage(true);
 
             const finalImageData = stage.toCanvas().toDataURL();
-            addToHistory({ type: "image", data: finalImageData });
+            addToHistory({ type: 'image', data: finalImageData });
           };
           imageObj.src = canvas.toDataURL();
         }
       } catch (error) {
-        console.error("Flood fill error:", error);
+        console.error('Flood fill error:', error);
       }
     },
     [saveCurrentState]
@@ -201,7 +201,7 @@ const DrawingCanvas = ({
     const pos = stage.getPointerPosition();
     if (!pos) return;
 
-    if (tool === "paint") {
+    if (tool === 'paint') {
       floodFill(Math.floor(pos.x), Math.floor(pos.y), color);
       return;
     }
@@ -221,7 +221,7 @@ const DrawingCanvas = ({
   const handleMouseMove = (
     e: Konva.KonvaEventObject<MouseEvent | TouchEvent>
   ): void => {
-    if (!isDrawing.current || tool === "paint") {
+    if (!isDrawing.current || tool === 'paint') {
       return;
     }
 
@@ -241,29 +241,29 @@ const DrawingCanvas = ({
   };
 
   const handleMouseUp = (): void => {
-    if (!isDrawing.current || tool === "paint") return;
+    if (!isDrawing.current || tool === 'paint') return;
     isDrawing.current = false;
 
     const stage = stageRef.current;
     if (stage) {
       const currentImageData = stage.toCanvas().toDataURL();
-      addToHistory({ type: "image", data: currentImageData });
+      addToHistory({ type: 'image', data: currentImageData });
     }
   };
 
   useEffect(() => {
     const handleMouseUpOutside = () => {
-      if (isDrawing.current && tool !== "paint") {
+      if (isDrawing.current && tool !== 'paint') {
         isDrawing.current = false;
       }
     };
 
-    window.addEventListener("mouseup", handleMouseUpOutside);
-    window.addEventListener("touchend", handleMouseUpOutside);
+    window.addEventListener('mouseup', handleMouseUpOutside);
+    window.addEventListener('touchend', handleMouseUpOutside);
 
     return () => {
-      window.removeEventListener("mouseup", handleMouseUpOutside);
-      window.removeEventListener("touchend", handleMouseUpOutside);
+      window.removeEventListener('mouseup', handleMouseUpOutside);
+      window.removeEventListener('touchend', handleMouseUpOutside);
     };
   }, [tool]);
 
@@ -275,14 +275,14 @@ const DrawingCanvas = ({
 
     setHistoryStep(newStep);
 
-    if (prevState.type === "lines") {
+    if (prevState.type === 'lines') {
       setLines(prevState.data as LineData[]);
       setHasImage(false);
 
       const stage = stageRef.current;
       if (stage) {
         const layer = stage.getLayers()[0];
-        layer.find("Image").forEach((img) => img.destroy());
+        layer.find('Image').forEach((img) => img.destroy());
         layer.batchDraw();
       }
     } else {
@@ -326,77 +326,77 @@ const DrawingCanvas = ({
           <div className="flex flex-col gap-[10px] mt-5">
             <div
               className={`w-6 h-6 bg-[#FF0000] rounded-full ${
-                color === "#FF0000" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#FF0000' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#FF0000")}
+              onClick={() => setColor('#FF0000')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#FF64B9] rounded-full  ${
-                color === "#FF64B9" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#FF64B9' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#FF64B9")}
+              onClick={() => setColor('#FF64B9')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#9500FF] rounded-full  ${
-                color === "#9500FF" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#9500FF' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#9500FF")}
+              onClick={() => setColor('#9500FF')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#A85134] rounded-full  ${
-                color === "#A85134" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#A85134' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#A85134")}
+              onClick={() => setColor('#A85134')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#34A853] rounded-full  ${
-                color === "#34A853" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#34A853' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#34A853")}
+              onClick={() => setColor('#34A853')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#3299FF] rounded-full  ${
-                color === "#3299FF" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#3299FF' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#3299FF")}
+              onClick={() => setColor('#3299FF')}
             ></div>
           </div>
           <div className="flex flex-col gap-[10px] mt-5">
             <div
               className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
-                color === "#1D1D1F" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#1D1D1F' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#1D1D1F")}
+              onClick={() => setColor('#1D1D1F')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#ffffff] rounded-full border border-[#22222266]  ${
-                color === "#ffffff" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#ffffff' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#ffffff")}
+              onClick={() => setColor('#ffffff')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#8C8C8C] rounded-full  ${
-                color === "#8C8C8C" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#8C8C8C' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#8C8C8C")}
+              onClick={() => setColor('#8C8C8C')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#FEC5A7] rounded-full  ${
-                color === "#FEC5A7" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#FEC5A7' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#FEC5A7")}
+              onClick={() => setColor('#FEC5A7')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#F4EC5A] rounded-full  ${
-                color === "#F4EC5A" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#F4EC5A' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#F4EC5A")}
+              onClick={() => setColor('#F4EC5A')}
             ></div>
             <div
               className={`w-6 h-6 bg-[#FF6D12] rounded-full  ${
-                color === "#FF6D12" && "outline-[5px] outline-[#C9C9C9]"
+                color === '#FF6D12' && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
-              onClick={() => setColor("#FF6D12")}
+              onClick={() => setColor('#FF6D12')}
             ></div>
           </div>
         </div>
@@ -425,7 +425,7 @@ const DrawingCanvas = ({
                     lineCap="round"
                     lineJoin="round"
                     globalCompositeOperation={
-                      line.tool === "eraser" ? "destination-out" : "source-over"
+                      line.tool === 'eraser' ? 'destination-out' : 'source-over'
                     }
                   />
                 ))}
@@ -445,19 +445,19 @@ const DrawingCanvas = ({
           <div className="flex items-center px-[17px] w-[126px] justify-between">
             <div
               className={`w-3 h-3 bg-[#1D1D1F] rounded-full ${
-                stroke === 2 && "outline-[5px] outline-[#C9C9C9]"
+                stroke === 2 && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
               onClick={() => setStroke(2)}
             ></div>
             <div
               className={`w-4.5 h-4.5 bg-[#1D1D1F] rounded-full ${
-                stroke === 8 && "outline-[5px] outline-[#C9C9C9]"
+                stroke === 8 && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
               onClick={() => setStroke(8)}
             ></div>
             <div
               className={`w-6 h-6 bg-[#1D1D1F] rounded-full ${
-                stroke === 15 && "outline-[5px] outline-[#C9C9C9]"
+                stroke === 15 && 'outline-[5px] outline-[#C9C9C9]'
               } cursor-pointer`}
               onClick={() => setStroke(15)}
             ></div>
@@ -468,25 +468,25 @@ const DrawingCanvas = ({
               src={pencil}
               alt="연필 도구"
               className={`w-[30px] cursor-pointer opacity-50 ${
-                tool === "pen" && "opacity-100"
+                tool === 'pen' && 'opacity-100'
               }`}
-              onClick={() => setTool("pen")}
+              onClick={() => setTool('pen')}
             />
             <img
               src={eraser}
               alt="지우개 도구"
               className={`w-[30px] cursor-pointer opacity-50 ${
-                tool === "eraser" && "opacity-100"
+                tool === 'eraser' && 'opacity-100'
               }`}
-              onClick={() => setTool("eraser")}
+              onClick={() => setTool('eraser')}
             />
             <img
               src={paint}
               alt="페인트 도구"
               className={`w-[30px]  cursor-pointer opacity-50 ${
-                tool === "paint" && "opacity-100"
+                tool === 'paint' && 'opacity-100'
               }`}
-              onClick={() => setTool("paint")}
+              onClick={() => setTool('paint')}
             />
             <img
               src={back}
