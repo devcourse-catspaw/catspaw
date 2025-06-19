@@ -24,8 +24,6 @@ export default function MultiModeWords() {
   const [isComplete, setIsComplete] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // const saveWords = useCallback(
-  //   async (isClick: boolean) => {
   const saveWords = async (isClick: boolean) => {
     if (!game || !user) return;
     const { data, error } = await supabase
@@ -39,8 +37,6 @@ export default function MultiModeWords() {
       .select();
 
     if (data) {
-      // console.log('저장 완료:', data);
-
       if (isClick) {
         const { data: dataGame, error: errorGame } = await supabase
           .from('games')
@@ -51,7 +47,6 @@ export default function MultiModeWords() {
           .select();
 
         if (dataGame) {
-          // console.log('complete players 업데이트 완료:', dataGame);
           setIsComplete(true);
         }
         if (errorGame) {
@@ -65,9 +60,6 @@ export default function MultiModeWords() {
       console.error(error);
     }
   };
-  //   },
-  //   [game, user, turn, word]
-  // );
 
   let lastEnterTime = 0;
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -82,42 +74,16 @@ export default function MultiModeWords() {
     }
   };
 
-  // const checkValidation = useCallback(() => {
   const checkValidation = () => {
     if (disabled) return;
 
     setDisabled(true);
     if (word.trim() !== '') {
-      // console.log('이동합니당');
       saveWords(true);
     } else setInvalid(true);
 
     setTimeout(() => setDisabled(false), 500);
   };
-  // }, [word, saveWords]);
-
-  // const isZero = async () => {
-  //   if (!game) return;
-
-  //   if (!isComplete) await saveWords(false);
-  //   //
-
-  //   const { data: dataGame, error: errorGame } = await supabase
-  //     .from('games')
-  //     .update({
-  //       timeout_players: game.timeout_players + 1,
-  //     })
-  //     .eq('id', game?.id)
-  //     .select();
-
-  //   if (dataGame) {
-  //     console.log('timeout players 업데이트 완료:', dataGame);
-  //   }
-  //   if (errorGame) {
-  //     console.log('timeout players 업데이트 실패');
-  //     console.error(errorGame);
-  //   }
-  // };
 
   const moveToNextTurn = async () => {
     if (!game) return;
@@ -132,12 +98,10 @@ export default function MultiModeWords() {
       .select();
 
     if (dataGame) {
-      // console.log('complete players, timeout_players 초기화 완료:', dataGame);
       useGameRoomStore.getState().updateGame({
         complete_players: dataGame[0].complete_players,
         timeout_players: dataGame[0].timeout_players,
       });
-      // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }
     if (errorGame) {
       console.log('complete players, timeout_players 초기화 실패');
@@ -145,7 +109,6 @@ export default function MultiModeWords() {
     }
 
     useGameRoomStore.getState().changeTurn(turn + 1);
-    // console.log('useGameRoomStore Turn:', useGameRoomStore.getState().turn);
 
     navigate('/game/multi/drawing');
   };
@@ -172,25 +135,10 @@ export default function MultiModeWords() {
             complete_players: newStatus.complete_players,
             timeout_players: newStatus.timeout_players,
           });
-          // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
           if (newStatus.complete_players === newStatus.current_players) {
-            // console.log('전원 제출해서 넘어감');
-
-            console.log('1턴에서 2턴으로 넘어감');
             moveToNextTurn();
             return;
-            // } else if (newStatus.timeout_players >= newStatus.current_players) {
-            //   console.log('전원 타이머 끝나서 넘어감');
-            //   if (!isComplete) saveWords(false);
-            //   moveToNextTurn();
-
-            // (async () => {
-            //   if (!isComplete) await saveWords(false);
-            //   await moveToNextTurn();
-            // })();
-
-            // return;
           }
         }
       )
@@ -202,8 +150,6 @@ export default function MultiModeWords() {
   }, [game?.id]);
 
   useEffect(() => {
-    console.log('이번 턴은 ?', turn);
-
     setTime(60);
     const timer = setInterval(() => {
       decrease();
@@ -214,11 +160,8 @@ export default function MultiModeWords() {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      // isZero();
-
       (async () => {
         if (!isComplete) await saveWords(false);
-
         await moveToNextTurn();
       })();
       reset();

@@ -19,7 +19,6 @@ export default function RoomPasswordModal({
 
   const checkPassword = () => {
     if (pw === password) {
-      console.log('일치합니당');
       closeRoomPasswordModalHandler();
       dataHandler();
     } else setInvalid(true);

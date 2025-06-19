@@ -42,21 +42,14 @@ export default function CreateRoomModal({
     );
 
     const data = await res.json();
-    // console.log(data);
+
     closeCreateRoomModalHandler();
 
     useGameRoomStore.getState().setPlayer(data.player[0]);
-    // console.log('useGameRoomStore Player:', useGameRoomStore.getState().player);
     useGameRoomStore.getState().setGame(data.game);
-    // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
     useGameRoomStore.getState().resetTurn();
     useGameRoomStore.getState().resetComplete();
-    console.log('대기방 입장하기 직전');
-    console.log('전역 game:', useGameRoomStore.getState().game);
-    console.log('전역 player:', useGameRoomStore.getState().player);
-    console.log('전역 turn:', useGameRoomStore.getState().turn);
-    console.log('전역 complete:', useGameRoomStore.getState().complete);
 
     navigate('/game/room');
   };

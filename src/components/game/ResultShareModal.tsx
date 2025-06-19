@@ -28,7 +28,6 @@ export default function ResultShareModal({
       setInvalid((prev) => [prev[0], true]);
     }
     if (title.trim() !== '' && content.trim() !== '') {
-      // console.log('게시합니당');
       clickCreateButtonHandler();
       closeResultShareModalHandler();
     }
@@ -48,14 +47,12 @@ export default function ResultShareModal({
     const blob = base64ToBlob(url, 'image/png');
     const fileName = `screenshot-${Date.now()}.png`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('post-images')
       .upload(fileName, blob, {
         contentType: 'image/png',
         upsert: false,
       });
-
-    console.log(data);
 
     if (error) {
       console.error('Storage upload error:', error.message);
