@@ -176,6 +176,12 @@ export default function Lounge() {
                 value={input}
                 placeholder="검색어를 입력해주세요."
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
                 className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]"
               />
               <Button
