@@ -23,32 +23,9 @@ export default function GameRoom({
 
   const { user } = useAuthStore();
 
-  // const [disabled, setDisabled] = useState(false);
   const [isFullPlayersModalOpen, setIsFullPlayersModalOpen] = useState(false);
   const [isPlayingModalOpen, setIsPlayingModalOpen] = useState(false);
   const [isRoomPasswordModalOpen, setIsRoomPasswordModalOpen] = useState(false);
-
-  // // const clickHandler = async () => {
-  // const clickHandler = () => {
-  //   // if (disabled) return;
-
-  //   // setDisabled(true);
-  //   if (status === 'PLAYING') {
-  //     setIsPlayingModalOpen(true);
-  //     return;
-  //   }
-  //   if (current_players >= 4) {
-  //     setIsFullPlayersModalOpen(true);
-  //     return;
-  //   }
-  //   if (room_password) {
-  //     setIsRoomPasswordModalOpen(true);
-  //     return;
-  //   }
-
-  //   dataHandler();
-  //   // setTimeout(() => setDisabled(false), 500);
-  // };
 
   const clickHandler = useCallback(
     debounce(() => {
@@ -89,10 +66,6 @@ export default function GameRoom({
 
     if (dataP) {
       useGameRoomStore.getState().setPlayer(dataP[0]);
-      // console.log(
-      //   'useGameRoomStore Player:',
-      //   useGameRoomStore.getState().player
-      // );
 
       const { data: dataG, error } = await supabase
         .from('games')
@@ -103,11 +76,7 @@ export default function GameRoom({
         .select();
 
       if (dataG) {
-        // console.log('인원 수 증가 성공! :', dataG);
-        // console.log('입장합니다.');
-
         useGameRoomStore.getState().setGame(dataG[0]);
-        // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
         useGameRoomStore.getState().resetTurn();
         useGameRoomStore.getState().resetComplete();

@@ -56,9 +56,7 @@ export default function GameWaitingRoom() {
         .update({ status: 'PLAYING' })
         .eq('id', game.id);
 
-      // console.log('게임을 시작합니다!');
       useGameRoomStore.getState().updateGame({ status: 'PLAYING' });
-      // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
     }, 1000),
     [game]
   );
@@ -75,12 +73,7 @@ export default function GameWaitingRoom() {
         .select();
 
       if (dataP) {
-        // console.log('READY 성공!');
         useGameRoomStore.getState().updatePlayer({ is_ready: true });
-        // console.log(
-        //   'useGameRoomStore Player:',
-        //   useGameRoomStore.getState().player
-        // );
 
         const { data, error } = await supabase
           .from('games')
@@ -91,9 +84,7 @@ export default function GameWaitingRoom() {
           .select();
 
         if (data) {
-          // console.log('레디 카운트 성공!');
           useGameRoomStore.getState().setGame(data[0]);
-          // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
         }
         if (error) {
           console.error('Ready Count error:', error.message);
@@ -111,7 +102,6 @@ export default function GameWaitingRoom() {
     debounce(async () => {
       if (!user || !game || !player) return;
 
-      // console.log('방 나가고 삭제 전 리더 여부:', player);
       if (player.is_leader) {
         const { error } = await supabase
           .from('games')
@@ -121,17 +111,8 @@ export default function GameWaitingRoom() {
         if (error) {
           console.error('삭제 실패:', error.message);
         } else {
-          // console.log('삭제 성공');
           useGameRoomStore.getState().resetGame();
-          // console.log(
-          //   'useGameRoomStore Game:',
-          //   useGameRoomStore.getState().game
-          // );
           useGameRoomStore.getState().resetPlayer();
-          // console.log(
-          //   'useGameRoomStore Player:',
-          //   useGameRoomStore.getState().player
-          // );
           navigate('/game/list');
         }
       } else {
@@ -143,12 +124,7 @@ export default function GameWaitingRoom() {
         if (error) {
           console.error('삭제 실패:', error.message);
         } else {
-          // console.log('삭제 성공');
           useGameRoomStore.getState().resetPlayer();
-          // console.log(
-          //   'useGameRoomStore Player:',
-          //   useGameRoomStore.getState().player
-          // );
 
           if (player?.is_ready) {
             const { data, error } = await supabase
@@ -163,12 +139,7 @@ export default function GameWaitingRoom() {
             if (error) {
               console.error('카운트 실패:', error.message);
             } else {
-              // console.log('카운트 성공');
               useGameRoomStore.getState().setGame(data[0]);
-              // console.log(
-              //   'useGameRoomStore:',
-              //   useGameRoomStore.getState().game
-              // );
               navigate('/game/list');
             }
           } else {
@@ -181,12 +152,7 @@ export default function GameWaitingRoom() {
             if (error) {
               console.error('카운트 실패:', error.message);
             } else {
-              // console.log('카운트 성공');
               useGameRoomStore.getState().setGame(data[0]);
-              // console.log(
-              //   'useGameRoomStore:',
-              //   useGameRoomStore.getState().game
-              // );
               navigate('/game/list');
             }
           }
@@ -198,11 +164,9 @@ export default function GameWaitingRoom() {
 
   const getPlayerList = async () => {
     if (!game) {
-      console.log('game이 없음... :', game);
       return;
     }
     if (game) {
-      // console.log('game 있음~! :', game);
       try {
         const { data } = await supabase
           .from('players')
@@ -217,7 +181,6 @@ export default function GameWaitingRoom() {
           .eq('game_id', game.id)
           .order('joined_at', { ascending: true });
         if (data) {
-          // console.log(data);
           setPlayers(data);
           setIsLoading(false);
         }
@@ -259,8 +222,6 @@ export default function GameWaitingRoom() {
           filter: `game_id=eq.${game?.id}`,
         },
         async (payload) => {
-          // console.log(payload);
-
           const { eventType, new: newPlayer } = payload;
 
           if (!newPlayer) return;
@@ -273,10 +234,6 @@ export default function GameWaitingRoom() {
             .select('*')
             .eq('id', player.user_id)
             .maybeSingle();
-          // .single();
-
-          // console.log('player.user_id:', player.user_id);
-          // console.log('user:', user);
 
           setPlayers((prevPlayers) => {
             switch (eventType) {
@@ -299,10 +256,6 @@ export default function GameWaitingRoom() {
                   ready_players: [...final].filter((p) => p.is_ready).length,
                   current_players: final.length,
                 });
-                // console.log(
-                //   'useGameRoomStore:',
-                //   useGameRoomStore.getState().game
-                // );
 
                 return final;
               case 'UPDATE':
@@ -325,10 +278,6 @@ export default function GameWaitingRoom() {
                   ready_players: [...final].filter((p) => p.is_ready).length,
                   current_players: final.length,
                 });
-                // console.log(
-                //   'useGameRoomStore:',
-                //   useGameRoomStore.getState().game
-                // );
 
                 return final;
               default:
@@ -354,8 +303,6 @@ export default function GameWaitingRoom() {
           table: 'players',
         },
         async (payload) => {
-          // console.log(payload);
-
           const { old: oldPlayer } = payload;
 
           let final: PlayerUserProps[];
@@ -364,13 +311,11 @@ export default function GameWaitingRoom() {
             final = prevPlayers.filter(
               (p) => p.id !== (oldPlayer as PlayerProps).id
             );
-            // console.log((oldPlayer as PlayerProps).id);
 
             useGameRoomStore.getState().updateGame({
               ready_players: [...final].filter((p) => p.is_ready).length,
               current_players: final.length,
             });
-            // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
             return final;
           });
@@ -394,13 +339,7 @@ export default function GameWaitingRoom() {
             useGameRoomStore
               .getState()
               .updateGame({ status: newStatus.status });
-            // console.log('useGameRoomStore:', useGameRoomStore.getState().game);
 
-            // console.log('리더 아이디:', newStatus.leader_id);
-            // console.log('내 user?.id 아이디:', user?.id);
-            // console.log('내 player?.user_id 아이디:', player?.user_id);
-
-            // if (newStatus.leader_id === user?.id) {
             if (
               newStatus.leader_id === user?.id ||
               newStatus.leader_id === player?.user_id
@@ -419,33 +358,15 @@ export default function GameWaitingRoom() {
               console.log('성공:', data);
 
               useGameRoomStore.getState().changeTurn(1);
-              // console.log(
-              //   'useGameRoomStore Turn:',
-              //   useGameRoomStore.getState().turn
-              // );
 
               setCount(3);
             } else {
               useGameRoomStore.getState().changeTurn(1);
-              // console.log(
-              //   'useGameRoomStore Turn:',
-              //   useGameRoomStore.getState().turn
-              // );
 
-              // console.log('방장 제외 1초 늦게 시작');
               setTimeout(() => {
                 setCount(3);
               }, 1000);
             }
-
-            // useGameRoomStore.getState().changeTurn(1);
-            // console.log(
-            //   'useGameRoomStore Turn:',
-            //   useGameRoomStore.getState().turn
-            // );
-
-            // setCount(3);
-            // navigate('/game/multi');
           }
         }
       )
@@ -459,15 +380,7 @@ export default function GameWaitingRoom() {
         },
         () => {
           useGameRoomStore.getState().resetGame();
-          // console.log(
-          //   'useGameRoomStore Game:',
-          //   useGameRoomStore.getState().game
-          // );
           useGameRoomStore.getState().resetPlayer();
-          // console.log(
-          //   'useGameRoomStore Player:',
-          //   useGameRoomStore.getState().player
-          // );
           navigate('/game/list');
           toast('방장이 방을 폭파시켰습니다!');
         }

@@ -26,10 +26,8 @@ const DrawingCanvasMulti = ({
   step,
   isComplete,
   timeLeft,
-  // isTimeout,
   trigger,
   drawingUrl,
-  // isZero,
   onSubmitDrawing,
   onSubmitWords,
   moveToNextTurn,
@@ -37,10 +35,8 @@ const DrawingCanvasMulti = ({
   step: string;
   isComplete: boolean;
   timeLeft: number;
-  // isTimeout: boolean;
   trigger?: boolean;
   drawingUrl?: string;
-  // isZero?: () => Promise<void>;
   onSubmitDrawing?: (imageData: string, isOver: boolean) => Promise<void>;
   onSubmitWords?: (answer: string, isOver: boolean) => Promise<void>;
   moveToNextTurn: () => Promise<void>;
@@ -80,7 +76,6 @@ const DrawingCanvasMulti = ({
 
     setDisabled(true);
     if (answer.trim() !== '') {
-      // console.log('제출합니당');
       handleSubmitAuto(false);
     } else setInvalid(true);
 
@@ -385,52 +380,10 @@ const DrawingCanvasMulti = ({
     }
   };
 
-  // const isZeros = async () => {
-  //   if (!game) return;
-
-  //   if (isSent) {
-  //     console.log('isTimeout:', isTimeout);
-  //     if (isTimeout) moveToNextTurn();
-  //   } else {
-  //     // if (!isComplete || isTimeout) await handleSubmitAuto();
-  //     if (!isComplete) await handleSubmitAuto(true);
-  //     // if (!isComplete && isTimeout) await handleSubmitAuto();
-
-  //     const { data: dataGame, error: errorGame } = await supabase
-  //       .from('games')
-  //       .update({
-  //         timeout_players: game.timeout_players + 1,
-  //       })
-  //       .eq('id', game?.id)
-  //       .select();
-
-  //     if (dataGame) {
-  //       console.log('timeout players 업데이트 완료:', dataGame);
-  //       setIsSent(true);
-
-  //       // console.log('isTimeout:', isTimeout);
-  //       // if (isTimeout) moveToNextTurn();
-  //     }
-  //     if (errorGame) {
-  //       console.log('timeout players 업데이트 실패');
-  //       console.error(errorGame);
-  //       // setIsSent(true);
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
-    // if (timeLeft <= 0) {
     if (timeLeft === 0) {
-      // 수정
-      // isZero();
-      // console.log('DrawingCanvasMulti에서 시간 다 돼서 넘어감');
       (async () => {
         if (!isComplete || trigger) await handleSubmitAuto(false);
-
-        console.log(
-          '타이머 0 된 후, DrawingCanvasMulti에서 moveToNextTurn 호출되기 직전!'
-        );
         await moveToNextTurn();
       })();
     }
