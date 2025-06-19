@@ -317,12 +317,12 @@ export default function UserPage() {
       <div className="w-screen h-screen flex flex-col">
         <NavBar />
         <div className="relative flex-1 flex justify-center items-center">
-          <Doodle1 className="absolute left-[24px] bottom-[20px] w-[152px] text-gray-300" />
-          <Doodle2 className="absolute left-[80px] top-[10px] w-[152px] rotate-[-34deg]  text-gray-300" />
+          <Doodle1 className="absolute left-[24px] bottom-[20px] w-[152px] text-gray-300 -z-10" />
+          <Doodle2 className="absolute left-[80px] top-[10px] w-[152px] rotate-[-34deg]  text-gray-300 -z-10" />
           <Doodle3 className="absolute bottom-[50px] left-1/2 -translate-x-[240px] w-[152px] rotate-[55deg] -z-10 text-gray-300" />
-          <Doodle4 className="absolute top-[-30px] right-[115px] w-[152px]  text-gray-300" />
-          <Doodle5 className="absolute right-1 bottom-[68px] w-[152px] text-gray-300 " />
-          <Doodle6 className="absolute top-[-90px] left-1/2 -translate-x-[100px] w-[152px] rotate-[55deg] -z-10 text-gray-300" />
+          <Doodle4 className="absolute top-[-30px] right-[115px] w-[152px]  text-gray-300 -z-10" />
+          <Doodle5 className="absolute right-1 bottom-[68px] w-[152px] text-gray-300 -z-10" />
+          <Doodle6 className="absolute top-[-90px] left-1/2 -translate-x-[100px] w-[152px] rotate-[55deg] -z-10 text-gray-300 -z-10" />
           <div className="flex items-end gap-[37px] mx-auto">
             <div className="flex flex-col gap-0 items-end bg-white">
               <div className="flex gap-0 items-end pr-[4px]">

@@ -1,18 +1,16 @@
-import { twMerge } from "tailwind-merge";
-
 interface TimeAgoProps {
   timestamp: string | number | Date;
   className?: string;
 }
 const dateStyle =
-  " text-end min-w-[48px] text-[var(--grey-100)] text-xs  font-medium"; // 기본 폰트 클래스
+  ' text-end min-w-[48px] text-[var(--grey-100)] text-xs  font-medium'; // 기본 폰트 클래스
 
 // 사용법: <TimeAgo timestamp={post.created_at /> props로 api를 통해 받은 created_at을 넘겨준다
 // api 예시 created_at: "2021-10-15T20:48:19.816Z",
 export default function TimeAgo({
   timestamp,
-  className, // 생성 날짜
-}: TimeAgoProps) {
+}: // className, // 생성 날짜
+TimeAgoProps) {
   const now = new Date();
   const time = new Date(timestamp);
   const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
