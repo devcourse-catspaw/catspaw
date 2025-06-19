@@ -46,6 +46,11 @@ export default function Lounge() {
     setIsActive((prev) => !prev);
   };
 
+  const [searchItem, setSearchItem] = useState("");
+  const handleSearch = () => {
+    setSearchItem(input);
+  };
+
   const loadMorePosts = async () => {
     if (isLoading) return;
 
@@ -92,7 +97,7 @@ export default function Lounge() {
 
   //검색필터, 인기순, 최신순
   const filteredAndSorted = useMemo(() => {
-    const keyword = input.trim().toLowerCase();
+    const keyword = searchItem.trim().toLowerCase();
     const filtered =
       keyword === ""
         ? posts
@@ -119,7 +124,7 @@ export default function Lounge() {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
     }
-  }, [posts, likeCounts, isActive, input]);
+  }, [posts, likeCounts, isActive, searchItem]);
   const handleLikeClick = async (postId: number) => {
     if (!user) return toast("로그인 후 이용해주세요.");
 
@@ -171,11 +176,17 @@ export default function Lounge() {
                 value={input}
                 placeholder="검색어를 입력해주세요."
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
                 className="w-[480px] h-[40px] bg-[var(--white)] rounded-[3px] border-[2px]"
               />
               <Button
                 className="w-[64px] h-[35px] font-medium text-base px-[16px] bg-[var(--white)]"
-                onClick={() => console.log("click")}>
+                onClick={handleSearch}>
                 검색
               </Button>
             </div>
