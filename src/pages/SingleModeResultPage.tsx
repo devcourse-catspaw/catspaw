@@ -183,8 +183,8 @@ export default function SingleModeResultPage() {
             </div>
           </div>
           <div className="flex flex-col gap-5 items-center">
-            <div className="px-[32px] py-[25px] flex flex-col justify-center items-center border-[2px] border-[color:var(--black)] rounded-[6px]">
-              <div className="border-b border-[color:var(--black)] w-[147px] pb-6 mb-6">
+            <div className="px-[32px] py-[25px] flex flex-col justify-center items-center border-[2px] border-[color:var(--black)] rounded-[6px] bg-[color:var(--white)]">
+              <div className="border-b border-[color:var(--black)] w-[147px] pb-6 mb-6 ">
                 <div className="flex flex-col gap-[6px] items-center justify-center">
                   <h1 className="text-center text-lg font-extrabold flex gap-2">
                     <span>"</span>
@@ -215,7 +215,7 @@ export default function SingleModeResultPage() {
             </div>
             <Button
               onClick={handleExitRoom}
-              className="w-[134px] h-[44px] font-semibold text-[18px] p-0"
+              className="w-[134px] h-[44px] font-semibold text-[18px] p-0 bg-[color:var(--white)]"
             >
               방 나가기
             </Button>
