@@ -4,17 +4,35 @@ import type { Database } from "../../types/supabase";
 
 export type LikeRow = Database["public"]["Tables"]["likes"]["Row"];
 
-export const fetchPosts = async () => {
+export const fetchPosts = async (offset: number, limit: number) => {
   try {
-    const { data: posts } = await supabase.from("posts").select(`
+    const { data: posts } = await supabase
+      .from("posts")
+      .select(
+        `
+>>>>>>> main
     *,
     users (
       id, 
       avatar,
       nickname
     ),
+    comments (
+      id, 
+      content,
+      updated_at,
+      post_id,
+      users (
+        id, 
+        nickname,
+        avatar
+      )
+    ),
      likes(*)
-  `);
+  `
+      )
+      .range(offset, offset + limit - 1)
+      .order("created_at", { ascending: false });
 
     return posts;
   } catch (e) {
@@ -57,6 +75,18 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
   }
 };
 
+export const fetchExactPost = async ({ params }: LoaderFunctionArgs) => {
+  const id = Number(params.postId);
+  if (isNaN(id)) throw new Error("Invalid postId");
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*, users(id, nickname, avatar)")
+    .eq("id", id)
+    .single();
+  if (error) throw console.error("포스트 수정 에러:", error);
+  return data;
+};
+
 // 좋아요 불러오기
 export const fetchLikes = async (): Promise<LikeRow[]> => {
   const { data, error } = await supabase.from("likes").select("*");
@@ -82,4 +112,15 @@ export const removeLike = async (postId: number, userId: string) => {
     .eq("user_id", userId);
   if (error) console.error("removeLike error:", error);
   return !error;
+};
+
+export const fetchUsers = async () => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, nickname, avatar");
+  if (error) {
+    console.error("fetchUsers error", error);
+    throw new Response("유저 조회 실패", { status: 500 });
+  }
+  return data ?? [];
 };

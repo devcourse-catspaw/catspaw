@@ -76,33 +76,75 @@ export type Database = {
           }
         ];
       };
-      follows: {
+      friend_requests: {
         Row: {
-          created_at: string;
-          follower_id: string;
-          following_id: string;
+          created_at: string | null;
+          id: string;
+          receiver_id: string;
+          sender_id: string;
+          status: string;
         };
         Insert: {
-          created_at?: string;
-          follower_id: string;
-          following_id: string;
+          created_at?: string | null;
+          id?: string;
+          receiver_id: string;
+          sender_id: string;
+          status?: string;
         };
         Update: {
-          created_at?: string;
-          follower_id?: string;
-          following_id?: string;
+          created_at?: string | null;
+          id?: string;
+          receiver_id?: string;
+          sender_id?: string;
+          status?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "follows_follower_id_fkey";
-            columns: ["follower_id"];
+            foreignKeyName: "friend_requests_receiver_id_fkey";
+            columns: ["receiver_id"];
             isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "follows_following_id_fkey";
-            columns: ["following_id"];
+            foreignKeyName: "friend_requests_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      friends: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          user_id_1: string;
+          user_id_2: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          user_id_1: string;
+          user_id_2: string;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          user_id_1?: string;
+          user_id_2?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "friends_user_id_1_fkey";
+            columns: ["user_id_1"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "friends_user_id_2_fkey";
+            columns: ["user_id_2"];
             isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
@@ -149,6 +191,7 @@ export type Database = {
           room_name: string;
           room_password: string | null;
           status: string;
+          timeout_players: number;
         };
         Insert: {
           complete_players?: number;
@@ -160,6 +203,7 @@ export type Database = {
           room_name: string;
           room_password?: string | null;
           status?: string;
+          timeout_players?: number;
         };
         Update: {
           complete_players?: number;
@@ -171,6 +215,7 @@ export type Database = {
           room_name?: string;
           room_password?: string | null;
           status?: string;
+          timeout_players?: number;
         };
         Relationships: [];
       };
@@ -325,38 +370,6 @@ export type Database = {
           }
         ];
       };
-      results: {
-        Row: {
-          contents: Json;
-          created_at: string;
-          game_id: number;
-          id: number;
-          origin_player_id: string;
-        };
-        Insert: {
-          contents: Json;
-          created_at?: string;
-          game_id: number;
-          id?: number;
-          origin_player_id: string;
-        };
-        Update: {
-          contents?: Json;
-          created_at?: string;
-          game_id?: number;
-          id?: number;
-          origin_player_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "results_game_id_fkey";
-            columns: ["game_id"];
-            isOneToOne: false;
-            referencedRelation: "games";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
       turns: {
         Row: {
           content: string | null;
@@ -400,21 +413,21 @@ export type Database = {
       };
       users: {
         Row: {
-          avatar: string | null;
+          avatar: string;
           created_at: string;
           email: string | null;
           id: string;
           nickname: string;
         };
         Insert: {
-          avatar?: string | null;
+          avatar: string;
           created_at?: string;
           email?: string | null;
           id: string;
           nickname: string;
         };
         Update: {
-          avatar?: string | null;
+          avatar?: string;
           created_at?: string;
           email?: string | null;
           id?: string;
@@ -455,7 +468,15 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      get_top_3_user_scores: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          user_id: string;
+          score: number;
+          nickname: string;
+          avatar: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

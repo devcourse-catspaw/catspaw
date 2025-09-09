@@ -22,7 +22,7 @@ export default function ResultChat({
   );
 
   const messageClass = twMerge(
-    'rounded-[6px] px-4 py-2 break-words text-[color:var(--white)] text-sm max-w-[180px] bg-[color:var(--grey-200-40)]'
+    'rounded-[6px] min-w-10 min-h-9 px-4 py-2 break-words text-[color:var(--white)] text-sm max-w-[180px] bg-[color:var(--grey-200-40)]'
   );
 
   const userNameClass = twMerge(
@@ -41,7 +41,7 @@ export default function ResultChat({
         {isDrawing ? (
           <div className="flex relative w-[307px] h-[210px] justify-center items-center pt-4 pr-0">
             <div className="w-[290px] h-[175px] flex justify-center items-center">
-              <img src={message} alt="그림" />
+              {message && <img src={message} alt="그림" />}
             </div>
             <img
               src={sketchBook}

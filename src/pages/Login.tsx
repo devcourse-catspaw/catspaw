@@ -25,11 +25,12 @@ export default function Login() {
     })
 
     if (error) {
-      toast.error('로그인 실패ㅠ')
+      toast.error('로그인 실패')
+      console.log(error)
       return
     }
 
-    toast.success('로그인 시도 중...')
+    toast('로그인 시도 중...')
   }
 
   const handleAnonymousLogin = async () => {
@@ -41,7 +42,7 @@ export default function Login() {
     }
 
     setUser(data.user)
-    toast.success('익명 로그인 성공!')
+    toast('익명 로그인 성공!')
     navigate('/')
   }
 

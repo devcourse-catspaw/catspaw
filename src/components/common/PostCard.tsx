@@ -3,14 +3,14 @@ import Spring from "../../assets/images/spring_small.svg?react";
 import like from "../../assets/images/icon_like.svg";
 import likeFilled from "../../assets/images/icon_like_filled.svg";
 import Paw from "../../assets/images/logo_catpaw.svg?react";
-import Typo from "../../assets/images/logo_typo.svg?react";
-import kisu from "../../assets/images/kisu_.svg";
 // import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TimeAgo from "./lounge/TimeAgo";
+import TimeAgo from "../lounge/TimeAgo";
+import { useAuthStore } from "../../stores/authStore";
 
 type PostCardProps = {
   postId: number;
+  userId: string;
   postTitle: string;
   date: string;
   contents: string;
@@ -18,15 +18,16 @@ type PostCardProps = {
   image?: string;
   likeCount: number;
   isLiked: boolean;
-  avatar?: string;
+
+  avatar: string;
   springImg: "yes" | "no";
-  onLike: () => void;
+  onLike?: () => void;
 };
 
 const cardLayout =
   "w-[240px] h-[324px] border-[3px] border-[var(--black)] shadow-[0px_7px_0px_var(--black)] bg-[var(--white)] rounded-[11px] flex";
 const titleStyle =
-  "text-[var(--black)]  text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
+  "min-w-[150px] text-[var(--black)] text-base font-bold block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const contentStyle =
   "text-[var(--black)] text-sm font-medium block w-100% overflow-hidden overflow-ellipsis whitespace-nowrap";
 const likeCountStyle =
@@ -34,6 +35,7 @@ const likeCountStyle =
 
 export default function PostCard({
   postId,
+  userId,
   postTitle,
   date,
   contents,
@@ -45,9 +47,8 @@ export default function PostCard({
   springImg,
   onLike,
 }: PostCardProps) {
-  // const [liked, setLiked] = useState(isLiked);
-  // const [count, setCount] = useState(likeCount);
   const navigate = useNavigate();
+  const loginUser = useAuthStore((state) => state.user);
 
   // useEffect(() => {
   //   setLiked(isLiked);
@@ -58,14 +59,10 @@ export default function PostCard({
     navigate(`/lounge/${postId}`);
   };
 
-  // const handleLikeClick = () => {
-  //   onLike();
-  //   setLiked((prev) => {
-  //     const next = !prev;
-  //     setCount((prevCount) => prevCount + (next ? -1 : +1));
-  //     return next;
-  //   });
-  // };
+  const goToUserPage = () => {
+    if (userId === loginUser?.id) return navigate("/mypage");
+    navigate(`/user/${userId}`);
+  };
 
   return (
     <>
@@ -87,11 +84,10 @@ export default function PostCard({
             ) : (
               <div className="flex flex-col w-[208px] h-[140px] justify-center items-center">
                 <Paw className="w-[84px] text-[var(--black)]" />
-                <Typo className="w-[140px] text-[var(--black)]" />
+                {/* <Typo className="w-[60px] text-[var(--black)]" /> */}
               </div>
             )}
           </div>
-
           {/* 이미지 하단 정보 : 제목, 날짜, 내용, 유저프로필, 유저 이름, 좋아요 버튼, 좋아요수  */}
           <div className="w-[240px] h-[124px] border-t-[2px] border-[var(--black)] rounded-b-[11px] absolute -bottom-1 left-0 z-10 p-4 flex flex-col gap-2">
             {/* 제목, 날짜 */}
@@ -99,7 +95,7 @@ export default function PostCard({
               className="flex w-full justify-between items-center gap-1 cursor-pointer"
               onClick={goToDetail}>
               <span className={twMerge(titleStyle)}>{postTitle}</span>
-              {/* <span className={dateStyle}>{date}</span> */}
+
               <TimeAgo timestamp={date} />
             </div>
             {/* 내용 */}
@@ -112,12 +108,10 @@ export default function PostCard({
             </div>
             {/* 프로필 사진 + 유저 이름 */}
             <div className="flex justify-between">
-              <div className="flex justify-between items-center">
-                <img
-                  className="w-[32px]"
-                  src={avatar || kisu}
-                  alt="프로필사진"
-                />
+              <div
+                onClick={goToUserPage}
+                className="flex justify-between items-center gap-1 cursor-pointer">
+                <img className="w-[28px]" src={avatar} alt="프로필사진" />
                 <span className={contentStyle}>{userName}</span>
               </div>
               {/* 좋아요 */}

@@ -132,6 +132,7 @@ export default function Lounge() {
       (l) => l.post_id === postId && l.user_id === user.id
     );
 
+    // <<<<<<< HEAD
     //롤백 가능한 기존 상태 복사
     const prevLikeCounts = { ...likeCounts };
     const prevAllLikes = [...allLikes];
@@ -168,6 +169,22 @@ export default function Lounge() {
       console.log(error);
       toast.error("좋아요 처리 중 오류가 발생했습니다.");
     }
+    // =======
+    //     if (liked) {
+    //       await removeLike(postId, user.id);
+    //     } else {
+    //       await addLike(postId, user.id);
+    //     }
+
+    //     const freshLikes = await fetchLikes();
+
+    //     setAllLikes(freshLikes);
+    //     const counts = freshLikes.reduce((acc, l) => {
+    //       if (l.post_id !== null) acc[l.post_id] = (acc[l.post_id] || 0) + 1;
+    //       return acc;
+    //     }, {} as Record<number, number>);
+    //     setLikeCounts(counts);
+    // >>>>>>> main
   };
 
   const handleAddPostClick = (e: React.MouseEvent) => {

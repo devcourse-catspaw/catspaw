@@ -1,10 +1,11 @@
-import type { InputHTMLAttributes } from 'react';
-import { twMerge } from 'tailwind-merge';
+import type { InputHTMLAttributes } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 type BaseInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  className?: string;
+  className?: string
+  placeholder?: string
   ref?: React.Ref<HTMLInputElement>;
-};
+}
 export default function BaseInput({
   className,
   ref,
@@ -21,5 +22,5 @@ export default function BaseInput({
       placeholder={placeholder}
       {...props}
     />
-  );
+  )
 }
