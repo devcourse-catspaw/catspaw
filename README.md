@@ -6,7 +6,7 @@
 
 ## 🎉 배포 주소
 
-https://catspaw-drawing.netlify.app
+🔗 [Cat's Paw 바로가기](https://catspaw-drawing.netlify.app)
 
 <br>
 
