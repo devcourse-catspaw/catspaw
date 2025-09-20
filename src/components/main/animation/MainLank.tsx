@@ -34,7 +34,6 @@ export default function MainLank() {
         console.error(error)
       } else {
         setRanking(data)
-        console.log(data)
       }
     }
 
