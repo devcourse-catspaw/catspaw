@@ -1,8 +1,8 @@
-import sketchBook from "../../assets/images/sketchbook.svg";
-import aiAnswering from "../../assets/images/ai_answering3.svg";
-import correctAnswer from "../../assets/images/answer_correct_blue.svg";
-import wrongAnswer from "../../assets/images/answer_wrong_red.svg";
-import DrawingPropmt from "../../components/game/DrawingPropmt";
+import sketchBook from "../../../assets/images/sketchbook.svg";
+import aiAnswering from "../../../assets/images/ai_answering3.svg";
+import correctAnswer from "../../../assets/images/answer_correct_blue.svg";
+import wrongAnswer from "../../../assets/images/answer_wrong_red.svg";
+import DrawingPropmt from "../DrawingPropmt";
 
 interface AiResultDisplayProps {
   currentTopic: string | null;
@@ -27,11 +27,7 @@ export default function AiResultDisplay({
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <DrawingPropmt topic={currentTopic} className="w-107" />
       <div className="relative">
-        <img
-          src={sketchBook}
-          alt="스케치북"
-          className="w-[438px] h-[294px]"
-        />
+        <img src={sketchBook} alt="스케치북" className="w-[438px] h-[294px]" />
         {imageUrl && (
           <img
             ref={imgRef}

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
-import { useDrawingStore } from "../../../stores/drawingStore";
-import { useAuthStore } from "../../../stores/authStore";
-import supabase from "../../../utils/supabase";
+import { useDrawingStore } from "../../../../stores/drawingStore";
+import { useAuthStore } from "../../../../stores/authStore";
+import supabase from "../../../../utils/supabase";
 
 export const useDrawingSubmit = () => {
   const navigate = useNavigate();

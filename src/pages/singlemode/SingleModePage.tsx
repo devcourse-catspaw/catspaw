@@ -1,10 +1,10 @@
 import SingleModeHeader from "../../components/game/SingleModeHeader";
 import DrawingGameLayout from "../../components/game/DrawingGameLayout";
 import { useDrawingStore } from "../../stores/drawingStore";
-import { useDrawingSubmit } from "./hooks/useDrawingSubmit";
-import { useGameTimerEffects } from "./hooks/useGameTimerEffects";
-import { usePageProtection } from "./hooks/usePageProtection";
-import { useTopicInitialization } from "./hooks/useTopicInitialization";
+import { useDrawingSubmit } from "../../components/game/singlemode/hooks/useDrawingSubmit";
+import { useGameTimerEffects } from "../../components/game/singlemode/hooks/useGameTimerEffects";
+import { usePageProtection } from "../../components/game/singlemode/hooks/usePageProtection";
+import { useTopicInitialization } from "../../components/game/singlemode/hooks/useTopicInitialization";
 
 export default function SingleModePage() {
   const { currentTopic } = useDrawingStore();

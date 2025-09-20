@@ -1,4 +1,4 @@
-import aiThinking from "../../assets/images/ai_answering.gif";
+import aiThinking from "../../../assets/images/ai_answering.gif";
 
 interface AiLoadingDisplayProps {
   imageUrl: string | null;

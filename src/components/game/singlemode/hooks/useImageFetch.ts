@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import supabase from "../../../utils/supabase";
+import supabase from "../../../../utils/supabase";
 
 export const useImageFetch = (
-  filename: string | null, 
+  filename: string | null,
   userId: string | undefined,
   setIsError: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
