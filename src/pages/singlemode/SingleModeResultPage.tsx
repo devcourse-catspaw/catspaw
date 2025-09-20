@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { useDrawingStore } from "../stores/drawingStore";
-import SingleModeHeader from "../components/game/SingleModeHeader";
-import Button from "../components/common/Button";
+import { useDrawingStore } from "../../stores/drawingStore";
+import SingleModeHeader from "../../components/game/SingleModeHeader";
+import Button from "../../components/common/Button";
 import { useNavigate } from "react-router";
-import SingleModeResultCard from "../components/game/SingleModeResultCard";
-import supabase from "../utils/supabase";
+import SingleModeResultCard from "../../components/game/SingleModeResultCard";
+import supabase from "../../utils/supabase";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { Grid } from "swiper/modules";
-import DrawingPropmt from "../components/game/DrawingPropmt";
-import pawsMouse from "../assets/images/paw_mouse_big.svg";
+import DrawingPropmt from "../../components/game/DrawingPropmt";
+import pawsMouse from "../../assets/images/paw_mouse_big.svg";
 import type { FileObject } from "@supabase/storage-js";
-import prevIcon from "../assets/images/icon_slide_left.svg";
-import nextIcon from "../assets/images/icon_slide_right.svg";
-import { useAuthStore } from "../stores/authStore";
+import prevIcon from "../../assets/images/icon_slide_left.svg";
+import nextIcon from "../../assets/images/icon_slide_right.svg";
+import { useAuthStore } from "../../stores/authStore";
 
 interface StorageResponse {
   data: FileObject[] | null;

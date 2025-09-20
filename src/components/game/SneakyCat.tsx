@@ -36,7 +36,7 @@ export default function SneakyCat({
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [navigate, setIsError]);
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-40">

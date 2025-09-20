@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import DrawingCanvas from "../components/game/DrawingCanvas";
-import DrawingPropmt from "../components/game/DrawingPropmt";
-import GameTimer from "../components/game/GameTimer";
-import SingleModeHeader from "../components/game/SingleModeHeader";
-import { useDrawingStore } from "../stores/drawingStore";
+import DrawingCanvas from "../../components/game/DrawingCanvas.tsx";
+import DrawingPropmt from "../../components/game/DrawingPropmt.tsx";
+import GameTimer from "../../components/game/GameTimer.tsx";
+import SingleModeHeader from "../../components/game/SingleModeHeader.tsx";
+import { useDrawingStore } from "../../stores/drawingStore.ts";
 import { useNavigate } from "react-router";
-import supabase from "../utils/supabase";
-import { useGameTimerStore } from "../stores/gameTimerStore";
-import { useAuthStore } from "../stores/authStore.ts";
+import supabase from "../../utils/supabase.ts";
+import { useGameTimerStore } from "../../stores/gameTimerStore.ts";
+import { useAuthStore } from "../../stores/authStore.ts";
 
 export default function SingleModePage() {
   const { currentTopic, getRandomTopic, setFilename } = useDrawingStore();
@@ -24,11 +24,11 @@ export default function SingleModePage() {
     const data = await fetch(imageDataUrl);
     const blob = await data.blob();
 
-    const file = new File([blob], filename, { type: 'image/jpeg' });
+    const file = new File([blob], filename, { type: "image/jpeg" });
     setFilename(filename);
 
     const { error } = await supabase.storage
-      .from('singlemode-images')
+      .from("singlemode-images")
       .upload(`private/${user?.id}/${filename}`, file);
 
     if (error) {
@@ -36,7 +36,7 @@ export default function SingleModePage() {
       return;
     }
 
-    navigate('/game/ai-answering');
+    navigate("/game/ai-answering");
   };
 
   useEffect(() => {
@@ -62,10 +62,10 @@ export default function SingleModePage() {
   };
   useEffect(() => {
     (() => {
-      window.addEventListener('beforeunload', preventClose);
+      window.addEventListener("beforeunload", preventClose);
     })();
     return () => {
-      window.removeEventListener('beforeunload', preventClose);
+      window.removeEventListener("beforeunload", preventClose);
     };
   }, []);
 
