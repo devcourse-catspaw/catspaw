@@ -6,7 +6,7 @@ import { useImageFetch } from "../../components/game/singlemode/hooks/useImageFe
 import { useAIPrediction } from "../../components/game/singlemode/hooks/useAIPrediction";
 import { useNavigationEffects } from "../../components/game/singlemode/hooks/useNavigationEffects";
 import SingleModeHeader from "../../components/game/SingleModeHeader";
-import SneakyCat from "../../components/game/SneakyCat";
+import SneakyCat from "../../components/game/singlemode/SneakyCat";
 import AiResultDisplay from "../../components/game/singlemode/AiResultDisplay";
 import AiLoadingDisplay from "../../components/game/singlemode/AiLoadingDisplay";
 
