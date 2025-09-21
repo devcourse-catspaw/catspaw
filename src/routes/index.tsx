@@ -1,45 +1,49 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import Home from '../pages/Home'
-import GameModeSelect from '../pages/game/GameModeSelect'
-import GameLayout from './layouts/GameLayout'
-import SingleModePage from '../pages/SingleModePage'
-import Login from '../pages/Login'
-import AiAnswering from '../pages/AiAnswering'
-import SingleModeResultPage from '../pages/SingleModeResultPage'
-import GameRoomList from '../pages/game/GameRoomList'
-import GameWaitingRoom from '../pages/game/GameWaitingRoom'
-import MultiModeWords from '../pages/game/MultiModeWords'
-import MultiModeDrawing from '../pages/game/MultiModeDrawing'
-import MultiModeResult from '../pages/game/MultiModeResult'
-import Lounge from '../pages/Lounge'
-import LoungeLayout from './layouts/LoungeLayout'
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import Home from "../pages/Home";
+import GameModeSelect from "../pages/game/GameModeSelect";
+import GameLayout from "./layouts/GameLayout";
+import SingleModePage from "../pages/singlemode/SingleModePage";
+import Login from "../pages/Login";
+import AiAnswering from "../pages/singlemode/AiAnswering";
+import SingleModeResultPage from "../pages/singlemode/SingleModeResultPage";
+import GameRoomList from "../pages/game/GameRoomList";
+import GameWaitingRoom from "../pages/game/GameWaitingRoom";
+import MultiModeWords from "../pages/game/MultiModeWords";
+import MultiModeDrawing from "../pages/game/MultiModeDrawing";
+import MultiModeResult from "../pages/game/MultiModeResult";
+import Lounge from "../pages/Lounge";
+import LoungeLayout from "./layouts/LoungeLayout";
 import {
   fetchExactPost,
   fetchPostDetail,
   fetchUsers,
-} from './loader/post.loader'
-import LoungeDetail from '../pages/lounge/LoungDetail'
-import AddPost from '../pages/lounge/AddPost'
-import EditPost from '../pages/lounge/EditPost'
-import MyPage from '../pages/MyPage'
-import UserPage from '../pages/UserPage'
-import NotFound from '../pages/NotFound'
-import useAuthInit from '../hooks/useAuthInit'
-import ProtectedRoute from '../components/common/ProtectedRoute'
+} from "./loader/post.loader";
+import LoungeDetail from "../pages/lounge/LoungDetail";
+import AddPost from "../pages/lounge/AddPost";
+import EditPost from "../pages/lounge/EditPost";
+import MyPage from "../pages/MyPage";
+import UserPage from "../pages/UserPage";
+import NotFound from "../pages/NotFound";
+import useAuthInit from "../hooks/useAuthInit";
+import ProtectedRoute from "../components/common/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Home />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/game',
+    path: "/game",
     element: (
       <ProtectedRoute>
         <GameLayout />
@@ -51,54 +55,54 @@ const router = createBrowserRouter([
         element: <Navigate to="select" replace />,
       },
       {
-        path: 'select',
+        path: "select",
         element: <GameModeSelect />,
       },
       {
-        path: 'single',
+        path: "single",
         element: <SingleModePage />,
       },
       {
-        path: 'ai-answering',
+        path: "ai-answering",
         element: <AiAnswering />,
       },
       {
-        path: 'score-result',
+        path: "score-result",
         element: <SingleModeResultPage />,
       },
-      { path: 'list', element: <GameRoomList /> },
+      { path: "list", element: <GameRoomList /> },
       {
-        path: 'room',
+        path: "room",
         element: <GameWaitingRoom />,
       },
       {
-        path: 'multi',
+        path: "multi",
         element: <MultiModeWords />,
       },
       {
-        path: 'multi/drawing',
+        path: "multi/drawing",
         element: <MultiModeDrawing key="DRAWING" step="DRAWING" />,
       },
       {
-        path: 'multi/words',
+        path: "multi/words",
         element: <MultiModeDrawing key="WORDS" step="WORDS" />,
       },
       {
-        path: 'result',
+        path: "result",
         element: <MultiModeResult />,
       },
     ],
   },
   {
-    path: '/lounge',
+    path: "/lounge",
     element: <LoungeLayout />,
     loader: fetchUsers,
     children: [
       { index: true, element: <Lounge /> },
-      { path: ':id', element: <LoungeDetail />, loader: fetchPostDetail },
-      { path: 'add-post', element: <AddPost /> },
+      { path: ":id", element: <LoungeDetail />, loader: fetchPostDetail },
+      { path: "add-post", element: <AddPost /> },
       {
-        path: ':postId/edit-post',
+        path: ":postId/edit-post",
         element: <EditPost />,
         loader: fetchExactPost,
       },
@@ -106,7 +110,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/mypage',
+    path: "/mypage",
     element: (
       <ProtectedRoute>
         <MyPage />
@@ -115,7 +119,7 @@ const router = createBrowserRouter([
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '/user/:id',
+    path: "/user/:id",
     element: (
       <ProtectedRoute>
         <UserPage />
@@ -124,16 +128,16 @@ const router = createBrowserRouter([
     hydrateFallbackElement: <h1>Loading ...</h1>,
   },
   {
-    path: '*',
+    path: "*",
     element: <NotFound />,
   },
-])
+]);
 
 export default function Router() {
-  useAuthInit()
+  useAuthInit();
   return (
     <>
       <RouterProvider router={router} />
     </>
-  )
+  );
 }
