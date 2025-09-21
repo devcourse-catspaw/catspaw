@@ -56,7 +56,7 @@
 @font-face {
   font-family: "GloriaHallelujah";
   font-weight: 400;
-  src: url("/src/assets/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
+  src: url("/src/assets/fonts/GloriaHallelujah-Regular.woff2") format("woff2");
 }
 
 @font-face {
