@@ -1,4 +1,4 @@
-import DrawingCanvas from "./DrawingCanvas";
+import DrawingCanvas from "./drawingCanvas/DrawingCanvas";
 import DrawingPropmt from "./DrawingPropmt";
 import GameTimer from "./GameTimer";
 
