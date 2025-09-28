@@ -17,7 +17,7 @@ export default function SingleModePage() {
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center px-20 pt-[14px] relative">
-      <SingleModeHeader disable={true} />
+      <SingleModeHeader disable={false} />
       <DrawingGameLayout currentTopic={currentTopic} onSubmit={handleSubmit} />
     </div>
   );
