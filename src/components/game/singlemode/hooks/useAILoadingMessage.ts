@@ -32,5 +32,7 @@ export const useAILoadingMessage = () => {
     return () => clearTimeout(timer);
   }, [messageIndex]);
 
-  return { currentMessage, isTransitioning };
+  const progress = ((messageIndex + 1) / AI_MESSAGES.length) * 100;
+
+  return { currentMessage, isTransitioning, progress };
 };
