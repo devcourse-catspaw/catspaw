@@ -13,7 +13,7 @@ export default function SingleModeHeader({ disable }: { disable?: boolean }) {
   };
 
   const handleConfirmExit = () => {
-    navigate(-1);
+    navigate("/game/select");
   };
 
   return (
@@ -24,7 +24,6 @@ export default function SingleModeHeader({ disable }: { disable?: boolean }) {
             src={logo}
             alt="Cat's Paw 로고"
             className="w-15 cursor-pointer"
-            onClick={disable ? undefined : () => navigate("/")}
           />
           <span className="font-semibold text-lg">싱글모드</span>
         </div>
