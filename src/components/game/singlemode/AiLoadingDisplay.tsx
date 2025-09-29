@@ -15,13 +15,17 @@ export default function AiLoadingDisplay({
   const { currentMessage, isTransitioning, progress } = useAILoadingMessage();
 
   return (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-6">
-      <img src={aiThinking} alt="생각하는 AI 그림" />
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-8">
+      <img 
+        src={aiThinking} 
+        alt="생각하는 AI 그림"
+        className="w-auto h-auto max-w-full"
+      />
       
-      <div className="flex flex-col items-center gap-4 w-96">
-        <div className="relative h-8 flex items-center w-full justify-center">
+      <div className="flex flex-col items-center gap-5 w-full max-w-md px-4">
+        <div className="relative min-h-[32px] flex items-center w-full justify-center">
           <p 
-            className={`text-lg font-semibold text-[#1D1D1F] transition-opacity duration-300 ${
+            className={`text-lg font-semibold text-[#1D1D1F] transition-opacity duration-300 text-center ${
               isTransitioning ? 'opacity-0' : 'opacity-100'
             }`}
           >
