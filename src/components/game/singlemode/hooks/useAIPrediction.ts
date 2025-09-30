@@ -43,7 +43,7 @@ export const useAIPrediction = (
 
       const modelPromise = tmImage.load(modelURL, metadataURL);
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 30000)
+        setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 10000) // 30초 → 10초
       );
 
       const model = (await Promise.race([
@@ -87,7 +87,7 @@ export const useAIPrediction = (
 
       const predictionPromise = model.predict(imgRef.current);
       const predictionTimeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("예측 타임아웃")), 15000)
+        setTimeout(() => reject(new Error("예측 타임아웃")), 10000) // 15초 → 10초
       );
 
       const predictions = (await Promise.race([
