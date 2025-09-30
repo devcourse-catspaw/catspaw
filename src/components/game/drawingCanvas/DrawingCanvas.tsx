@@ -25,14 +25,11 @@ const DrawingCanvas = ({ onSubmit }: DrawingCanvasProps) => {
     setColor,
     stroke,
     setStroke,
-    hasImage,
     setHasImage,
   } = useDrawingState();
 
   const { addToHistory, handleUndo } = useDrawingHistory(
-    lines,
     setLines,
-    hasImage,
     setHasImage,
     stageRef
   );
