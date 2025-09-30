@@ -22,7 +22,6 @@ export default function AiAnswering() {
 
   const { prediction, imgRef } = useAIPrediction(
     imageUrl,
-    currentTopic,
     setAiAnswer,
     setIsError,
     imageReady
