@@ -1,16 +1,14 @@
-import { useState, useCallback } from 'react';
-import Konva from 'konva';
-import type { HistoryState, LineData } from './useDrawingState';
+import { useState, useCallback } from "react";
+import Konva from "konva";
+import type { HistoryState, LineData } from "./useDrawingState";
 
 export const useDrawingHistory = (
-  lines: LineData[],
   setLines: React.Dispatch<React.SetStateAction<LineData[]>>,
-  hasImage: boolean,
   setHasImage: React.Dispatch<React.SetStateAction<boolean>>,
   stageRef: React.RefObject<Konva.Stage | null>
 ) => {
   const [history, setHistory] = useState<HistoryState[]>([
-    { type: 'lines', data: [] },
+    { type: "lines", data: [] },
   ]);
   const [historyStep, setHistoryStep] = useState<number>(0);
 
@@ -41,14 +39,14 @@ export const useDrawingHistory = (
 
     setHistoryStep(newStep);
 
-    if (prevState.type === 'lines') {
+    if (prevState.type === "lines") {
       setLines(prevState.data as LineData[]);
       setHasImage(false);
 
       const stage = stageRef.current;
       if (stage) {
         const layer = stage.getLayers()[0];
-        layer.find('Image').forEach((img) => img.destroy());
+        layer.find("Image").forEach((img) => img.destroy());
         layer.batchDraw();
       }
     } else {
