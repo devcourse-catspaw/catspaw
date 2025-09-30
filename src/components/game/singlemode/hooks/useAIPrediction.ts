@@ -6,6 +6,9 @@ type Prediction = {
   probability: number;
 };
 
+let cachedModel: tmImage.CustomMobileNet | null = null;
+let isLoadingModel = false;
+
 export const useAIPrediction = (
   imageUrl: string | null,
   currentTopic: string | null,
@@ -16,6 +19,53 @@ export const useAIPrediction = (
   const [prediction, setPrediction] = useState<string | null>(null);
   const [predictionCount, setPredictionCount] = useState(0);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  
+  const performanceStartRef = useRef<number | null>(null);
+
+  const loadModel = async () => {
+    if (cachedModel) {
+      console.log("[개선 후] 캐시된 모델 사용");
+      return cachedModel;
+    }
+
+    if (isLoadingModel) {
+      while (isLoadingModel) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      return cachedModel;
+    }
+
+    isLoadingModel = true;
+    const modelLoadStart = performance.now();
+
+    try {
+      const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+
+      const modelPromise = tmImage.load(modelURL, metadataURL);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 30000)
+      );
+
+      const model = (await Promise.race([
+        modelPromise,
+        timeoutPromise,
+      ])) as tmImage.CustomMobileNet;
+
+      const modelLoadEnd = performance.now();
+      const loadTime = ((modelLoadEnd - modelLoadStart) / 1000).toFixed(2);
+      
+      console.log(`[개선 후] 모델 로딩: ${loadTime}초`);
+
+      cachedModel = model;
+      isLoadingModel = false;
+      return model;
+    } catch (error) {
+      isLoadingModel = false;
+      throw error;
+    }
+  };
 
   useEffect(() => {
     if (!imageUrl || !imageReady) {
@@ -30,20 +80,17 @@ export const useAIPrediction = (
       const tryNumber = predictionCount + 1;
       setPredictionCount(tryNumber);
 
+      if (tryNumber === 1) {
+        performanceStartRef.current = performance.now();
+        console.log("[개선 후] 시작");
+      }
+
       try {
-        const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
-        const modelURL = URL + "model.json";
-        const metadataURL = URL + "metadata.json";
+        const model = await loadModel();
 
-        const modelPromise = tmImage.load(modelURL, metadataURL);
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 30000)
-        );
-
-        const model = (await Promise.race([
-          modelPromise,
-          timeoutPromise,
-        ])) as tmImage.CustomMobileNet;
+        if (!model) {
+          throw new Error("모델 로드 실패");
+        }
 
         if (!imgRef.current) {
           throw new Error("이미지 참조가 없음");
@@ -70,17 +117,22 @@ export const useAIPrediction = (
 
         setPrediction(best.className);
         setAiAnswer(best.className);
+
+        if (performanceStartRef.current) {
+          const totalTime = ((performance.now() - performanceStartRef.current) / 1000).toFixed(2);
+          console.log(`[개선 후] 완료: ${totalTime}초 (${tryNumber}회 시도)`);
+        }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "알 수 없는 오류";
-        console.log(`예측 시도 ${tryNumber} 실패:`, errorMessage);
+        console.log(`[개선 후] 시도 ${tryNumber} 실패: ${errorMessage}`);
 
         if (tryNumber < 3) {
           setTimeout(() => {
             predict();
-          }, 5000); 
+          }, 5000);
         } else {
-          console.log("최대 재시도 횟수 초과, 에러 상태로 전환");
+          console.log("[개선 후] 최대 재시도 초과");
           setIsError(true);
         }
       }
@@ -94,8 +146,8 @@ export const useAIPrediction = (
     }
   }, [imageUrl, imageReady, currentTopic, setAiAnswer, setIsError, predictionCount, prediction]);
 
-  return { 
-    prediction, 
-    imgRef
+  return {
+    prediction,
+    imgRef,
   };
 };
