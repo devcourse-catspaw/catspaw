@@ -17,24 +17,22 @@ export const useAIPrediction = (
 ) => {
   const [prediction, setPrediction] = useState<string | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const performanceStartRef = useRef<number | null>(null);
   const retryCountRef = useRef(0);
+  const hasStartedRef = useRef(false);
 
   const loadModel = async () => {
     if (cachedModel) {
-      console.log("[개선 후] 캐시된 모델 사용");
       return cachedModel;
     }
 
     if (isLoadingModel) {
       while (isLoadingModel) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
       return cachedModel;
     }
 
     isLoadingModel = true;
-    const modelLoadStart = performance.now();
 
     try {
       const URL = "https://teachablemachine.withgoogle.com/models/SolSQBa_D/";
@@ -43,18 +41,13 @@ export const useAIPrediction = (
 
       const modelPromise = tmImage.load(modelURL, metadataURL);
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 10000) // 30초 → 10초
+        setTimeout(() => reject(new Error("모델 로딩 타임아웃")), 10000)
       );
 
       const model = (await Promise.race([
         modelPromise,
         timeoutPromise,
       ])) as tmImage.CustomMobileNet;
-
-      const modelLoadEnd = performance.now();
-      const loadTime = ((modelLoadEnd - modelLoadStart) / 1000).toFixed(2);
-      
-      console.log(`[개선 후] 모델 로딩: ${loadTime}초`);
 
       cachedModel = model;
       isLoadingModel = false;
@@ -69,11 +62,6 @@ export const useAIPrediction = (
     const currentAttempt = retryCountRef.current + 1;
     retryCountRef.current = currentAttempt;
 
-    if (currentAttempt === 1) {
-      performanceStartRef.current = performance.now();
-      console.log("[개선 후] 시작");
-    }
-
     try {
       const model = await loadModel();
 
@@ -87,7 +75,7 @@ export const useAIPrediction = (
 
       const predictionPromise = model.predict(imgRef.current);
       const predictionTimeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("예측 타임아웃")), 10000) // 15초 → 10초
+        setTimeout(() => reject(new Error("예측 타임아웃")), 10000)
       );
 
       const predictions = (await Promise.race([
@@ -99,32 +87,18 @@ export const useAIPrediction = (
         throw new Error("예측 결과가 없음");
       }
 
-      const sorted = predictions.sort(
-        (a, b) => b.probability - a.probability
-      );
+      const sorted = predictions.sort((a, b) => b.probability - a.probability);
       const best = sorted[0];
 
       setPrediction(best.className);
       setAiAnswer(best.className);
-
-      if (performanceStartRef.current) {
-        const totalTime = ((performance.now() - performanceStartRef.current) / 1000).toFixed(2);
-        console.log(`[개선 후] 완료: ${totalTime}초 (${currentAttempt}회 시도)`);
-      }
-
       retryCountRef.current = 0;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "알 수 없는 오류";
-      console.log(`[개선 후] 시도 ${currentAttempt} 실패: ${errorMessage}`);
-
+    } catch {
       if (currentAttempt < 3) {
-        console.log(`[개선 후] 5초 후 재시도 (${currentAttempt}/3)`);
         setTimeout(() => {
           runPrediction();
         }, 5000);
       } else {
-        console.log("[개선 후] 최대 재시도 초과");
         retryCountRef.current = 0;
         setIsError(true);
       }
@@ -132,11 +106,17 @@ export const useAIPrediction = (
   }, [setAiAnswer, setIsError]);
 
   useEffect(() => {
-    if (!imageUrl || !imageReady || prediction) {
+    if (!imageUrl || !imageReady || prediction || hasStartedRef.current) {
       return;
     }
 
+    hasStartedRef.current = true;
     runPrediction();
+
+    return () => {
+      hasStartedRef.current = false;
+      retryCountRef.current = 0;
+    };
   }, [imageUrl, imageReady, prediction, runPrediction]);
 
   return {
