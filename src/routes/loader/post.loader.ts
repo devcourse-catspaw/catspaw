@@ -10,7 +10,6 @@ export const fetchPosts = async (offset: number, limit: number) => {
       .from("posts")
       .select(
         `
->>>>>>> main
     *,
     users (
       id, 

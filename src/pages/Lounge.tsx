@@ -15,13 +15,6 @@ import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 import useInfiniteScroll from "../components/hooks/useInfiniteScroll";
 
-// import kisu from "../assets/images/kisu_.svg";
-// import kisuRibbon from "../assets/images/kisu_ribbon.svg";
-// import kisuSunglasses from "../assets/images/kisu_sunglasses.svg";
-// import kisuCap from "../assets/images/kisu_cap.svg";
-// import kisuPippi from "../assets/images/kisu_pippi.svg";
-// import kisuTie from "../assets/images/kisu_tie.svg";
-
 export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Posts = NonNullable<Awaited<ReturnType<typeof fetchPosts>>>;
 
@@ -132,7 +125,6 @@ export default function Lounge() {
       (l) => l.post_id === postId && l.user_id === user.id
     );
 
-    // <<<<<<< HEAD
     //롤백 가능한 기존 상태 복사
     const prevLikeCounts = { ...likeCounts };
     const prevAllLikes = [...allLikes];
@@ -154,37 +146,12 @@ export default function Lounge() {
       } else {
         await addLike(postId, user.id);
       }
-
-      // const freshLikes = await fetchLikes();
-
-      // setAllLikes(freshLikes);
-      // const counts = freshLikes.reduce((acc, l) => {
-      //   if (l.post_id !== null) acc[l.post_id] = (acc[l.post_id] || 0) + 1;
-      //   return acc;
-      // }, {} as Record<number, number>);
-      // setLikeCounts(counts);
     } catch (error) {
       setLikeCounts(prevLikeCounts);
       setAllLikes(prevAllLikes);
       console.log(error);
       toast.error("좋아요 처리 중 오류가 발생했습니다.");
     }
-    // =======
-    //     if (liked) {
-    //       await removeLike(postId, user.id);
-    //     } else {
-    //       await addLike(postId, user.id);
-    //     }
-
-    //     const freshLikes = await fetchLikes();
-
-    //     setAllLikes(freshLikes);
-    //     const counts = freshLikes.reduce((acc, l) => {
-    //       if (l.post_id !== null) acc[l.post_id] = (acc[l.post_id] || 0) + 1;
-    //       return acc;
-    //     }, {} as Record<number, number>);
-    //     setLikeCounts(counts);
-    // >>>>>>> main
   };
 
   const handleAddPostClick = (e: React.MouseEvent) => {
