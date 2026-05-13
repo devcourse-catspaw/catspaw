@@ -67,6 +67,7 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
       )
       .eq("id", Number(params.id))
       .single();
+
     return posts;
   } catch (e) {
     console.error(e);

@@ -1,4 +1,5 @@
 import backImg from "../../assets/images/background_doodle_2.svg";
+
 import { Outlet, useLoaderData, useLocation } from "react-router-dom";
 import Header from "../../components/common/Header";
 import { useAuthStore } from "../../stores/authStore";
